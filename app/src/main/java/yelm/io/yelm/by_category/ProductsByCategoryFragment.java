@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import yelm.io.yelm.R;
 import yelm.io.yelm.databinding.FragmentProductsByCategoryBinding;
 import yelm.io.yelm.main.adapter.ProductsNewMenuAdapter;
 import yelm.io.yelm.main.adapter.ProductsNewMenuSquareImageAdapter;
+import yelm.io.yelm.support_stuff.AlexTAG;
 import yelm.io.yelm.support_stuff.ItemOffsetDecorationRight;
 
 public class ProductsByCategoryFragment extends Fragment {
@@ -51,6 +53,9 @@ public class ProductsByCategoryFragment extends Fragment {
         } else {
             binding.title.setText(productsByCategory.getName());
         }
+
+        Log.d(AlexTAG.debug, "productsByCategory.getItems().size: " + productsByCategory.getItems().size());
+
 
         if (horizontalLayout) {
             binding.recycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));

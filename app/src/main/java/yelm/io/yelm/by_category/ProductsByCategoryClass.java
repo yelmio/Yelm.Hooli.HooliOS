@@ -15,7 +15,7 @@ public class ProductsByCategoryClass {
     @SerializedName("name")
     @Expose
     private String name;
-    @SerializedName("Items")
+    @SerializedName("items")
     @Expose
     private List<Item> items = null;
 

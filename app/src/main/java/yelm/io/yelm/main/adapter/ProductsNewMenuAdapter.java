@@ -41,8 +41,6 @@ public class ProductsNewMenuAdapter extends RecyclerView.Adapter<ProductsNewMenu
     private Context context;
     private List<Item> products;
 
-
-
     public ProductsNewMenuAdapter(Context context, List<Item> products) {
         this.context = context;
         this.products = products;

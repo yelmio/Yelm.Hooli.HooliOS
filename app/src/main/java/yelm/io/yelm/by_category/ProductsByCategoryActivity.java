@@ -65,10 +65,14 @@ public class ProductsByCategoryActivity extends AppCompatActivity {
                 if (userAddress.isChecked) {
                     latitude = userAddress.latitude;
                     longitude = userAddress.longitude;
+                    Log.d(AlexTAG.debug, "latitude: " + latitude);
+                    Log.d(AlexTAG.debug, "longitude: " + longitude);
                     break;
                 }
             }
         }
+
+
         RetrofitClientNew.
                 getClient(RestAPI.URL_API_MAIN).
                 create(RestAPI.class).
@@ -87,6 +91,7 @@ public class ProductsByCategoryActivity extends AppCompatActivity {
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
                                 productsByCategoryList = response.body();
+                                Log.d(AlexTAG.debug, "productsByCategoryList.size: " + productsByCategoryList.size());
                                 rewriteView();
                                 allowUpdateUI = true;
                             } else {
@@ -157,6 +162,7 @@ public class ProductsByCategoryActivity extends AppCompatActivity {
             FrameLayout frameLayout = new FrameLayout(ProductsByCategoryActivity.this);
             frameLayout.setId(View.generateViewId());
             ProductsByCategoryFragment categoryFragment = new ProductsByCategoryFragment(productsByCategoryList.get(i), isHorizontalLayout);
+
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.add(frameLayout.getId(), categoryFragment, "fragment" + i).commit();
             binding.storeFragments.addView(frameLayout);
