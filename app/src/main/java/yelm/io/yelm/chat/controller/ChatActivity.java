@@ -18,19 +18,13 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.View;
 import android.webkit.MimeTypeMap;
 
-import com.google.android.material.snackbar.Snackbar;
-
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,14 +32,9 @@ import java.util.Map;
 import yelm.io.yelm.R;
 import yelm.io.yelm.chat.adapter.ChatAdapter;
 import yelm.io.yelm.chat.model.ChatContent;
-import yelm.io.yelm.database_new.Common;
-import yelm.io.yelm.database_new.user_addresses.UserAddress;
 import yelm.io.yelm.databinding.ActivityChatBinding;
-import yelm.io.yelm.databinding.PickImageBottomSheetBinding;
 import yelm.io.yelm.loader.controller.LoaderActivity;
-import yelm.io.yelm.main.controller.MainActivity;
 import yelm.io.yelm.support_stuff.AlexTAG;
-import yelm.io.yelm.user_address.controller.AddressesBottomSheet;
 
 
 public class ChatActivity extends AppCompatActivity implements PickImageBottomSheet.BottomSheetShopListener {
@@ -64,7 +53,12 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE,
     };
+
+    private static final String[] CAMERA_PERMISSIONS = new String[]{Manifest.permission.CAMERA};
+
+
     private static final int REQUEST_PERMISSIONS_READ_WRITE_STORAGE = 100;
+    private static final int REQUEST_PERMISSIONS_CAMERA = 10;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +68,6 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
 
         tuneChatRecycler();
         binding();
-
     }
 
 
@@ -83,7 +76,6 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
                 .checkSelfPermission(this.getApplicationContext(), READ_WRITE_EXTERNAL_PERMISSIONS[0]);
         return result == PackageManager.PERMISSION_GRANTED;
     }
-
 
     private void tuneChatRecycler() {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -103,23 +95,13 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
 
     private void binding() {
 
-        //binding.back.setBack
-
         binding.sendMessage.setOnClickListener(v -> {
-            if (binding.messageField.getText().toString().trim().isEmpty()) {
-//                Snackbar snackbar = Snackbar.make(
-//                        findViewById(R.id.rootLayout),
-//                        "Message is empty",
-//                        Snackbar.LENGTH_SHORT);
-//                snackbar.show();
-            } else {
+            if (!binding.messageField.getText().toString().trim().isEmpty()) {
                 ChatContent temp = new ChatContent(userID, binding.messageField.getText().toString().trim(), "", null);
                 chatContentList.add(temp);
                 chatAdapter.notifyDataSetChanged();
                 binding.messageField.setText("");
-                //binding.chatRecycler.smoothScrollToPosition(chatContentList.size() - 1);
             }
-
         });
         binding.back.setOnClickListener(v -> finish());
 
@@ -133,12 +115,18 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
             }
         });
 
-        //binding.choosePicture.setOnClickListener(v -> openFileChooser());
         binding.choosePicture.setOnClickListener(v -> callPickImageBottomSheet());
 
     }
 
     private void callPickImageBottomSheet() {
+
+        if (hasCameraPermission()) {
+        } else {
+            ActivityCompat.requestPermissions(
+                    this, CAMERA_PERMISSIONS, REQUEST_PERMISSIONS_CAMERA);
+        }
+
         if (hasReadExternalStoragePermission()) {
             //check if AddressesBottomSheet is added otherwise we get exception:
             //java.lang.IllegalStateException: Fragment already added
@@ -149,39 +137,43 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
         } else {
             ActivityCompat.requestPermissions(this, READ_WRITE_EXTERNAL_PERMISSIONS, REQUEST_PERMISSIONS_READ_WRITE_STORAGE);
         }
+
     }
 
-
-    private void openFileChooser() {
-//        Intent intent = new Intent();
-//        intent.setType("image/*");
-//        intent.setAction(Intent.ACTION_GET_CONTENT);
-//        startActivityForResult(Intent.createChooser(intent, "Select Image"), PICK_IMAGE_REQUEST);
-
-        Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(i, PICK_IMAGE_REQUEST);
+    private boolean hasCameraPermission() {
+        int result = ContextCompat
+                .checkSelfPermission(this.getApplicationContext(), CAMERA_PERMISSIONS[0]);
+        return result == PackageManager.PERMISSION_GRANTED;
     }
+
 
     public static float dpToPx(Context context, float valueInDp) {
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, valueInDp, metrics);
     }
 
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case REQUEST_PERMISSIONS_READ_WRITE_STORAGE:
                 if (hasReadExternalStoragePermission()) {
-                    Log.d(AlexTAG.debug, "Method onRequestPermissionsResult() - Request Permissions Result: Success!");
+                    Log.d(AlexTAG.debug, "Method onRequestPermissionsResult() - Request Location Permissions Result: Success!");
                     callPickImageBottomSheet();
                 } else if (shouldShowRequestPermissionRationale(permissions[0])) {
-                    showDialogExplanationAboutRequestLocationPermission(getText(R.string.chatActivityRequestPermission).toString());
+                    showDialogExplanationAboutRequestLocationPermission(getText(R.string.chatActivityRequestStoragePermission).toString());
                 } else {
-                    Log.d(AlexTAG.debug, "Method onRequestPermissionsResult() - Request Permissions Result: Failed!");
+                    Log.d(AlexTAG.debug, "Method onRequestPermissionsResult() - Request Location Permissions Result: Failed!");
                 }
                 break;
-
+            case REQUEST_PERMISSIONS_CAMERA:
+                if (hasCameraPermission()) {
+                    Log.d(AlexTAG.debug, "Method onRequestPermissionsResult() - Request Camera Permissions Result: Success!");
+                    callPickImageBottomSheet();
+                } else if (shouldShowRequestPermissionRationale(permissions[0])) {
+                    showDialogExplanationAboutRequestCameraPermission(getText(R.string.chatActivityRequestCameraPermission).toString());
+                } else {
+                    Log.d(AlexTAG.debug, "Method onRequestPermissionsResult() - Request Camera Permissions Result: Failed!");
+                }
             default:
                 super.onRequestPermissionsResult(requestCode, permissions,
                         grantResults);
@@ -198,37 +190,40 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
                 .show();
     }
 
+    private void showDialogExplanationAboutRequestCameraPermission(String message) {
+        new AlertDialog.Builder(ChatActivity.this)
+                .setMessage(message)
+                .setTitle(getText(R.string.mainActivityAttention))
+                .setOnCancelListener(dialogInterface -> ActivityCompat.requestPermissions(ChatActivity.this, CAMERA_PERMISSIONS, REQUEST_PERMISSIONS_CAMERA))
+                .setPositiveButton(getText(R.string.mainActivityOk), (dialogInterface, i) -> ActivityCompat.requestPermissions(ChatActivity.this, CAMERA_PERMISSIONS, REQUEST_PERMISSIONS_CAMERA))
+                .create()
+                .show();
+    }
+
     @Override
     public boolean shouldShowRequestPermissionRationale(@NonNull String permission) {
         return super.shouldShowRequestPermissionRationale(permission);
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            Uri imageUri = data.getData();
-            Log.d(AlexTAG.debug, "imageUri " + imageUri);
-            Log.d(AlexTAG.debug, "getPath " + imageUri.getPath());
-
-            chatAdapter.notifyDataSetChanged();
-            binding.chatRecycler.smoothScrollToPosition(chatContentList.size() - 1);
-
-            try {
-                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
-
-                Log.d(AlexTAG.debug, "bitmap.getWidth() " + bitmap.getWidth());
-                Log.d(AlexTAG.debug, "bitmap.getHeight() " + bitmap.getHeight());
-                ConvertingImageToBase64(bitmap);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        }
-
+//        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+//            Uri imageUri = data.getData();
+//            Log.d(AlexTAG.debug, "imageUri " + imageUri);
+//            Log.d(AlexTAG.debug, "getPath " + imageUri.getPath());
+//            chatAdapter.notifyDataSetChanged();
+//            binding.chatRecycler.smoothScrollToPosition(chatContentList.size() - 1);
+//            try {
+//                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+//                Log.d(AlexTAG.debug, "bitmap.getWidth() " + bitmap.getWidth());
+//                Log.d(AlexTAG.debug, "bitmap.getHeight() " + bitmap.getHeight());
+//                ConvertingImageToBase64(bitmap);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 
     private void ConvertingImageToBase64(Bitmap bitmap) {
@@ -260,7 +255,6 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
         }
         chatAdapter.notifyDataSetChanged();
         binding.chatRecycler.smoothScrollToPosition(chatContentList.size() - 1);
-
     }
 }
 

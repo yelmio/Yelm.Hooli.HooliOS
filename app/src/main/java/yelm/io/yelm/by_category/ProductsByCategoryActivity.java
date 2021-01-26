@@ -91,7 +91,6 @@ public class ProductsByCategoryActivity extends AppCompatActivity {
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
                                 productsByCategoryList = response.body();
-                                Log.d(AlexTAG.debug, "productsByCategoryList.size: " + productsByCategoryList.size());
                                 rewriteView();
                                 allowUpdateUI = true;
                             } else {

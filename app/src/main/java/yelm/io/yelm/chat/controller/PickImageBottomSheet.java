@@ -1,7 +1,9 @@
 package yelm.io.yelm.chat.controller;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -26,6 +28,8 @@ import yelm.io.yelm.databinding.PickImageBottomSheetBinding;
 import yelm.io.yelm.chat.model.ModelImages;
 import yelm.io.yelm.support_stuff.AlexTAG;
 
+import static android.app.Activity.RESULT_OK;
+
 public class PickImageBottomSheet extends BottomSheetDialogFragment {
 
     private BottomSheetShopListener listener;
@@ -34,6 +38,8 @@ public class PickImageBottomSheet extends BottomSheetDialogFragment {
     public ArrayList<ModelImages> allImages;
     boolean isFolder;
     private static final int REQUEST_PERMISSIONS = 100;
+    private static final int REQUEST_TAKE_PHOTO = 11;
+
     PickImageAdapter pickImageAdapter;
     HashMap<Integer, String> picturesMap;
 
@@ -142,8 +148,28 @@ public class PickImageBottomSheet extends BottomSheetDialogFragment {
             binding.done.setText(String.format("%s: (%s)", getText(R.string.pickImageBottomSheetSend), picturesMap.size()));
         });
 
+        pickImageAdapter.setCameraListener(() -> {
+            Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivityForResult(takePhotoIntent, REQUEST_TAKE_PHOTO);
+        });
+
 
         recyclerPickImages.setAdapter(pickImageAdapter);
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
+            // Фотка сделана, извлекаем миниатюру картинки
+            Log.d(AlexTAG.debug, "made photo");
+
+            Bundle extras = data.getExtras();
+            Bitmap thumbnailBitmap = (Bitmap) extras.get("data");
+            Log.d(AlexTAG.debug, "Bitmap: " + thumbnailBitmap.getByteCount());
+
+        }
     }
 
 

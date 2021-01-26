@@ -14,10 +14,12 @@
     <uses-permission android:name="com.sec.android.provider.badge.permission.WRITE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <uses-feature android:name="android.hardware.camera.any" />
     <uses-permission android:name="android.permission.CAMERA" />
 
-    <uses-feature android:name="android.hardware.camera" />
-    <uses-feature android:name="android.hardware.camera.autofocus" />
+<!--    <uses-feature android:name="android.hardware.camera" />-->
+<!--    <uses-feature android:name="android.hardware.camera.autofocus" />-->
 
     <application
         android:allowBackup="true"
@@ -28,7 +30,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".basket.controller.BasketActivityOnlyDelivery"></activity>
+        <activity
+            android:name=".basket.controller.BasketActivityOnlyDelivery"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".main.news.ItemsFromNewsActivity"
             android:screenOrientation="portrait" />

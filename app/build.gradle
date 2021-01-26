@@ -134,5 +134,10 @@ dependencies {
     //segment
     implementation  'info.hoang8f:android-segmented:1.0.6'
 
+    //cameraX
+    def camerax_version = "1.0.0-alpha01"
+    implementation "androidx.camera:camera-core:${camerax_version}"
+    implementation "androidx.camera:camera-camera2:${camerax_version}"
+
 
 }

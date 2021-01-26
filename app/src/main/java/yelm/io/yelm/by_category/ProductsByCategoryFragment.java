@@ -27,7 +27,6 @@ public class ProductsByCategoryFragment extends Fragment {
     ProductsNewMenuAdapter productsAdapter;
     ProductsNewMenuSquareImageAdapter productsSquareAdapter;
 
-
     boolean horizontalLayout;
 
     public ProductsByCategoryFragment() {
@@ -54,9 +53,6 @@ public class ProductsByCategoryFragment extends Fragment {
             binding.title.setText(productsByCategory.getName());
         }
 
-        Log.d(AlexTAG.debug, "productsByCategory.getItems().size: " + productsByCategory.getItems().size());
-
-
         if (horizontalLayout) {
             binding.recycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
             binding.recycler.setHasFixedSize(false);
@@ -74,8 +70,6 @@ public class ProductsByCategoryFragment extends Fragment {
             productsSquareAdapter = new ProductsNewMenuSquareImageAdapter(getContext(), productsByCategory.getItems());
             binding.recycler.setAdapter(productsSquareAdapter);
         }
-
         return binding.getRoot();
     }
-
 }

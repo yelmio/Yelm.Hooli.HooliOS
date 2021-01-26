@@ -45,7 +45,8 @@
     <string name="chatActivitySaveImage">Сохранить</string>
     <string name="chatActivitySavedImage">Изображение сохранено</string>
     <string name="chatActivityYourMessage">Ваше сообщение</string>
-    <string name="chatActivityRequestPermission">Для отправки сообщения разрешите приложению доступ к галереи. </string>
+    <string name="chatActivityRequestStoragePermission">Для отправки сообщения разрешите приложению доступ к галереи. </string>
+    <string name="chatActivityRequestCameraPermission">Для отправки фотографии разрешите приложению доступ к камере. </string>
 
     <!-- PickImageBottomSheet -->
     <string name="pickImageBottomSheetPictures">Фотографии</string>

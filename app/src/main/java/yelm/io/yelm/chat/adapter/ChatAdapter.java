@@ -73,29 +73,24 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         this.chatContentList = chatContentList;
         this.context = context;
         this.screenDimensions = new ScreenDimensions((Activity) context);
-
     }
 
     @NonNull
     @Override
     public ChatAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Log.d("AlexDebug", "viewType: " + viewType);
-
         if (viewType == MSG_TYPE_RIGHT) {
             View v = LayoutInflater.from(context).inflate(R.layout.chat_item_right, parent, false);
-
             return new ViewHolder(v);
         } else {
             View v = LayoutInflater.from(context).inflate(R.layout.chat_item_left, parent, false);
             return new ViewHolder(v);
         }
-
     }
 
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-
         ChatContent chatContent = chatContentList.get(position);
 
         holder.nameSender.setText(chatContent.getNameSender());
@@ -107,7 +102,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             holder.date.setText(formatterDate.format(date.getTime()));
         } else {
             holder.date.setText("date");
-
         }
         if (!chatContent.getTextSender().isEmpty()) {
             setText(holder, chatContent);
