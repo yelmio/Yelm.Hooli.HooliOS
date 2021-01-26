@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="#CDCDCD" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_weight="1"
+            android:text="date"
+            android:textColor="@color/colorText"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:theme="@style/ProDisplayTextStyle" />
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="0dp"
+            android:layout_height="46dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/background_toggle_buttons"
+            android:text="Повторить"
+            android:textAllCaps="false"
+            android:textColor="@color/colorText"
+            android:textSize="16sp"
+            android:theme="@style/ProDisplayTextStyle"
+            app:backgroundTint="@color/buttonBack"
+            app:icon="@drawable/ic_refresh_24"
+            app:iconTint="@color/colorIconOrder" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/fullPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="8dp"
+        android:layout_weight="1"
+        android:text="fullPrice"
+        android:textSize="16sp"
+        android:theme="@style/ProDisplayTextStyle" />
+
+    <TextView
+        android:id="@+id/countProducts"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="8dp"
+        android:text="countProducts"
+        android:textSize="16sp"
+        android:theme="@style/ProDisplayTextStyle" />
+
+    <TextView
+        android:id="@+id/userAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="8dp"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="address"
+        android:textSize="16sp"
+        android:theme="@style/ProDisplayTextStyle" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Статус заказа:"
+            android:textSize="16sp"
+            android:theme="@style/ProDisplayTextStyle" />
+
+        <TextView
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:paddingStart="12dp"
+            android:text="Принят"
+            android:textColor="#4FFB31"
+            android:textSize="16sp"
+            android:theme="@style/ProDisplayTextStyle" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/hideShowItemsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/arrow"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="4dp"
+            android:scaleType="centerInside"
+
+            android:background="#FFFFFF"
+            app:srcCompat="@drawable/ic_arrow_forward_24" />
+
+        <TextView
+            android:id="@+id/hideShowItems"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Товары:"
+            android:textColor="@color/colorText"
+            android:textSize="18sp"
+            android:theme="@style/ProDisplayTextStyle" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_history_orders"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="16dp" />
+
+</LinearLayout>

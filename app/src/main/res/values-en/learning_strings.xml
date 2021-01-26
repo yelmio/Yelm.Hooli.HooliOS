@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="make_app">Create your application!</string>
+
+
+    <string name="perfect">Great!</string>
+
+    <string name="next">Further!</string>
+
+
+    <string name="breadbasket">Application for the restaurant “Bi Food”</string>
+    <string name="bell">Application for the workshop “Bell”</string>
+    <string name="fallon">Application for jewelry store “Fallon Jewelry Brand”</string>
+
+    <string name="first_frame_title">Who are we?</string>
+
+    <string name="first_frame_description">We are a mobile application builder, where you can create a mobile application for your business in an hour without programming skills.</string>
+
+    <string name="second_frame_title">Why is this necessary?</string>
+
+    <string name="second_frame_description">Your audience is always with you! In other sources, it can get lost, not see your news, with a mobile application, you are always in your client\'s pocket!</string>
+
+    <string name="third_frame_title">Why is it beneficial?</string>
+
+    <string name="third_frame_description">With the help of the innovative YELM service, which has no analogues in the world, you can make an application with many functions!</string>
+
+    <string name="fourth_frame_title">Great!</string>
+
+    <string name="fourth_frame_description">Now you can see what your future application will look like</string>
+
+
+
+</resources>

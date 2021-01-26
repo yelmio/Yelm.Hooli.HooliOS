@@ -1,0 +1,195 @@
+<resources>
+    <string name="app_name" translatable="false">Yelm</string>
+
+    <string name="yandex_maps_API_key" translatable="false">09ee0a39-0ad1-490a-9ea8-8600c46b9ef8</string>
+
+
+    <string-array name="sorts">
+        <item>without sorting</item>
+        <item>descending price</item>
+        <item>ascending price</item>
+        <item>by date: newest first</item>
+        <item>by date: old first</item>
+    </string-array>
+
+
+    <!-- profile fragment -->
+    <string name="profile_subscription_action">Subscription action:</string>
+    <string name="profile_control">Control</string>
+    <string name="profile_days">days</string>
+    <string name="profile_day1">day</string>
+    <string name="profile_day2">day</string>
+    <string name="profile_settings">Settings</string>
+    <string name="profile_statistics">Statistics</string>
+
+    <!-- login fragment -->
+    <string name="login_enter">Login</string>
+    <string name="login_enter_phone_number">Enter your phone number</string>
+    <string name="login_phone_number">Phone number</string>
+    <string name="login_sms_code">SMS code</string>
+    <string name="login_send">Send</string>
+    <string name="login_code">Your code</string>
+    <string name="login_repeat_code">Repeat SMS sending</string>
+
+    <!-- push activity -->
+    <string name="push_notifications">Notifications</string>
+    <string name="push_heading">Heading:</string>
+    <string name="push_heading_hint">Something new</string>
+    <string name="push_notification_text">Notification text:</string>
+    <string name="push_description_hint">Description</string>
+    <string name="push_send_button">Send</string>
+    <string name="push_notifications_for_app">Push notifications for your application</string>
+    <string name="push_notifications_description">You can send push notifications to all devices</string>
+
+    <!-- profile settings activity -->
+    <string name="profile_settings_activity">Settings</string>
+    <string name="profile_application">APPLICATION</string>
+    <string name="profile_payment">Payment</string>
+    <string name="profile_delivery">Delivery</string>
+    <string name="profile_pickup">Pickup</string>
+    <string name="profile_download">Download</string>
+    <string name="profile_assets">Assets.</string>
+    <string name="profile_total_orders">Total orders</string>
+    <string name="profile_account">ACCOUNT</string>
+    <string name="profile_currency">Currency</string>
+    <string name="profile_name">Name</string>
+    <string name="profile_minimum_order">Minimum order</string>
+    <string name="profile_application_version">Application version</string>
+
+    <!-- order success -->
+    <string name="order_is_accepted">Order is accepted.</string>
+    <string name="order_is_accepted_by_card">Payment by Card was successful. Order is accepted.</string>
+    <string name="order_is_accepted_by_google_pay">The payment with Google Pay was successful. Order is accepted.</string>
+
+    <!-- user settings -->
+    <string name="settings">Settings</string>
+    <string name="contact">Contact</string>
+    <string name="notify">Notifications</string>
+    <string name="my_personal_data">My personal data</string>
+    <string name="account">Account</string>
+
+    <string name="article">Articles</string>
+    <string name="cash_back">Cashback</string>
+    <string name="cash_back_description">This is your balance, you can spend cashback on purchases in this application. Points are accumulated through your purchases.</string>
+    <string name="balance">Balance</string>
+
+    <!-- bottom menu -->
+    <string name="news">News</string>
+    <string name="main">Main</string>
+    <string name="catalog">Shop</string>
+    <string name="stock">Catalog</string>
+    <string name="goods">Products</string>
+
+    <!-- basket -->
+    <string name="basket">Basket</string>
+    <string name="history">Orders</string>
+    <string name="delete_all">Remove</string>
+    <string name="checkout">Checkout</string>
+    <string name="min_order_price">Minimum order value -</string>
+    <string name="cart_is_epty">Cart is empty</string>
+    <string name="empty_basket">It\'s empty :c \nTo search and select the products you need, go to the catalog</string>
+
+    <!-- map -->
+    <string name="clarify_location">clarify…</string>
+    <string name="clarify_shops">we specify your location position…</string>
+    <string name="where_deliver">Where do we deliver?</string>
+    <string name="select_location">Select location</string>
+
+    <!-- user_data_activity-->
+    <string name="details_have_been_updated">Your details have been updated.</string>
+
+
+    <!-- order -->
+    <string name="order">Order</string>
+    <string name="pickup_address">Pickup address</string>
+    <string name="сhoose_pickup_point">Select a pickup point</string>
+    <string name="i_have_delivery">I have delivery</string>
+    <string name="select_pickup_point">Select a pickup point</string>
+    <string name="if_you_choose_delivery">If you choose delivery</string>
+    <string name="order_select_on_the_map">Select on the map</string>
+    <string name="logistics">Logistics</string>
+    <string name="delivery">Delivery</string>
+    <string name="enter_full_name">Enter your full name</string>
+    <string name="enter_phone">Enter Phone</string>
+    <string name="enter_delivery_address">Enter delivery address</string>
+    <string name="enter_pickup_point">Enter pickup point</string>
+    <string name="cheсkout_in_cash">Checkout in cash</string>
+    <string name="bonus">Bonuses</string>
+    <string name="pickup_point">Pickup point</string>
+    <string name="card">Card</string>
+    <string name="cash">Cash</string>
+    <string name="bonus_point">Bonus points:</string>
+
+    <string name="overview">Overview</string>
+
+    <string name="my_orders">My orders</string>
+
+    <string name="ruble_sign" translatable="false">₽</string>
+
+
+    <string name="description_product">Description</string>
+    <string name="specifications_product">Characteristics</string>
+    <string name="add_to_cart">Add to</string>
+
+    <string name="additional_information">Extra data</string>
+    <string name="popular_products">Popular products</string>
+    <string name="orders_hitory">History</string>
+    <string name="sent_your_data_to_contact">Please enter your details so that we can contact you.</string>
+    <string name="payment">Payment</string>
+    <string name="select_point">Select point</string>
+
+    <!-- user history products -->
+    <string name="products">Products:</string>
+    <string name="order_status">Order status:</string>
+
+    <!-- user -->
+    <string name="user_data">Personal data</string>
+    <string name="user_fio">Full name</string>
+    <string name="my_info">My details</string>
+    <string name="what_is_your_name">What is your name?</string>
+    <string name="office">Apt/office</string>
+    <string name="user_phone">Phone number</string>
+    <string name="your_address">Your address</string>
+    <string name="address">Address</string>
+    <string name="save_user_data">Save data</string>
+    <string name="phone">Phone</string>
+    <string name="intercom">Intercom</string>
+    <string name="entrance">Entrance</string>
+    <string name="floor">Floor</string>
+
+
+    <!-- payment -->
+    <string name="checkout_total">Total payable: </string>
+    <string name="checkout_card_number">Card number</string>
+    <string name="checkout_card_date">MM/YY</string>
+    <string name="checkout_card_cvc">CVC</string>
+    <string name="checkout_card_holder">Card owner</string>
+    <string name="checkout_payment">Pay</string>
+    <string name="main_rub">Rub.</string>
+    <string name="payment2">Payment: </string>
+    <string name="checkout_cash">Pay in cash</string>
+    <string name="checkout_card">Pay by card</string>
+
+    <string name="common_no_internet_connection">No internet connection</string>
+    <string name="checkout_error_card_number">Card number is incorrect</string>
+    <string name="checkout_error_card_date">The validity period is incorrect or expired</string>
+    <string name="checkout_error_card_cvc">Incorrect CVC code</string>
+
+    <!-- firebase FCM -->
+    <string name="default_notification_channel_id">fcm_default_channel</string>
+    <string name="default_notification_channel_name">yelm</string>
+    <string name="pay_with_google_content_description">Buy with Google Pay</string>
+
+
+
+    <string name="chat">Chat</string>
+    <string name="call">Call shop</string>
+    <string name="mail">Mail</string>
+    <string name="whatsapp">Whatsapp</string>
+    <string name="search">Search</string>
+    <string name="preview">Preview</string>
+    <string name="qr">Scan the QR code in the preview section of the control panel</string>
+
+
+
+</resources>

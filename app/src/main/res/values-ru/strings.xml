@@ -1,0 +1,190 @@
+<resources>
+    <string name="app_name" translatable="false">Yelm</string>
+
+    <string name="yandex_maps_API_key" translatable="false">09ee0a39-0ad1-490a-9ea8-8600c46b9ef8</string>
+
+    <string-array name="sorts">
+        <item>без сортировки</item>
+        <item>по убыванию цены</item>
+        <item>по возрастанию цены</item>
+        <item>по дате: сначала новые</item>
+        <item>по дате: сначала старые</item>
+    </string-array>
+
+    <!-- profile fragment -->
+    <string name="profile_subscription_action">Действие подписки:</string>
+    <string name="profile_control">Управление</string>
+    <string name="profile_days">дней</string>
+    <string name="profile_day1">день</string>
+    <string name="profile_day2">дня</string>
+    <string name="profile_settings">Настройки</string>
+    <string name="profile_statistics">Статистика</string>
+
+    <!-- login fragment -->
+    <string name="login_enter">Войти</string>
+    <string name="login_enter_phone_number">Введите номер телефона</string>
+    <string name="login_phone_number">Номер телефона</string>
+    <string name="login_sms_code">Код из SMS</string>
+    <string name="login_send">Отправить</string>
+    <string name="login_code">Ваш код</string>
+    <string name="login_repeat_code">Повторить отправку SMS</string>
+
+    <!-- push activity -->
+    <string name="push_notifications">Уведомления</string>
+    <string name="push_heading">Заголовок:</string>
+    <string name="push_heading_hint">Что-то новое</string>
+    <string name="push_notification_text">Текст уведомления:</string>
+    <string name="push_description_hint">Описание</string>
+    <string name="push_send_button">Отправить</string>
+    <string name="push_notifications_for_app">Push уведомления для Вашего приложения</string>
+    <string name="push_notifications_description">Вы можете отправить push уведомления на все устройства</string>
+
+    <!-- profile settings activity -->
+    <string name="profile_settings_activity">Настройки</string>
+    <string name="profile_application">ПРИЛОЖЕНИЕ</string>
+    <string name="profile_payment">Оплата</string>
+    <string name="profile_delivery">Доставка</string>
+    <string name="profile_pickup">Самовывоз</string>
+    <string name="profile_download">Загрузки</string>
+    <string name="profile_assets">Актив.</string>
+    <string name="profile_total_orders">Всего заказов</string>
+    <string name="profile_account">АККАУНТ</string>
+    <string name="profile_currency">Валюта</string>
+    <string name="profile_name">Название</string>
+    <string name="profile_minimum_order">Минимальный заказ</string>
+    <string name="profile_application_version">Версия приложения</string>
+
+    <!-- order success -->
+    <string name="order_is_accepted">Заказ принят.</string>
+    <string name="order_is_accepted_by_card">Оплата Картой прошла успешно. Заказ принят.</string>
+    <string name="order_is_accepted_by_google_pay">Оплата с Google Pay прошла успешно. Заказ принят.</string>
+
+    <!-- user settings -->
+    <string name="settings" >Настройки</string>
+    <string name="contact" >Связаться</string>
+    <string name="notify" >Уведомления</string>
+    <string name="my_personal_data" >Мои личные данные</string>
+    <string name="account">Аккаунт</string>
+
+    <string name="article">Статьи</string>
+    <string name="cash_back">Cashback</string>
+    <string name="cash_back_description">"Это Ваш баланс, Вы можете потратить кешбэк на покупки в этом приложении. Баллы накапливатся за счет Ваших покупок.</string>
+    <string name="balance">Баланс</string>
+
+    <!-- bottom menu -->
+    <string name="news">Новости</string>
+    <string name="main">Главная</string>
+    <string name="catalog">Каталог</string>
+    <string name="stock">Каталог</string>
+    <string name="goods">Товары</string>
+
+    <!-- basket -->
+    <string name="basket">Корзина</string>
+    <string name="history">История</string>
+    <string name="delete_all">Удалить все</string>
+    <string name="checkout">Оформить заказ</string>
+    <string name="min_order_price">Минимальная сумма заказа -</string>
+    <string name="cart_is_epty">Корзина пуста</string>
+    <string name="empty_basket">Тут пусто :c\nДля поиска и выбора нужных Вам товаров перейдите в каталог</string>
+
+    <!-- map -->
+    <string name="clarify_location">уточняем...</string>
+    <string name="clarify_shops">уточняем Ваше место положение...</string>
+    <string name="where_deliver">Куда доставляем?</string>
+    <string name="select_location">Выбрать локацию</string>
+
+    <!-- user_data_activity-->
+    <string name="details_have_been_updated">Ваши данные обновлены.</string>
+
+
+    <!-- order -->
+    <string name="order">Заказ</string>
+    <string name="pickup_address">Адрес самовывоза</string>
+    <string name="сhoose_pickup_point">Выбрать пункт самовывоза</string>
+    <string name="i_have_delivery">У меня доставка</string>
+    <string name="select_pickup_point">Выберите пункт самовывоза</string>
+    <string name="if_you_choose_delivery">Если выбираете доставку</string>
+    <string name="order_select_on_the_map">Выберите на карте</string>
+
+    <string name="logistics">Логистика</string>
+    <string name="delivery">Доставка</string>
+    <string name="enter_full_name">Укажите ФИО</string>
+    <string name="enter_phone">Укажите Телефон</string>
+    <string name="enter_delivery_address">Укажите адрес доставки</string>
+    <string name="enter_pickup_point">Укажите пункт самовывоза</string>
+    <string name="cheсkout_in_cash">Оформить наличными</string>
+    <string name="bonus">Бонусы</string>
+    <string name="pickup_point">Пункт самовывоза</string>
+    <string name="card">Карта</string>
+    <string name="cash">Наличные</string>
+    <string name="bonus_point">Бонусные баллы:</string>
+
+    <string name="overview">Обзор</string>
+
+    <string name="my_orders">Мои заказы</string>
+
+    <string name="ruble_sign" translatable="false">₽</string>
+
+    <string name="description_product">Описание</string>
+    <string name="specifications_product">Характеристики</string>
+    <string name="add_to_cart">Добавить</string>
+
+    <string name="additional_information">Дополнительные данные</string>
+    <string name="popular_products">Популярные товары</string>
+    <string name="orders_hitory">История</string>
+    <string name="sent_your_data_to_contact">Пожалуйста, укажите свои данные, чтобы мы могли с Вами связаться.</string>
+    <string name="payment">Оплата</string>
+    <string name="select_point">Выбрать точку</string>
+
+    <!-- user history products -->
+    <string name="products">Товары:</string>
+    <string name="order_status">Статус заказа:</string>
+
+    <!-- user -->
+    <string name="user_data">Личные данные</string>
+    <string name="user_fio">ФИО</string>
+    <string name="my_info">Мои данные</string>
+    <string name="what_is_your_name">Как вас зовут?</string>
+    <string name="office">Кв/офис</string>
+    <string name="user_phone">Номер телефона</string>
+    <string name="your_address">Ваш адрес</string>
+    <string name="address">Адрес</string>
+    <string name="save_user_data">Сохранить данные</string>
+    <string name="phone">Телефон</string>
+    <string name="intercom">Домофон</string>
+    <string name="entrance">Подъезд</string>
+    <string name="floor">Этаж</string>
+
+    <!-- payment -->
+    <string name="checkout_total">Всего к оплате: </string>
+    <string name="checkout_card_number">Номер карты</string>
+    <string name="checkout_card_date">MM/YY</string>
+    <string name="checkout_card_cvc">CVC</string>
+    <string name="checkout_card_holder">Владелец карты</string>
+    <string name="checkout_payment">Оплатить</string>
+    <string name="main_rub">Руб.</string>
+    <string name="payment2">Оплата: </string>
+    <string name="checkout_cash">Оформить наличными</string>
+    <string name="checkout_card">Оформить картой</string>
+
+    <string name="common_no_internet_connection">Отсутствует соединение с интернетом</string>
+    <string name="checkout_error_card_number">Номер карты некорректен</string>
+    <string name="checkout_error_card_date">Срок действитя некорректен либо истек</string>
+    <string name="checkout_error_card_cvc">Некорректный CVC код</string>
+
+    <!-- firebase FCM -->
+    <string name="default_notification_channel_id">fcm_default_channel</string>
+    <string name="default_notification_channel_name">yelm</string>
+
+    <string name="chat">Чат</string>
+    <string name="call">Позвонить</string>
+    <string name="mail">Почта</string>
+    <string name="whatsapp">Whatsapp</string>
+    <string name="instagram">Instagram</string>
+    <string name="website">Website</string>
+    <string name="search">Поиск</string>
+    <string name="ruble">руб.</string>
+    <string name="preview">Предпросмотр</string>
+    <string name="qr">Отсканируйте QR код в разделе превью в панели управления</string>
+
+</resources>

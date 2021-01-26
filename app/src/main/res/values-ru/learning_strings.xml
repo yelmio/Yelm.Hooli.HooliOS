@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="make_app">Создать свое приложение!</string>
+
+    <string name="perfect" >Отлично!</string>
+    <string name="touch" >Потрогать</string>
+
+    <string name="next" >Отлично, далее!</string>
+
+
+    <string name="breadbasket" >Приложение для ресторана “Bi Food”</string>
+
+    <string name="bell" >Приложение для гончарной школы “Колокол”</string>
+    <string name="fallon" >Приложение для ювелирного магазина “Fallon Jewelry Brand”</string>
+
+    <string name="first_frame_title">Кто мы?</string>
+
+    <string name="first_frame_description" >Мы – конструктор мобильных приложений, в котором вы без навыков программирования за час можете создать мобильное приложение для своего бизнеса.</string>
+
+    <string name="second_frame_title">Зачем это нужно?</string>
+
+    <string name="second_frame_description" >Ваша аудитория всегда с вами! В других источниках она может потеряться, не увидеть ваши новости, с мобильным приложением, вы всегда в кармане у своего клиента!</string>
+
+    <string name="third_frame_title" >Почему это выгодно?</string>
+
+    <string name="third_frame_description" >С помощью инновационного сервиса YELM, аналогов которому нет в мире, вы сможете сделать приложение с множеством функций всего за 4990 рублей в месяц!</string>
+
+    <string name="fourth_frame_title" >Отлично!</string>
+
+    <string name="fourth_frame_description">Теперь вы можете посмотреть, как будет выглядеть ваше будущее приложение</string>
+
+
+
+</resources>

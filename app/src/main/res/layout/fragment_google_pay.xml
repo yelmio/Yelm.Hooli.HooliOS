@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    tools:context=".payment.pages.GooglePayFragment">
+
+    <include
+        android:id="@+id/pwg_button"
+        layout="@layout/pay_with_google_button"
+        android:layout_width="@dimen/buy_button_width"
+        android:layout_height="@dimen/buy_button_height"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/pwg_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="@string/pwg_status_checking"
+        android:theme="@style/ProDisplayTextStyle" />
+
+
+</FrameLayout>

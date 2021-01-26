@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/myAddressesTitle"
+        style="@style/ProDisplayTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/myAddresses"
+        android:textColor="@color/colorText"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="24dp"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:id="@+id/youDontHaveAddressesYet"
+            style="@style/ProDisplayTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center|center_horizontal"
+            android:text="@string/youDontHaveAddressesYet"
+            android:textColor="@color/colorText"
+            android:visibility="gone" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerUserAddresses"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/addNewAddress"
+            style="@style/ProDisplayTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:drawableStart="@drawable/ic_add_address"
+            android:drawablePadding="4dp"
+            android:gravity="center_vertical"
+            android:text="@string/addNewAddress"
+            android:textColor="@color/colorYelmMediaDark"
+            android:textSize="16sp" />
+
+        <Switch
+            android:id="@+id/setPickup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_weight="1"
+            android:text="@string/setPickup"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/addressesDone"
+            style="@style/ProDisplayTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/background_learning_button"
+            android:gravity="center"
+            android:text="@string/addressesDone"
+            android:textColor="@color/whiteColor"
+            android:textSize="18sp" />
+
+    </LinearLayout>
+
+</LinearLayout>

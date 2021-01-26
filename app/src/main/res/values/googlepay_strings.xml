@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="googlepay_button_content_description" translatable="false">Google Pay</string>
+    <string name="buy_with_googlepay_button_content_description" translatable="false">Buy with Google Pay</string>
+
+    <string name="pwg_status_unavailable" translatable="false">Unfortunately, Pay with Google is not available on this phone.</string>
+    <string name="pwg_status_checking" translatable="false">Checking if Pay with Google is available...</string>
+    <string name="pay_with_google_content_description">Оплатить через Google Pay</string>
+    <string name="payments_show_name" translatable="false">Successfully received payment data for %s!</string>
+
+</resources>

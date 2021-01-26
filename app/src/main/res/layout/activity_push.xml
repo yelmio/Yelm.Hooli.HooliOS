@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".old_version.profile.PushActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/push_notifications"
+        android:textColor="@color/colorText"
+        android:textSize="36sp"
+        android:textStyle="bold"
+        android:theme="@style/ProDisplayTextStyle" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/push_notifications_for_app"
+        android:textColor="@color/colorText"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:theme="@style/ProDisplayTextStyle" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/push_notifications_description"
+        android:textSize="16sp"
+        android:theme="@style/ProDisplayTextStyle" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/push_heading"
+        android:textColor="@color/colorText"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:theme="@style/ProDisplayTextStyle" />
+
+    <androidx.cardview.widget.CardView
+        style="@style/CardViewCustomStyle"
+        android:layout_width="match_parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp">
+
+        <EditText
+            android:id="@+id/pushHeading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:drawableStart="@drawable/ic_headers"
+
+            android:drawablePadding="10dp"
+            android:ems="10"
+            android:hint="@string/push_heading_hint"
+            android:inputType="textPersonName"
+            android:paddingStart="10dp"
+            android:paddingEnd="8dp"
+            android:textColorHint="#A8A7A7"
+            android:theme="@style/ProDisplayTextStyle" />
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/push_notification_text"
+        android:textColor="@color/colorText"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:theme="@style/ProDisplayTextStyle" />
+
+    <androidx.cardview.widget.CardView
+        style="@style/CardViewCustomStyle"
+        android:layout_width="match_parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp">
+
+        <EditText
+            android:id="@+id/pushDescription"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:drawableStart="@drawable/ic_text"
+
+            android:drawablePadding="8dp"
+            android:ems="10"
+            android:hint="@string/push_description_hint"
+            android:inputType="textPersonName"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:textColorHint="#A8A7A7"
+            android:theme="@style/ProDisplayTextStyle" />
+    </androidx.cardview.widget.CardView>
+
+    <Button
+        android:id="@+id/sendButton"
+        style="@style/CustomTextPayButton"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="100dp"
+        android:background="@drawable/background_toggle_buttons"
+        android:fontFamily="@font/zmiin_phh3l"
+        android:text="@string/push_send_button"
+        android:textAllCaps="false"
+        android:textColor="#DEFFFFFF"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:backgroundTint="@color/colorYelmMediaDark" />
+
+
+</LinearLayout>
