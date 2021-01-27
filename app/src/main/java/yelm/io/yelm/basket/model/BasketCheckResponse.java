@@ -7,39 +7,27 @@ import java.util.List;
 
 public class BasketCheckResponse {
 
-
-    @SerializedName("DeletedID")
+    @SerializedName("deleted_id")
     @Expose
-    private List<String> deletedID = null;
-    @SerializedName("PriceDelivery")
+    private List<DeletedId> deletedId = null;
+    @SerializedName("delivery")
     @Expose
-    private String priceDelivery;
-    @SerializedName("TimeDelivery")
-    @Expose
-    private String timeDelivery;
+    private Delivery delivery;
 
-    public List<String> getDeletedID() {
-        return deletedID;
+    public List<DeletedId> getDeletedId() {
+        return deletedId;
     }
 
-    public void setDeletedID(List<String> deletedID) {
-        this.deletedID = deletedID;
+    public void setDeletedId(List<DeletedId> deletedId) {
+        this.deletedId = deletedId;
     }
 
-    public String getPriceDelivery() {
-        return priceDelivery;
+    public Delivery getDelivery() {
+        return delivery;
     }
 
-    public void setPriceDelivery(String priceDelivery) {
-        this.priceDelivery = priceDelivery;
-    }
-
-    public String getTimeDelivery() {
-        return timeDelivery;
-    }
-
-    public void setTimeDelivery(String timeDelivery) {
-        this.timeDelivery = timeDelivery;
+    public void setDelivery(Delivery delivery) {
+        this.delivery = delivery;
     }
 
 }

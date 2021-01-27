@@ -32,9 +32,9 @@ public interface RestAPI {
                                              @Query("region_code") String RegionCode,
                                              @Query("lat") String LAT,
                                              @Query("lon") String LON
-                                             );
+    );
 
-    @GET ("items?")
+    @GET("items?")
     Call<ArrayList<CatalogsWithProductsClass>> getCategoriesWithProducts(
             @Query("version") String Version,
             @Query("language_code") String LanguageCode,
@@ -44,7 +44,7 @@ public interface RestAPI {
             @Query("lon") String LON
     );
 
-    @GET ("search?")
+    @GET("search?")
     Call<ArrayList<Item>> getAllItems(
             @Query("version") String Version,
             @Query("language_code") String LanguageCode,
@@ -53,7 +53,7 @@ public interface RestAPI {
             @Query("shop_id") String ShopID
     );
 
-    @GET ("all-news?")
+    @GET("all-news?")
     Call<ArrayList<NewNews>> getNews(
             @Query("version") String Version,
             @Query("language_code") String LanguageCode,
@@ -61,7 +61,7 @@ public interface RestAPI {
             @Query("platform") String Platform
     );
 
-    @GET ("news-item?")
+    @GET("news-item?")
     Call<ArrayList<NewNews>> getItemByNewsID(
             @Query("id") String ID,
             @Query("version") String Version,
@@ -73,14 +73,18 @@ public interface RestAPI {
 
     //not accessible items!!
     @FormUrlEncoded
-            @POST("m-basket?")
-                    Call<BasketCheckResponse> checkBasket(
-                    @Field("Items") String Items,
-            @Field("platform") String Platform,
-            @Field("shopID") String ShopID
-    );
+    @POST("basket?")
+    Call<BasketCheckResponse> checkBasket(
+            @Query("platform") String Platform,
+            @Query("shop_id") String ShopID,
+            @Query("language_code") String LanguageCode,
+            @Query("region_code") String RegionCode,
+            @Query("lat") String LAT,
+            @Query("lon") String LON,
+            @Field("items") String Items
+            );
 
-    @GET ("subcategories?")
+    @GET("subcategories?")
     Call<ArrayList<ProductsByCategoryClass>> getProductsByCategory(
             @Query("version") String Version,
             @Query("language_code") String LanguageCode,

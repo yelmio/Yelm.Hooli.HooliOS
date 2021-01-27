@@ -6,19 +6,28 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.util.Rational;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.camera.core.CameraX;
+import androidx.camera.core.ImageCapture;
+import androidx.camera.core.ImageCaptureConfig;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -33,6 +42,7 @@ import static android.app.Activity.RESULT_OK;
 public class PickImageBottomSheet extends BottomSheetDialogFragment {
 
     private BottomSheetShopListener listener;
+    private CameraListener cameraListener;
     PickImageBottomSheetBinding binding;
 
     public ArrayList<ModelImages> allImages;
@@ -149,32 +159,114 @@ public class PickImageBottomSheet extends BottomSheetDialogFragment {
         });
 
         pickImageAdapter.setCameraListener(() -> {
-            Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            startActivityForResult(takePhotoIntent, REQUEST_TAKE_PHOTO);
+
+            Log.d(AlexTAG.debug, "onClicked");
+            if (cameraListener != null) {
+                cameraListener.onCameraClick();
+            }
+//            ImageCaptureConfig imageCaptureConfig = new ImageCaptureConfig.Builder()
+//                    .setTargetAspectRatio(new Rational(1, 1))
+//                    .setCaptureMode(ImageCapture.CaptureMode.MIN_LATENCY)
+//                    .build();
+//            ImageCapture imageCapture = new ImageCapture(imageCaptureConfig);
+//
+//            File file = new File(getContext().getExternalMediaDirs()[0], System.currentTimeMillis() + ".jpg");
+//
+//            imageCapture.takePicture(file, new ImageCapture.OnImageSavedListener() {
+//
+//                @Override
+//                public void onError(ImageCapture.UseCaseError error, String message,
+//                                    @Nullable Throwable exc) {
+//                    String msg = "Photo capture failed: " + message;
+//                    Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+//                    Log.e(AlexTAG.error, msg);
+//                    if (exc != null) {
+//                        exc.printStackTrace();
+//                    }
+//                }
+//
+//                @Override
+//                public void onImageSaved(File file) {
+//                    String msg = "Photo capture succeeded: " + file.getAbsolutePath();
+//                    Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+//                    Log.d(AlexTAG.debug, msg);
+//                }
+//            });
+
         });
-
-
         recyclerPickImages.setAdapter(pickImageAdapter);
     }
 
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-            // Фотка сделана, извлекаем миниатюру картинки
-            Log.d(AlexTAG.debug, "made photo");
-
-            Bundle extras = data.getExtras();
-            Bitmap thumbnailBitmap = (Bitmap) extras.get("data");
-            Log.d(AlexTAG.debug, "Bitmap: " + thumbnailBitmap.getByteCount());
-
-        }
-    }
-
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+//       super.onActivityResult(requestCode, resultCode, data);
+//        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
+//            Log.d(AlexTAG.debug, "onActivityResult");
+//            // Фотка сделана, извлекаем миниатюру картинки
+////            if (data != null) {
+////                Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+////                Log.d(AlexTAG.debug, "Bitmap: " + bitmap.getByteCount());
+////                File file = new File(getContext().getExternalMediaDirs()[0], System.currentTimeMillis() + ".jpg");
+////                Log.d(AlexTAG.debug, "file.getAbsolutePath(): " + file.getAbsolutePath());
+////
+////                FileOutputStream fileOutputStream = null;
+////                try {
+////                    fileOutputStream = new FileOutputStream(file);
+////                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
+////                    try {
+////                        fileOutputStream.flush();
+////                        fileOutputStream.close();
+////                    } catch (Exception e) {
+////                        e.printStackTrace();
+////                    }
+////                } catch (FileNotFoundException e) {
+////                    e.printStackTrace();
+////                }
+////            }
+//
+//            if (data != null) {
+//                Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+//                Log.d(AlexTAG.debug, "Bitmap: " + bitmap.getByteCount());
+//
+//                File dir = new File(Environment.getExternalStorageDirectory() + "/" + getText(R.string.app_name));
+//                if (!dir.exists()) {
+//                    dir.mkdirs();
+//                }
+//                String fileName = String.format("IMG_%d.jpg", System.currentTimeMillis());
+//                File outFile = new File(dir, fileName);
+//                FileOutputStream fileOutputStream = null;
+//                try {
+//                    fileOutputStream = new FileOutputStream(outFile);
+//                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
+//                    try {
+//                        fileOutputStream.flush();
+//                        fileOutputStream.close();
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                    Log.d(AlexTAG.debug, " " + e.toString());
+//                }
+//                Log.d(AlexTAG.debug, "outFile.getAbsolutePath()" + outFile.getAbsolutePath());
+//            }
+//
+//
+//        }
+    //}
 
     public interface BottomSheetShopListener {
         void onSendPictures(HashMap<Integer, String> picturesMap);
+    }
+
+    public interface CameraListener {
+        void onCameraClick();
+    }
+
+    @Override
+    public void onDestroyView() {
+        CameraX.unbindAll();
+        super.onDestroyView();
     }
 
     @Override
@@ -182,9 +274,9 @@ public class PickImageBottomSheet extends BottomSheetDialogFragment {
         super.onAttach(context);
         try {
             listener = (PickImageBottomSheet.BottomSheetShopListener) context;
+            cameraListener = (PickImageBottomSheet.CameraListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString() + " must implement BottomSheetShopListener");
         }
     }
-
 }

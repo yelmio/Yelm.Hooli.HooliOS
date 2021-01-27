@@ -148,7 +148,7 @@ public class ProductsByCategoryActivity extends AppCompatActivity {
 
     private void rewriteView() {
         for (Fragment fragment : getSupportFragmentManager().getFragments()) {
-            getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+            getSupportFragmentManager().beginTransaction().remove(fragment).commitAllowingStateLoss();
         }
         binding.storeFragments.removeAllViews();
 
@@ -163,7 +163,7 @@ public class ProductsByCategoryActivity extends AppCompatActivity {
             ProductsByCategoryFragment categoryFragment = new ProductsByCategoryFragment(productsByCategoryList.get(i), isHorizontalLayout);
 
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.add(frameLayout.getId(), categoryFragment, "fragment" + i).commit();
+            fragmentTransaction.add(frameLayout.getId(), categoryFragment, "fragment" + i).commitAllowingStateLoss();
             binding.storeFragments.addView(frameLayout);
         }
 

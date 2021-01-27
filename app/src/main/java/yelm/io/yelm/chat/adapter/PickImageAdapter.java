@@ -97,11 +97,8 @@ public class PickImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return result == PackageManager.PERMISSION_GRANTED;
     }
 
-
-
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-
         if (holder instanceof HeaderViewHolder) {
             CameraX.unbindAll();
             if (hasCameraPermission()) {
@@ -204,8 +201,6 @@ public class PickImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     }
                 });
             }
-
-
         } else {
             String path = listImages.get(position - 1);
             ((ItemViewHolder) holder).binding.selector.setChecked(checked[position - 1]);
@@ -220,11 +215,10 @@ public class PickImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     listener.selectedPicture(position - 1, path, checked[position - 1]);
                 }
             });
-
         }
     }
 
-    private class LuminosityAnalyzer implements ImageAnalysis.Analyzer {
+    private static class LuminosityAnalyzer implements ImageAnalysis.Analyzer {
         private long lastAnalyzedTimestamp = 0L;
 
         @Override

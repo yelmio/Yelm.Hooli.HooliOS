@@ -88,7 +88,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         }
     }
 
-
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ChatContent chatContent = chatContentList.get(position);
@@ -146,33 +145,22 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             Log.d(AlexTAG.debug, "ratio " + ratio);
             Log.d(AlexTAG.debug, "newHeight " + newHeight);
             Log.d(AlexTAG.debug, "newWight " + newWight);
+
+            Picasso.get().load(uri)
+                    .resize(newWight, newHeight)
+                    .into(imageCornerRadius);
+            holder.layoutContent.addView(imageCornerRadius);
+            Bitmap finalBitmap = bitmap;
+            imageCornerRadius.setOnLongClickListener(v -> {
+                popupMenu(context, imageCornerRadius, finalBitmap);
+                return true;
+            });
+
+
         } catch (
                 IOException e) {
             e.printStackTrace();
         }
-
-        Picasso.get().load(uri)
-                .resize(newWight, newHeight)
-                .into(imageCornerRadius, new Callback() {
-                    @Override
-                    public void onSuccess() {
-//                        if (listener != null) {
-//                            listener.onComplete();
-//                        }
-                    }
-
-                    @Override
-                    public void onError(Exception e) {
-                    }
-                });
-        holder.layoutContent.addView(imageCornerRadius);
-
-        Bitmap finalBitmap = bitmap;
-
-        imageCornerRadius.setOnLongClickListener(v -> {
-            popupMenu(context, imageCornerRadius, finalBitmap);
-            return true;
-        });
 
     }
 
@@ -180,8 +168,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         new Thread(() -> {
             FileOutputStream fileOutputStream = null;
 
-            File file = Environment.getExternalStorageDirectory();
-            Log.d(AlexTAG.debug, "file.getAbsolutePath()" + file.getAbsolutePath());
+            //File file = Environment.getExternalStorageDirectory();
+            //Log.d(AlexTAG.debug, "file.getAbsolutePath()" + file.getAbsolutePath());
 
             File dir = new File(Environment.getExternalStorageDirectory() + "/" + context.getText(R.string.app_name));
             if (!dir.exists()) {
@@ -197,7 +185,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             } catch (Exception e) {
                 e.printStackTrace();
                 Log.d(AlexTAG.debug, " " + e.toString());
-
             }
             Log.d(AlexTAG.debug, "outFile.getAbsolutePath()" + outFile.getAbsolutePath());
 

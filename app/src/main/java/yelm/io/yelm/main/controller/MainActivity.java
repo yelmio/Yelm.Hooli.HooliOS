@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -438,10 +439,17 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
                 }));
     }
 
-    private void redrawProducts() {
+    @SuppressLint("MissingSuperCall")
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        //No call for super(). Bug on API Level > 11.
+        //super.onSaveInstanceState(outState);
+    }
+
+   synchronized private void redrawProducts() {
         Log.d(AlexTAG.debug, "Method redrawProducts()");
         for (Fragment fragment : getSupportFragmentManager().getFragments()) {
-            getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+            getSupportFragmentManager().beginTransaction().remove(fragment).commitAllowingStateLoss();
         }
         binding.storeFragments.removeAllViews();
         for (int i = 0; i < catalogsWithProductsList.size(); i++) {
@@ -449,7 +457,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
             frameLayout.setId(View.generateViewId());
             CategoryFragment categoryFragment = new CategoryFragment(catalogsWithProductsList.get(i));
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.add(frameLayout.getId(), categoryFragment, "fragment: " + i).commit();
+            fragmentTransaction.add(frameLayout.getId(), categoryFragment, "fragment: " + i).commitAllowingStateLoss();
             binding.storeFragments.addView(frameLayout);
         }
         View footer = new View(MainActivity.this);

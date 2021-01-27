@@ -63,8 +63,12 @@ public class BasketActivity extends AppCompatActivity implements AddressesBottom
         binding();
         setDeliveryAddress();
 
-        checkBasket();
-
+        for (UserAddress userAddress : Common.userAddressesRepository.getUserAddressesList()) {
+            if (userAddress.isChecked) {
+                checkBasket(userAddress.latitude, userAddress.longitude);
+                break;
+            }
+        }
         compositeDisposableBasket.
                 add(Common.basketCartRepository.
                         getBasketCarts().
@@ -134,7 +138,7 @@ public class BasketActivity extends AppCompatActivity implements AddressesBottom
             binding.layoutPickupCost.setVisibility(View.VISIBLE);
             binding.layoutDeliveryCost.setVisibility(View.GONE);
             if (!methodDelivery.equals("pickup")) {
-                if (pickupShopAddress.isEmpty()){
+                if (pickupShopAddress.isEmpty()) {
                     binding.ordering.setEnabled(false);
                 }
                 methodDelivery = "pickup";
@@ -189,7 +193,7 @@ public class BasketActivity extends AppCompatActivity implements AddressesBottom
         return items;
     }
 
-    private void checkBasket() {
+    private void checkBasket(String Lat, String Lon) {
         StringBuilder items = getItemsForCheckBasket(Common.basketCartRepository.getBasketCartsList());
         Log.d(AlexTAG.debug, "Method checkBasket() - items: " + items);
         RetrofitClientNew.
@@ -198,22 +202,26 @@ public class BasketActivity extends AppCompatActivity implements AddressesBottom
                 checkBasket(
                         items.toString(),
                         RestAPI.PLATFORM_NUMBER,
-                        Constants.ShopID
+                        Constants.ShopID,
+                        getResources().getConfiguration().locale.getLanguage(),
+                        getResources().getConfiguration().locale.getCountry(),
+                        Lat,
+                        Lon
                 ).
                 enqueue(new Callback<BasketCheckResponse>() {
                     @Override
                     public void onResponse(@NotNull Call<BasketCheckResponse> call, @NotNull final Response<BasketCheckResponse> response) {
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
-                                Log.d(AlexTAG.debug, "Method checkBasket() - response.getPriceDelivery(): " + response.body().getPriceDelivery());
-                                Log.d(AlexTAG.debug, "Method checkBasket() - response.getTimeDelivery(): " + response.body().getTimeDelivery());
-                                Log.d(AlexTAG.debug, "Method checkBasket() - response.getDeletedID(): " + response.body().getDeletedID().toString());
-                                binding.deliveryCost.setText(String.format("%s %s", response.body().getPriceDelivery(), LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
-                                binding.time.setText(String.format("%s %s", response.body().getTimeDelivery(), getText(R.string.delivery_time)));
+                                Log.d(AlexTAG.debug, "Method checkBasket() - PriceDelivery(): " + response.body().getDelivery().getPrice());
+                                Log.d(AlexTAG.debug, "Method checkBasket() - TimeDelivery(): " + response.body().getDelivery().getTime());
+                                Log.d(AlexTAG.debug, "Method checkBasket() - response.getDeletedID(): " + response.body().getDeletedId().toString());
+                                binding.deliveryCost.setText(String.format("%s %s", response.body().getDelivery().getPrice(), LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
+                                binding.time.setText(String.format("%s %s", response.body().getDelivery().getTime(), getText(R.string.delivery_time)));
+                                deliveryTime = response.body().getDelivery().getTime();
+                                deliveryCost = BigDecimal.valueOf(response.body().getDelivery().getPrice());
 
-                                deliveryTime = response.body().getTimeDelivery();
-                                deliveryCost = new BigDecimal(response.body().getPriceDelivery());
-                                updateBasketCartsForExist(response.body().getDeletedID());
+                                //updateBasketCartsForExist(response.body().getDeletedID());
                             } else {
                                 Log.e(AlexTAG.error, "Method checkBasket() - by some reason response is null!");
                             }
@@ -247,7 +255,7 @@ public class BasketActivity extends AppCompatActivity implements AddressesBottom
                 }
             }
         }
-        if (!updated){
+        if (!updated) {
             updateBasket(Common.basketCartRepository.getBasketCartsList());
         }
     }
@@ -301,6 +309,6 @@ public class BasketActivity extends AppCompatActivity implements AddressesBottom
     public void selectedAddress(UserAddress userAddress) {
         Log.d(AlexTAG.debug, "Method selectedAddress() - address: " + userAddress.address);
         binding.addressDelivery.setText(String.format("%s", userAddress.address));
-        checkBasket();
+        checkBasket(userAddress.latitude, userAddress.longitude);
     }
 }

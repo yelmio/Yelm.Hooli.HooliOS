@@ -11,8 +11,12 @@ import android.view.View;
 import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -58,7 +62,13 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
         binding();
         setDeliveryAddress();
 
-        checkBasket();
+        for (UserAddress userAddress : Common.userAddressesRepository.getUserAddressesList()) {
+            if (userAddress.isChecked) {
+                checkBasket(userAddress.latitude, userAddress.longitude);
+                break;
+            }
+        }
+
         compositeDisposableBasket.
                 add(Common.basketCartRepository.
                         getBasketCarts().
@@ -78,7 +88,6 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
             binding.deliveryCost.setText("");
             deliveryCost = new BigDecimal("0");
             Common.basketCartRepository.emptyBasketCart();
-            binding.ordering.setEnabled(false);
         });
 
         binding.addressDelivery.setOnClickListener(v -> callAddressesBottomSheet());
@@ -90,7 +99,6 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
             intent.putExtra("deliveryTime", deliveryTime);
             startActivity(intent);
         });
-
     }
 
     private void callAddressesBottomSheet() {
@@ -123,30 +131,89 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
         return items;
     }
 
-    private void checkBasket() {
-        StringBuilder items = getItemsForCheckBasket(Common.basketCartRepository.getBasketCartsList());
-        Log.d(AlexTAG.debug, "Method checkBasket() - items: " + items);
+    synchronized private void checkBasket(String Lat, String Lon) {
+        //StringBuilder items = getItemsForCheckBasket(Common.basketCartRepository.getBasketCartsList());
+
+        JSONObject jsonData = new JSONObject();
+        JSONArray jsonObjectItems = new JSONArray();
+
+        List<BasketCart> basketCarts = Common.basketCartRepository.getBasketCartsList();
+
+        try {
+            JSONObject jsonObjectItem1 = new JSONObject();
+            jsonObjectItem1
+                    .put("id", "6137")
+                    .put("count", "10");
+            jsonObjectItems.put(jsonObjectItem1);
+
+            JSONObject jsonObjectItem2 = new JSONObject();
+            jsonObjectItem2
+                    .put("id", "6138")
+                    .put("count", "100");
+            jsonObjectItems.put(jsonObjectItem2);
+            jsonData.put("items", jsonObjectItems);
+
+
+//            for (int i = 0; i < basketCarts.size(); i++) {
+//                JSONObject jsonObjectItem = new JSONObject();
+//                jsonObjectItem
+//                        .put("id", basketCarts.get(i).itemID)
+//                        .put("count", basketCarts.get(i).count);
+//                jsonObjectItems.put(jsonObjectItem);
+//            }
+//            jsonData.put("items", jsonObjectItems);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        //6137
+
+        Log.d(AlexTAG.debug, "Method checkBasket() - items jsonData.toString(): " + jsonData.toString());
+        String items = jsonData.toString();
+        Log.d(AlexTAG.debug, "Method checkBasket() - items string: " + items);
+
+        Log.d(AlexTAG.debug, "[{\"id\": 6137,\n" +
+                "\t\"count\": 10\n" +
+                "}, {\n" +
+                "\t\"id\": 6138,\n" +
+                "\t\"count\": 1000\n" +
+                "}]");
+
         RetrofitClientNew.
                 getClient(RestAPI.URL_API_MAIN).
                 create(RestAPI.class).
                 checkBasket(
-                        items.toString(),
+                        //RestAPI.PLATFORM_NUMBER,
                         RestAPI.PLATFORM_NUMBER,
-                        Constants.ShopID
-                ).
+                        "11",
+                        //Constants.ShopID,
+                        getResources().getConfiguration().locale.getLanguage(),
+                        getResources().getConfiguration().locale.getCountry(),
+                        "55.78487156477965",
+                        //Lat,
+                        //Lon
+                        "37.56303011869477",
+                        "[{\"id\": 6137,\n" +
+                                "\t\"count\": 10\n" +
+                                "}, {\n" +
+                                "\t\"id\": 6138,\n" +
+                                "\t\"count\": 1000\n" +
+                                "}]"
+                        ).
                 enqueue(new Callback<BasketCheckResponse>() {
                     @Override
                     public void onResponse(@NotNull Call<BasketCheckResponse> call, @NotNull final Response<BasketCheckResponse> response) {
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
-                                Log.d(AlexTAG.debug, "Method checkBasket() - response.getPriceDelivery(): " + response.body().getPriceDelivery());
-                                Log.d(AlexTAG.debug, "Method checkBasket() - response.getTimeDelivery(): " + response.body().getTimeDelivery());
-                                Log.d(AlexTAG.debug, "Method checkBasket() - response.getDeletedID(): " + response.body().getDeletedID().toString());
-                                binding.deliveryCost.setText(String.format("%s %s", response.body().getPriceDelivery(), LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
-                                binding.time.setText(String.format("%s %s", response.body().getTimeDelivery(), getText(R.string.delivery_time)));
-                                deliveryTime = response.body().getTimeDelivery();
-                                deliveryCost = new BigDecimal(response.body().getPriceDelivery());
-                                updateBasketCartsForExist(response.body().getDeletedID());
+                                Log.d(AlexTAG.debug, "Method checkBasket() - PriceDelivery(): " + response.body().getDelivery().getPrice());
+                                Log.d(AlexTAG.debug, "Method checkBasket() - TimeDelivery(): " + response.body().getDelivery().getTime());
+                                Log.d(AlexTAG.debug, "Method checkBasket() - response.getDeletedID(): " + response.body().getDeletedId().toString());
+                                binding.deliveryCost.setText(String.format("%s %s", response.body().getDelivery().getPrice(), LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
+                                binding.time.setText(String.format("%s %s", response.body().getDelivery().getTime(), getText(R.string.delivery_time)));
+                                deliveryTime = response.body().getDelivery().getTime();
+                                deliveryCost = BigDecimal.valueOf(response.body().getDelivery().getPrice());
+
+                                //updateBasketCartsForExist(response.body().getDeletedID());
                             } else {
                                 Log.e(AlexTAG.error, "Method checkBasket() - by some reason response is null!");
                             }
@@ -185,8 +252,11 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
         }
     }
 
-
     private void updateBasket(List<BasketCart> carts) {
+
+        binding.emptyTextView.setVisibility(carts.size() == 0 ? View.VISIBLE : View.GONE);
+        binding.layoutDeliveryCost.setVisibility(carts.size() == 0 ? View.GONE : View.VISIBLE);
+
         basketAdapter = new BasketAdapter(this, carts);
         finalCost = new BigDecimal("0");
         boolean allCartsExist = true;
@@ -216,6 +286,6 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
     public void selectedAddress(UserAddress userAddress) {
         Log.d(AlexTAG.debug, "Method selectedAddress() - address: " + userAddress.address);
         binding.addressDelivery.setText(String.format("%s", userAddress.address));
-        checkBasket();
+        checkBasket(userAddress.latitude, userAddress.longitude);
     }
 }

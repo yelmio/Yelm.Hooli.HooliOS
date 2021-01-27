@@ -128,6 +128,18 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
+                <TextView
+                    android:id="@+id/emptyTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="32dp"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:text="@string/empty_basket"
+                    android:textColor="@color/colorText"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:theme="@style/ProDisplayTextStyle" />
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerCart"
                     android:layout_width="match_parent"
