@@ -85,6 +85,10 @@ public class ProductsNewMenuAdapter extends RecyclerView.Adapter<ProductsNewMenu
             bd = new BigDecimal(current.getDiscount()).divide(new BigDecimal("100"), 2, BigDecimal.ROUND_HALF_UP);
             bd = bd.multiply(new BigDecimal(current.getPrice())).setScale(2, BigDecimal.ROUND_HALF_UP);
             bd = new BigDecimal(current.getPrice()).subtract(bd);
+            //trim zeros if after comma there are only zeros: 45.00 -> 45
+            if (bd.compareTo(new BigDecimal(String.valueOf(bd.setScale(0, BigDecimal.ROUND_HALF_UP)))) == 0) {
+                bd = bd.setScale(0, BigDecimal.ROUND_HALF_UP);
+            }
             holder.binding.priceFinal.setText(String.format("%s %s", bd.toString(), LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
             holder.binding.priceStart.setText(String.format("%s %s", current.getPrice(), LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
             holder.binding.priceStart.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);

@@ -132,13 +132,8 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
     }
 
     synchronized private void checkBasket(String Lat, String Lon) {
-        //StringBuilder items = getItemsForCheckBasket(Common.basketCartRepository.getBasketCartsList());
-
-        JSONObject jsonData = new JSONObject();
         JSONArray jsonObjectItems = new JSONArray();
-
         List<BasketCart> basketCarts = Common.basketCartRepository.getBasketCartsList();
-
         try {
             JSONObject jsonObjectItem1 = new JSONObject();
             jsonObjectItem1
@@ -151,8 +146,6 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
                     .put("id", "6138")
                     .put("count", "100");
             jsonObjectItems.put(jsonObjectItem2);
-            jsonData.put("items", jsonObjectItems);
-
 
 //            for (int i = 0; i < basketCarts.size(); i++) {
 //                JSONObject jsonObjectItem = new JSONObject();
@@ -161,29 +154,14 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
 //                        .put("count", basketCarts.get(i).count);
 //                jsonObjectItems.put(jsonObjectItem);
 //            }
-//            jsonData.put("items", jsonObjectItems);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-        //6137
-
-        Log.d(AlexTAG.debug, "Method checkBasket() - items jsonData.toString(): " + jsonData.toString());
-        String items = jsonData.toString();
-        Log.d(AlexTAG.debug, "Method checkBasket() - items string: " + items);
-
-        Log.d(AlexTAG.debug, "[{\"id\": 6137,\n" +
-                "\t\"count\": 10\n" +
-                "}, {\n" +
-                "\t\"id\": 6138,\n" +
-                "\t\"count\": 1000\n" +
-                "}]");
 
         RetrofitClientNew.
                 getClient(RestAPI.URL_API_MAIN).
                 create(RestAPI.class).
                 checkBasket(
-                        //RestAPI.PLATFORM_NUMBER,
                         RestAPI.PLATFORM_NUMBER,
                         "11",
                         //Constants.ShopID,
@@ -193,12 +171,7 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
                         //Lat,
                         //Lon
                         "37.56303011869477",
-                        "[{\"id\": 6137,\n" +
-                                "\t\"count\": 10\n" +
-                                "}, {\n" +
-                                "\t\"id\": 6138,\n" +
-                                "\t\"count\": 1000\n" +
-                                "}]"
+                        jsonObjectItems.toString()
                         ).
                 enqueue(new Callback<BasketCheckResponse>() {
                     @Override
@@ -215,7 +188,7 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
 
                                 //updateBasketCartsForExist(response.body().getDeletedID());
                             } else {
-                                Log.e(AlexTAG.error, "Method checkBasket() - by some reason response is null!");
+                                Log.e(AlexTAG.error, "Method checkBasket() - by some resason response is null!");
                             }
                         } else {
                             Log.e(AlexTAG.error, "Method checkBasket() - response is not successful." +

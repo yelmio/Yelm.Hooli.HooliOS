@@ -50,8 +50,6 @@ public class CategoryFragment extends Fragment {
         binding.recycler.setAdapter(productsAdapter);
         binding.categoryExpand.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), ProductsByCategoryActivity.class);
-            //ArrayList<Item> items = (ArrayList<Item>) catalogsWithProductsClass.getItems();
-            //intent.putParcelableArrayListExtra("products", items);
             intent.putExtra("catalogID", catalogsWithProductsClass.getCategoryID());
             intent.putExtra("catalogName", catalogsWithProductsClass.getName());
             startActivity(intent);

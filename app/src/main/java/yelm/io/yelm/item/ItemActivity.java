@@ -62,10 +62,13 @@ public class ItemActivity extends AppCompatActivity implements AppBarLayout.OnOf
             bd = new BigDecimal(product.getDiscount()).divide(new BigDecimal("100"), 2, BigDecimal.ROUND_HALF_UP);
             bd = bd.multiply(new BigDecimal(product.getPrice())).setScale(2, BigDecimal.ROUND_HALF_UP);
             bd = new BigDecimal(product.getPrice()).subtract(bd);
+            //trim zeros if after comma there are only zeros: 45.00 -> 45
+            if (bd.compareTo(new BigDecimal(String.valueOf(bd.setScale(0, BigDecimal.ROUND_HALF_UP)))) == 0) {
+                bd = bd.setScale(0, BigDecimal.ROUND_HALF_UP);
+            }
         }
         binding.cost.setText(String.format("%s %s", bd.toString(), LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
     }
-
 
     private void binding(Item item) {
         if (item.getModifier() != null && item.getModifier().size() == 0) {
