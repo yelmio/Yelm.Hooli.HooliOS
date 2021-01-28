@@ -7,24 +7,24 @@ public class DeletedId {
 
     @SerializedName("id")
     @Expose
-    private Integer id;
+    private String id;
     @SerializedName("available_count")
     @Expose
-    private Integer availableCount;
+    private String availableCount;
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public Integer getAvailableCount() {
+    public String getAvailableCount() {
         return availableCount;
     }
 
-    public void setAvailableCount(Integer availableCount) {
+    public void setAvailableCount(String availableCount) {
         this.availableCount = availableCount;
     }
 

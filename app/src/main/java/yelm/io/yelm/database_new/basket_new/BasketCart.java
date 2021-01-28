@@ -10,36 +10,36 @@ import java.util.List;
 
 import yelm.io.yelm.main.model.Modifier;
 
-@Entity(tableName="BasketCart")
+@Entity(tableName = "BasketCart")
 public class BasketCart {
 
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name="id")
+    @ColumnInfo(name = "id")
     public int id;
 
-    @ColumnInfo(name="itemID")
+    @ColumnInfo(name = "itemID")
     public String itemID;
 
-    @ColumnInfo(name="name")
+    @ColumnInfo(name = "name")
     public String name;
 
-    @ColumnInfo(name="startPrice")
+    @ColumnInfo(name = "startPrice")
     public String startPrice;
 
-    @ColumnInfo(name="finalPrice")
+    @ColumnInfo(name = "finalPrice")
     public String finalPrice;
 
-    @ColumnInfo(name="type")
+    @ColumnInfo(name = "type")
     public String type;
 
-    @ColumnInfo(name="count")
+    @ColumnInfo(name = "count")
     public String count;
 
-    @ColumnInfo(name="imageUrl")
+    @ColumnInfo(name = "imageUrl")
     public String imageUrl;
 
     @ColumnInfo(name = "quantity")
-    public String quantity;
+    public String quantity = "9999";
 
     @ColumnInfo(name = "modifier")
     public List<Modifier> modifier = new ArrayList<>();

@@ -138,7 +138,8 @@
                     android:textColor="@color/colorText"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    android:theme="@style/ProDisplayTextStyle" />
+                    android:theme="@style/ProDisplayTextStyle"
+                    android:visibility="gone" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerCart"

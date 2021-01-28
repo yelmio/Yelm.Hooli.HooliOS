@@ -25,6 +25,8 @@ import com.google.android.gms.wallet.TransactionInfo;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.UnknownHostException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -57,6 +59,8 @@ import yelm.io.yelm.support_stuff.PhoneTextFormatter;
 public class OrderActivityNew extends AppCompatActivity {
 
     ActivityOrderNewBinding binding;
+
+    private static final int PAYMENT_SUCCESS = 77;
 
     private PaymentsClient paymentsClient;
     BigDecimal bigTotal = new BigDecimal("0");
@@ -99,7 +103,6 @@ public class OrderActivityNew extends AppCompatActivity {
             binding.googlePay.setVisibility(View.GONE);
         });
 
-
         binding.googlepayPay.setOnClickListener(view -> {
             binding.googlepayPay.setCardBackgroundColor(getResources().getColor(R.color.mainThemeColor));
             binding.googlePayText.setTextColor(getResources().getColor(R.color.whiteColor));
@@ -126,24 +129,23 @@ public class OrderActivityNew extends AppCompatActivity {
             case LOAD_PAYMENT_DATA_REQUEST_CODE:
                 switch (resultCode) {
                     case Activity.RESULT_OK:
+                        Log.d(AlexTAG.debug, "Method payment with GooglePay(): RESULT_OK");
                         PaymentData paymentData = PaymentData.getFromIntent(data);
-                        //Log.d("AlexDebug", "paymentData: " + paymentData.toString());
-
                         handlePaymentSuccess(paymentData);
-
-                        //Intent intentGP = new Intent();
-                        //intentGP.putExtra("success", "googlePay payment");
-                        //setResult(RESULT_OK, intentGP);
-                        //finish();
                         break;
                     case Activity.RESULT_CANCELED:
-                        Log.d("AlexDebug", "RESULT_CANCELED");
+                        Log.d(AlexTAG.debug, "Method payment with GooglePay(): RESULT_CANCELED");
                         // Nothing to here normally - the user simply cancelled without selecting a payment method.
                         break;
                     case AutoResolveHelper.RESULT_ERROR:
+                        Log.d(AlexTAG.debug, "Method payment with GooglePay(): RESULT_ERROR");
                         Status status = AutoResolveHelper.getStatusFromIntent(data);
-                        handlePaymentError(status.getStatusCode());
-                        Log.e("AlexDebug", "status.getStatusMessage(): " + status.getStatusMessage());
+                        if (status != null) {
+                            handlePaymentError(status.getStatusCode());
+                            Log.e(AlexTAG.error, "Method - status.getStatusMessage(): " + status.getStatusMessage());
+                        } else {
+                            Log.e(AlexTAG.error, "Method - status.getStatusMessage(): status is null");
+                        }
                         break;
                 }
                 break;
@@ -178,6 +180,7 @@ public class OrderActivityNew extends AppCompatActivity {
         binding.paymentCard.setOnClickListener(v -> {
             Intent intent = new Intent(OrderActivityNew.this, PaymentActivity.class);
             intent.putExtra("Order", "test");
+            intent.putExtra("md5", md5);
             intent.putExtra("Price", "0");
             startActivity(intent);
         });
@@ -189,9 +192,31 @@ public class OrderActivityNew extends AppCompatActivity {
                 return;
             }
         }
-
-
     }
+
+    private String md5(final String s) {
+        final String MD5 = "MD5";
+        try {
+            // Create MD5 Hash
+            MessageDigest digest = java.security.MessageDigest
+                    .getInstance(MD5);
+            digest.update(s.getBytes());
+            byte[] messageDigest = digest.digest();
+            // Create Hex String
+            StringBuilder hexString = new StringBuilder();
+            for (byte aMessageDigest : messageDigest) {
+                String h = Integer.toHexString(0xFF & aMessageDigest);
+                while (h.length() < 2)
+                    h = "0" + h;
+                hexString.append(h);
+            }
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
 
     private void checkIsReadyToPay() {
         // The call to isReadyToPay is asynchronous and returns a Task. We need to provide an
