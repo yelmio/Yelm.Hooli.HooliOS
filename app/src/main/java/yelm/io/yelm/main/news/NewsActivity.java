@@ -23,7 +23,6 @@ import java.net.URL;
 
 import yelm.io.yelm.R;
 import yelm.io.yelm.databinding.ActivityNewsBinding;
-import yelm.io.yelm.main.model.NewNews;
 
 public class NewsActivity extends AppCompatActivity implements AppBarLayout.OnOffsetChangedListener, Html.ImageGetter {
 

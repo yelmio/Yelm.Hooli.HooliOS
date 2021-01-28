@@ -1,4 +1,4 @@
-package yelm.io.yelm.main.news;
+package yelm.io.yelm.item;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
@@ -23,7 +23,7 @@ import yelm.io.yelm.main.adapter.ProductsNewMenuSquareImageAdapter;
 import yelm.io.yelm.main.model.Item;
 import yelm.io.yelm.support_stuff.AlexTAG;
 
-public class ItemsFromNewsActivity extends AppCompatActivity {
+public class ItemsOfOneCategoryActivity extends AppCompatActivity {
     ActivityItemsFromNewsBinding binding;
     private final CompositeDisposable compositeDisposableBasket = new CompositeDisposable();
     ProductsNewMenuSquareImageAdapter productsSquareAdapter;
@@ -33,28 +33,34 @@ public class ItemsFromNewsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityItemsFromNewsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        binding();
+    }
 
+    private void binding() {
         binding.title.setText(getIntent().getStringExtra("title"));
-
-        ArrayList<Item> items = getIntent().getParcelableArrayListExtra("items");
         binding.recycler.setLayoutManager(new StaggeredGridLayoutManager(2, 1));
-        productsSquareAdapter = new ProductsNewMenuSquareImageAdapter(this, items);
-        binding.recycler.setAdapter(productsSquareAdapter);
         binding.back.setOnClickListener(v -> finish());
         binding.basket.setOnClickListener(v -> startActivity(new Intent(this, BasketActivityOnlyDelivery.class)));
+    }
 
+    private void rewriteView() {
+        ArrayList<Item> items = getIntent().getParcelableArrayListExtra("items");
+        productsSquareAdapter = new ProductsNewMenuSquareImageAdapter(this, items);
+        binding.recycler.setAdapter(productsSquareAdapter);
     }
 
     @Override
     public void onStop() {
         compositeDisposableBasket.clear();
         super.onStop();
+        Log.d(AlexTAG.debug, "onStop");
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         updateCost();
+        Log.d(AlexTAG.debug, "onStart");
     }
 
     private void updateCost() {
@@ -62,6 +68,9 @@ public class ItemsFromNewsActivity extends AppCompatActivity {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(carts -> {
+
+                    rewriteView();
+
                     if (carts.size() == 0) {
                         binding.basketLayout.setVisibility(View.GONE);
                         binding.basket.setText(String.format("0 %s", LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
@@ -77,5 +86,4 @@ public class ItemsFromNewsActivity extends AppCompatActivity {
                     }
                 }));
     }
-
 }

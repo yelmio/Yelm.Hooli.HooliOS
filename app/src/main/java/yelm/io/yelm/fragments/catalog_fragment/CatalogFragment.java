@@ -41,7 +41,7 @@ import yelm.io.yelm.R;
 import yelm.io.yelm.fragments.catalog_fragment.adapter.CategoryProductAdapter;
 import yelm.io.yelm.fragments.catalog_fragment.adapter.ProductsAdapter;
 import yelm.io.yelm.fragments.catalog_fragment.adapter.SquareCategoryProductAdapter;
-import yelm.io.yelm.main.adapter.NewsAdapter;
+import yelm.io.yelm.main.news.NewsAdapter;
 import yelm.io.yelm.fragments.catalog_fragment.model.CatalogClass;
 import yelm.io.yelm.fragments.catalog_fragment.model.ProductsClass;
 import yelm.io.yelm.fragments.catalog_fragment.model.StockClass;

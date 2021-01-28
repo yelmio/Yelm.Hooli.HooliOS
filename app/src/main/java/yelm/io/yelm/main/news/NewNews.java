@@ -1,4 +1,4 @@
-package yelm.io.yelm.main.model;
+package yelm.io.yelm.main.news;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -7,6 +7,8 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
+
+import yelm.io.yelm.main.model.Item;
 
 public class NewNews implements Parcelable {
     @SerializedName("id")

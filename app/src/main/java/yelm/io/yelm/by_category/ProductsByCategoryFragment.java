@@ -1,19 +1,24 @@
 package yelm.io.yelm.by_category;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import java.util.ArrayList;
+
 import yelm.io.yelm.R;
 import yelm.io.yelm.databinding.FragmentProductsByCategoryBinding;
+import yelm.io.yelm.item.ItemsOfOneCategoryActivity;
 import yelm.io.yelm.main.adapter.ProductsNewMenuAdapter;
 import yelm.io.yelm.main.adapter.ProductsNewMenuSquareImageAdapter;
 import yelm.io.yelm.support_stuff.AlexTAG;
@@ -70,6 +75,13 @@ public class ProductsByCategoryFragment extends Fragment {
             productsSquareAdapter = new ProductsNewMenuSquareImageAdapter(getContext(), productsByCategory.getItems());
             binding.recycler.setAdapter(productsSquareAdapter);
         }
+
+        binding.categoryExpand.setOnClickListener(v->{
+            Intent intent = new Intent(getContext(), ItemsOfOneCategoryActivity.class);
+            intent.putParcelableArrayListExtra("items", (ArrayList<? extends Parcelable>) productsByCategory.getItems());
+            intent.putExtra("title", productsByCategory.getName());
+            startActivity(intent);
+        });
         return binding.getRoot();
     }
 }

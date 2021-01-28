@@ -27,7 +27,6 @@ import yelm.io.yelm.database_new.user_addresses.UserAddress;
 import yelm.io.yelm.support_stuff.AlexTAG;
 import yelm.io.yelm.main.adapter.ProductsNewMenuSquareImageAdapter;
 import yelm.io.yelm.R;
-import yelm.io.yelm.basket.controller.BasketActivity;
 import yelm.io.yelm.database_new.basket_new.BasketCart;
 import yelm.io.yelm.database_new.Common;
 import yelm.io.yelm.databinding.ActivityProductsByCategoryBinding;
@@ -36,7 +35,7 @@ import yelm.io.yelm.constants.Constants;
 import yelm.io.yelm.retrofit.new_api.RestAPI;
 import yelm.io.yelm.retrofit.new_api.RetrofitClientNew;
 
-public class ProductsByCategoryActivity extends AppCompatActivity {
+public class ProductsByCategoriesActivity extends AppCompatActivity {
 
     ActivityProductsByCategoryBinding binding;
     ProductsNewMenuSquareImageAdapter productsAdapter;
@@ -71,7 +70,6 @@ public class ProductsByCategoryActivity extends AppCompatActivity {
                 }
             }
         }
-
 
         RetrofitClientNew.
                 getClient(RestAPI.URL_API_MAIN).
@@ -108,7 +106,6 @@ public class ProductsByCategoryActivity extends AppCompatActivity {
                     }
                 });
     }
-
 
     @Override
     public void onStop() {
@@ -158,16 +155,15 @@ public class ProductsByCategoryActivity extends AppCompatActivity {
         }
 
         for (int i = 0; i < productsByCategoryList.size(); i++) {
-            FrameLayout frameLayout = new FrameLayout(ProductsByCategoryActivity.this);
+            FrameLayout frameLayout = new FrameLayout(ProductsByCategoriesActivity.this);
             frameLayout.setId(View.generateViewId());
             ProductsByCategoryFragment categoryFragment = new ProductsByCategoryFragment(productsByCategoryList.get(i), isHorizontalLayout);
-
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.add(frameLayout.getId(), categoryFragment, "fragment" + i).commitAllowingStateLoss();
             binding.storeFragments.addView(frameLayout);
         }
 
-        View footer = new View(ProductsByCategoryActivity.this);
+        View footer = new View(ProductsByCategoriesActivity.this);
         footer.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
                 (int) getResources().getDimension(R.dimen.dimen_60dp)));
         binding.storeFragments.addView(footer);

@@ -14,7 +14,7 @@ import yelm.io.yelm.loader.model.ApplicationSettings;
 import yelm.io.yelm.loader.model.UserLoginResponse;
 import yelm.io.yelm.main.model.CatalogsWithProductsClass;
 import yelm.io.yelm.main.model.Item;
-import yelm.io.yelm.main.model.NewNews;
+import yelm.io.yelm.main.news.NewNews;
 
 public interface RestAPI {
 

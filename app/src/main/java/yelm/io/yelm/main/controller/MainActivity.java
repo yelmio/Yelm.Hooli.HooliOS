@@ -19,15 +19,12 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.badge.BadgeDrawable;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.zxing.Result;
 
 import org.jetbrains.annotations.NotNull;
@@ -47,10 +44,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import yelm.io.yelm.basket.controller.BasketActivityOnlyDelivery;
-import yelm.io.yelm.main.model.NewNews;
+import yelm.io.yelm.main.news.NewNews;
 import yelm.io.yelm.support_stuff.AlexTAG;
 import yelm.io.yelm.search.SearchActivity;
-import yelm.io.yelm.basket.controller.BasketActivity;
 import yelm.io.yelm.database_new.basket_new.BasketCart;
 import yelm.io.yelm.database_new.user_addresses.UserAddress;
 import yelm.io.yelm.databinding.ActivityMainBinding;
@@ -65,7 +61,7 @@ import yelm.io.yelm.chat.controller.ChatActivity;
 import yelm.io.yelm.main.adapter.ProductsNewMenuAdapter;
 import yelm.io.yelm.R;
 import yelm.io.yelm.database_new.Common;
-import yelm.io.yelm.main.adapter.NewsAdapter;
+import yelm.io.yelm.main.news.NewsAdapter;
 import yelm.io.yelm.support_stuff.ItemOffsetDecorationRight;
 import yelm.io.yelm.retrofit.DynamicURL;
 
@@ -357,7 +353,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 //                                        //setLinks(stockList.get(0).getAttachments());
 //                                    });
 //                                } else {
-                                binding.cardTopImage.setVisibility(View.GONE);
+                                //binding.cardTopImage.setVisibility(View.GONE);
                                 newsAdapter = new NewsAdapter(MainActivity.this, newsList);
                                 binding.recyclerCards.setAdapter(newsAdapter);
                                 //}

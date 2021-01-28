@@ -35,7 +35,6 @@ import yelm.io.yelm.loader.controller.LoaderActivity;
 import yelm.io.yelm.main.model.Item;
 import yelm.io.yelm.main.model.Modifier;
 import yelm.io.yelm.item.ProductModifierAdapter;
-import yelm.io.yelm.item.ProductNewActivity;
 
 public class ProductsNewMenuAdapter extends RecyclerView.Adapter<ProductsNewMenuAdapter.ProductHolder> {
     private Context context;

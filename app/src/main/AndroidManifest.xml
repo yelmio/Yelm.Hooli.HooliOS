@@ -34,7 +34,7 @@
             android:name=".basket.controller.BasketActivityOnlyDelivery"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".main.news.ItemsFromNewsActivity"
+            android:name=".item.ItemsOfOneCategoryActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".item.ItemActivity"
@@ -59,7 +59,7 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".by_category.ProductsByCategoryActivity"
+            android:name=".by_category.ProductsByCategoriesActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".user_address.controller.AddressChooseActivity"

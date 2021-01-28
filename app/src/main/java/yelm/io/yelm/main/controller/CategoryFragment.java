@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import org.jetbrains.annotations.NotNull;
 
 import yelm.io.yelm.R;
-import yelm.io.yelm.by_category.ProductsByCategoryActivity;
+import yelm.io.yelm.by_category.ProductsByCategoriesActivity;
 import yelm.io.yelm.databinding.FragmentCategoryBinding;
 import yelm.io.yelm.main.adapter.ProductsNewMenuAdapter;
 import yelm.io.yelm.main.model.CatalogsWithProductsClass;
@@ -49,7 +49,7 @@ public class CategoryFragment extends Fragment {
         productsAdapter = new ProductsNewMenuAdapter(getContext(), catalogsWithProductsClass.getItems());
         binding.recycler.setAdapter(productsAdapter);
         binding.categoryExpand.setOnClickListener(v -> {
-            Intent intent = new Intent(getContext(), ProductsByCategoryActivity.class);
+            Intent intent = new Intent(getContext(), ProductsByCategoriesActivity.class);
             intent.putExtra("catalogID", catalogsWithProductsClass.getCategoryID());
             intent.putExtra("catalogName", catalogsWithProductsClass.getName());
             startActivity(intent);

@@ -117,8 +117,6 @@ public class PaymentActivity extends AppCompatActivity {
             showToast(getString(R.string.checkout_error_card_cvc));
             return;
         }
-
-
     }
 
     @Override
@@ -140,7 +138,6 @@ public class PaymentActivity extends AppCompatActivity {
                 .append(LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
     }
 
-
     public void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
@@ -156,7 +153,6 @@ public class PaymentActivity extends AppCompatActivity {
         }
         return isCorrect;
     }
-
 
     private String concatString(char[] digits, int dividerPosition, char divider) {
         final StringBuilder formatted = new StringBuilder();
@@ -185,6 +181,4 @@ public class PaymentActivity extends AppCompatActivity {
         }
         return digits;
     }
-
-
 }

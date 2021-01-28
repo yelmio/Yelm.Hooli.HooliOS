@@ -1,4 +1,4 @@
-package yelm.io.yelm.main.adapter;
+package yelm.io.yelm.main.news;
 
 import android.content.Context;
 import android.content.Intent;
@@ -24,9 +24,7 @@ import yelm.io.yelm.databinding.NewsItemBinding;
 import yelm.io.yelm.fragments.catalog_fragment.ProductActivity;
 import yelm.io.yelm.fragments.main_fragment.ArticleActivity;
 import yelm.io.yelm.item.ItemActivity;
-import yelm.io.yelm.main.model.NewNews;
-import yelm.io.yelm.main.news.ItemsFromNewsActivity;
-import yelm.io.yelm.main.news.NewsActivity;
+import yelm.io.yelm.item.ItemsOfOneCategoryActivity;
 import yelm.io.yelm.support_stuff.GradientTransformation;
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsHolder> {
@@ -76,7 +74,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsHolder> {
                 intentItem.putExtra("item", currentNews.getItems().get(0));
                 context.startActivity(intentItem);
             } else {
-                Intent intentItem = new Intent(context, ItemsFromNewsActivity.class);
+                Intent intentItem = new Intent(context, ItemsOfOneCategoryActivity.class);
                 intentItem.putParcelableArrayListExtra("items", (ArrayList<? extends Parcelable>) currentNews.getItems());
                 intentItem.putExtra("title", currentNews.getTitle());
                 context.startActivity(intentItem);

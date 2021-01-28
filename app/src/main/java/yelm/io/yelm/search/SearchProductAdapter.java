@@ -23,7 +23,6 @@ import yelm.io.yelm.main.model.Item;
 import yelm.io.yelm.support_stuff.AlexTAG;
 import yelm.io.yelm.databinding.ProductItemSearcheableBinding;
 import yelm.io.yelm.loader.controller.LoaderActivity;
-import yelm.io.yelm.item.ProductNewActivity;
 
 public class SearchProductAdapter extends RecyclerView.Adapter<SearchProductAdapter.ProductHolder> implements Filterable {
 
