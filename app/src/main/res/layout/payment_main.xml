@@ -2,6 +2,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
+    tools:viewBindingIgnore="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".payment.PaymentActivity">
@@ -80,10 +82,11 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/imageView10">
+                    app:layout_constraintTop_toBottomOf="@+id/imageView9">
 
                     <EditText
-                        android:id="@+id/editTextTextPersonName3"
+                        android:id="@+id/edit_card_number"
+                        style="@style/ProDisplayTextStyle"
                         android:layout_width="match_parent"
                         android:layout_height="48dp"
                         android:drawableEnd="@drawable/ic_card_icon"
@@ -98,7 +101,8 @@
                         android:orientation="horizontal">
 
                         <EditText
-                            android:id="@+id/editTextTextPersonName4"
+                            android:id="@+id/edit_card_date"
+                            style="@style/ProDisplayTextStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_marginEnd="16dp"
@@ -110,7 +114,8 @@
                             android:textSize="16sp" />
 
                         <EditText
-                            android:id="@+id/editTextTextPersonName5"
+                            android:id="@+id/edit_card_cvc"
+                            style="@style/ProDisplayTextStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_marginStart="16dp"
@@ -123,7 +128,8 @@
                     </LinearLayout>
 
                     <EditText
-                        android:id="@+id/editTextTextPersonName2"
+                        android:id="@+id/edit_card_holder_name"
+                        style="@style/ProDisplayTextStyle"
                         android:layout_width="match_parent"
                         android:layout_height="48dp"
                         android:ems="10"
@@ -147,92 +153,23 @@
                     android:id="@+id/imageView10"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="24dp"
+                    android:layout_marginStart="16dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/imageView9"
                     app:layout_constraintStart_toEndOf="@+id/imageView9"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/ic_circls" />
+                    app:layout_constraintTop_toTopOf="@+id/imageView9"
+                    app:srcCompat="@drawable/ic_visa" />
 
                 <ImageView
                     android:id="@+id/imageView12"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="24dp"
+                    android:layout_marginStart="16dp"
                     app:layout_constraintBottom_toBottomOf="@+id/imageView10"
                     app:layout_constraintStart_toEndOf="@+id/imageView10"
                     app:layout_constraintTop_toTopOf="@+id/imageView10"
                     app:srcCompat="@drawable/ic_mur" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:orientation="vertical">
-
-            <EditText
-                android:id="@+id/edit_card_number"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:drawableRight="@drawable/ic_credit_card_black_24dp"
-                android:hint="@string/checkout_card_number"
-                android:inputType="phone"
-                android:padding="8dp"
-                android:textColor="@color/colorText"
-                android:textSize="16sp"
-                android:theme="@style/ProDisplayTextStyle" />
-
-
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <EditText
-                    android:id="@+id/edit_card_date"
-                    android:layout_width="0dp"
-                    android:layout_height="48dp"
-                    android:layout_weight="1"
-                    android:baselineAligned="false"
-                    android:drawableRight="@drawable/ic_date_range_black_24dp"
-                    android:hint="@string/checkout_card_date"
-                    android:inputType="date"
-                    android:padding="8dp"
-                    android:textColor="@color/colorText"
-                    android:textSize="16sp"
-                    android:theme="@style/ProDisplayTextStyle" />
-
-                <EditText
-                    android:id="@+id/edit_card_cvc"
-                    android:layout_width="0dp"
-                    android:layout_height="48dp"
-                    android:layout_weight="1"
-                    android:drawableRight="@drawable/ic_lock_black_24dp"
-                    android:hint="@string/checkout_card_cvc"
-                    android:inputType="number"
-                    android:padding="8dp"
-                    android:textColor="@color/colorText"
-                    android:textSize="16sp"
-                    android:theme="@style/ProDisplayTextStyle" />
-            </LinearLayout>
-
-            <EditText
-                android:id="@+id/edit_card_holder_name"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:drawableRight="@drawable/ic_person_black_24dp"
-                android:hint="@string/checkout_card_holder"
-                android:inputType="textPersonName"
-                android:padding="8dp"
-                android:textColor="@color/colorText"
-                android:textSize="16sp"
-                android:theme="@style/ProDisplayTextStyle" />
-
-        </LinearLayout>
 
 
         <TextView
