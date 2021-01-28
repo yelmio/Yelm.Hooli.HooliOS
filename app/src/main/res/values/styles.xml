@@ -214,7 +214,6 @@
         <item name="cardElevation">4dp</item>
         <item name="cardBackgroundColor">@color/colorBackgroundGray</item>
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_margin">16dp</item>
         <item name="android:layout_height">35dp</item>
     </style>
 
