@@ -275,7 +275,7 @@
                 android:theme="@style/ProDisplayTextStyle" />
 
             <EditText
-                android:id="@+id/appartament"
+                android:id="@+id/apartament"
                 android:layout_width="wrap_content"
                 android:layout_height="46dp"
                 android:layout_weight="1"
@@ -317,9 +317,10 @@
             android:layout_weight="1"
             android:background="@drawable/stroke_back"
             android:fontFamily="@font/sf_prodisplay_regular"
-            android:hint="+7"
+            android:hint="+"
             android:inputType="phone"
             android:paddingStart="16dp"
+            android:paddingEnd="16dp"
             android:theme="@style/ProDisplayTextStyle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -363,6 +364,7 @@
                 android:layout_weight="1"
                 android:text="@string/inYourOrderProductsCount"
                 android:textColor="@color/colorTextGray"
+                android:textSize="16sp"
                 android:theme="@style/ProDisplayTextStyle" />
 
             <TextView
@@ -370,7 +372,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="end"
+                android:text="4567"
                 android:textColor="@color/mainThemeColor"
+                android:textSize="16sp"
                 android:theme="@style/ProDisplayTextStyle" />
         </LinearLayout>
 
@@ -389,6 +393,7 @@
                 android:layout_weight="1"
                 android:text="@string/orderDiscount"
                 android:textColor="@color/colorRedDiscount"
+                android:textSize="16sp"
                 android:theme="@style/ProDisplayTextStyle" />
 
             <TextView
@@ -405,7 +410,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:orientation="horizontal"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -413,6 +418,7 @@
                 android:layout_weight="1"
                 android:text="@string/delivery"
                 android:textColor="@color/colorTextGray"
+                android:textSize="16sp"
                 android:theme="@style/ProDisplayTextStyle" />
 
             <TextView
@@ -420,7 +426,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
 
+                android:text="456"
                 android:textColor="@color/mainThemeColor"
+                android:textSize="16sp"
                 android:theme="@style/ProDisplayTextStyle" />
         </LinearLayout>
 

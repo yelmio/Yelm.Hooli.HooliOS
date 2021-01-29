@@ -77,6 +77,7 @@
     <string name="orderDiscount">Скидка</string>
     <string name="cardPayment">Оплата картой</string>
     <string name="paymentType">Способ оплаты</string>
+    <string name="orderActivityEnterCorrectPhone">Укажите корректный телефон</string>
 
     <!-- profile fragment -->
     <string name="profile_subscription_action">Действие подписки:</string>

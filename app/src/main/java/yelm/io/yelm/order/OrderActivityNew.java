@@ -22,6 +22,10 @@ import com.google.android.gms.wallet.PaymentMethodToken;
 import com.google.android.gms.wallet.PaymentsClient;
 import com.google.android.gms.wallet.TransactionInfo;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.UnknownHostException;
@@ -39,6 +43,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import ru.cloudpayments.sdk.three_ds.ThreeDsDialogFragment;
+import yelm.io.yelm.database_old.basket.Cart;
 import yelm.io.yelm.old_version.maps.MapActivity;
 import yelm.io.yelm.payment.PayApi;
 import yelm.io.yelm.payment.models.Transaction;
@@ -64,6 +69,9 @@ public class OrderActivityNew extends AppCompatActivity {
 
     private PaymentsClient paymentsClient;
     BigDecimal bigTotal = new BigDecimal("0");
+    private BigDecimal deliveryCost = new BigDecimal("0");
+    private String deliveryTime = "";
+
     private static final int LOAD_PAYMENT_DATA_REQUEST_CODE = 991;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private String transactionID = "";
@@ -76,7 +84,9 @@ public class OrderActivityNew extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityOrderNewBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
+        bigTotal = new BigDecimal(getIntent().getStringExtra("finalPrice"));
+        deliveryCost = new BigDecimal(getIntent().getStringExtra("deliveryCost"));
+        deliveryTime = getIntent().getStringExtra("deliveryTime");
         binding();
 
         paymentsClient = PaymentsUtil.createPaymentsClient(this);
@@ -84,13 +94,67 @@ public class OrderActivityNew extends AppCompatActivity {
 
         bindingChosePaymentType();
 
-//        String phone = binding.phone.getText().toString();
-//        Log.d("AlexDebug", "phone: " + phone);
-//        phone = phone.replaceAll("\\D", "");
-//        Log.d("AlexDebug", "phone after replacement: " + phone);
-
-
     }
+
+    private boolean makeOrder(String paymentType) {
+        String phone = binding.phone.getText().toString();
+        Log.d("AlexDebug", "phone: " + phone);
+        phone = phone.replaceAll("\\D", "");
+        Log.d("AlexDebug", "phone after replacement: " + phone);
+        if (phone.trim().equals("") || phone.length() != 11) {
+            showToast(getText(R.string.orderActivityEnterCorrectPhone).toString());
+            return false;
+        }
+
+        JSONObject jsonData = new JSONObject();
+        try {
+            jsonData.put("phone", phone);
+            for (UserAddress userAddress : Common.userAddressesRepository.getUserAddressesList()) {
+                if (userAddress.isChecked) {
+                    binding.userAddress.setText(userAddress.address);
+                    jsonData.put("address", userAddress.address);
+                    jsonData.put("latitude", userAddress.latitude);
+                    jsonData.put("longitude", userAddress.longitude);
+                    break;
+                }
+            }
+
+            jsonData.put("paymentType", paymentType);
+            jsonData.put("apartment", binding.apartament.getText().toString());
+            jsonData.put("floor", binding.floor.getText().toString());
+            jsonData.put("entrance", binding.entrance.getText().toString());
+            jsonData.put("finalPrice", getIntent().getStringExtra("finalPrice"));
+            List<BasketCart> basketCarts = Common.basketCartRepository.getBasketCartsList();
+            JSONArray jsonObjectItems = new JSONArray();
+            for (int i = 0; i < basketCarts.size(); i++) {
+                BigDecimal fullPrice = new BigDecimal(basketCarts.get(i).finalPrice).multiply(new BigDecimal(basketCarts.get(i).count));
+                JSONObject jsonObjectItem = new JSONObject();
+                jsonObjectItem
+                        .put("itemID", basketCarts.get(i).itemID)
+                        .put("name", basketCarts.get(i).name)
+                        //.put("Quantity", basketCarts.get(i).quantity)
+                        .put("startPrice", basketCarts.get(i).startPrice)
+                        .put("finalPrice", basketCarts.get(i).finalPrice)
+                        .put("type", basketCarts.get(i).type)
+                        .put("count", basketCarts.get(i).count)
+                        .put("imageUrl", basketCarts.get(i).imageUrl)
+                        .put("quantityType", basketCarts.get(i).quantityType)
+                        .put("discount", basketCarts.get(i).discount)
+                        .put("fullPrice", fullPrice);
+                jsonObjectItems.put(jsonObjectItem);
+            }
+            jsonData.put("items", jsonObjectItems);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        order = jsonData.toString();
+        Log.d("AlexDebug", "order:" + order);
+        md5 = md5("45yu3d7h9Jca0ppq2l" + order);
+
+        return true;
+    }
+
 
     private void bindingChosePaymentType() {
 
@@ -153,7 +217,10 @@ public class OrderActivityNew extends AppCompatActivity {
     }
 
     private void binding() {
+        binding.startPrice.setText(String.format("%s %s", bigTotal.subtract(deliveryCost), LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
+        binding.finalPrice.setText(String.format("%s %s", bigTotal, LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
         binding.back.setOnClickListener(v -> finish());
+        binding.deliveryPrice.setText(String.format("%s %s", deliveryCost, LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
 
         //set amount of products
         BigInteger productsAmount = new BigInteger("0");
@@ -161,6 +228,14 @@ public class OrderActivityNew extends AppCompatActivity {
             productsAmount = productsAmount.add(new BigInteger(basketCart.count));
         }
         binding.amountOfProducts.setText(String.format("%s %s %s", getText(R.string.inYourOrderProductsCount), productsAmount, getText(R.string.inYourOrderProductsPC)));
+
+        //set chosen user address
+        for (UserAddress address : Common.userAddressesRepository.getUserAddressesList()) {
+            if (address.isChecked) {
+                binding.userAddress.setText(address.address);
+                break;
+            }
+        }
 
         binding.phone.addTextChangedListener(new PhoneTextFormatter(binding.phone, "+# (###) ###-##-##"));
 
@@ -172,26 +247,15 @@ public class OrderActivityNew extends AppCompatActivity {
 //            binding.time.setText(String.format("%s %s", getIntent().getStringExtra("deliveryTime"), getText(R.string.delivery_time)));
 //        }
 
-        binding.finalPrice.setText(String.format("%s %s", getIntent().getStringExtra("finalCost"), LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
-        binding.startPrice.setText(String.format("%s %s", getIntent().getStringExtra("finalCost"), LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
-
-        bigTotal = new BigDecimal(getIntent().getStringExtra("finalCost"));
-
         binding.paymentCard.setOnClickListener(v -> {
-            Intent intent = new Intent(OrderActivityNew.this, PaymentActivity.class);
-            intent.putExtra("Order", "test");
-            intent.putExtra("md5", md5);
-            intent.putExtra("Price", "0");
-            startActivity(intent);
-        });
-
-        //set chosen user address
-        for (UserAddress address : Common.userAddressesRepository.getUserAddressesList()) {
-            if (address.isChecked) {
-                binding.userAddress.setText(address.address);
-                return;
+            if (makeOrder("Payment card")) {
+                Intent intent = new Intent(OrderActivityNew.this, PaymentActivity.class);
+                intent.putExtra("Order", order);
+                intent.putExtra("md5", md5);
+                intent.putExtra("Price", bigTotal);
+                startActivity(intent);
             }
-        }
+        });
     }
 
     private String md5(final String s) {
@@ -217,7 +281,6 @@ public class OrderActivityNew extends AppCompatActivity {
         return "";
     }
 
-
     private void checkIsReadyToPay() {
         // The call to isReadyToPay is asynchronous and returns a Task. We need to provide an
         // OnCompleteListener to be triggered when the result of the call is known.
@@ -240,13 +303,21 @@ public class OrderActivityNew extends AppCompatActivity {
         // Please adjust to fit in with your current user flow. You are not required to explicitly
         // let the user know if isReadyToPay returns false.
         if (available) {
-            binding.pwgStatus.setVisibility(View.GONE);
-            binding.pwgButton.getRoot().setVisibility(View.VISIBLE);
-            binding.pwgButton.getRoot().setOnClickListener(v -> requestPayment(paymentsClient));
-
+            bindingGooglePayButton();
         } else {
             binding.pwgStatus.setText(R.string.pwg_status_unavailable);
         }
+    }
+
+
+    private void bindingGooglePayButton() {
+        binding.pwgStatus.setVisibility(View.GONE);
+        binding.pwgButton.getRoot().setVisibility(View.VISIBLE);
+        binding.pwgButton.getRoot().setOnClickListener(v -> {
+            if (makeOrder("Google Pay")) {
+                //requestPayment(paymentsClient);
+            }
+        });
     }
 
     // This method is called when the Pay with Google button is clicked.

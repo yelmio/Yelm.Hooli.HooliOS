@@ -211,7 +211,7 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
         binding.addressDelivery.setOnClickListener(v -> callAddressesBottomSheet());
         binding.ordering.setOnClickListener(v -> {
             Intent intent = new Intent(this, OrderActivityNew.class);
-            intent.putExtra("finalCost", finalCost.toString());
+            intent.putExtra("finalPrice", finalCost.toString());
             intent.putExtra("deliveryCost", deliveryCost.toString());
             intent.putExtra("deliveryTime", deliveryTime);
             startActivity(intent);

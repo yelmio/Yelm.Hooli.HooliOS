@@ -163,7 +163,6 @@ public class BasketActivity extends AppCompatActivity implements AddressesBottom
 
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -178,7 +177,6 @@ public class BasketActivity extends AppCompatActivity implements AddressesBottom
 
         }
     }
-
 
     private StringBuilder getItemsForCheckBasket(List<BasketCart> basketCarts) {
         StringBuilder items = new StringBuilder();
@@ -275,7 +273,6 @@ public class BasketActivity extends AppCompatActivity implements AddressesBottom
         compositeDisposableBasket.clear();
         super.onDestroy();
     }
-
 
     private void updateBasket(List<BasketCart> carts) {
         basketAdapter = new BasketAdapter(this, carts);
