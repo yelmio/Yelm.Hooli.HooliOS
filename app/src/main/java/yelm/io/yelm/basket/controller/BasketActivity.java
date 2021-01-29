@@ -59,7 +59,7 @@ public class BasketActivity extends AppCompatActivity implements AddressesBottom
         super.onCreate(savedInstanceState);
         binding = ActivityBasketBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-//
+
         binding();
         setDeliveryAddress();
 

@@ -55,11 +55,6 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
         binding = ActivityBasketOnlyDeliveryBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         binding();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
         currentAddress = setDeliveryAddress();
         //check if there is user address in db - if there is not we just show basket and disable ordering button
         if (currentAddress != null) {
@@ -71,6 +66,11 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
             basketAdapter = new BasketAdapter(this, Common.basketCartRepository.getBasketCartsList());
             binding.recyclerCart.setAdapter(basketAdapter);
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
     }
 
     synchronized private void checkBasket(String Lat, String Lon) {

@@ -20,7 +20,10 @@ import io.reactivex.schedulers.Schedulers;
 import yelm.io.yelm.R;
 import yelm.io.yelm.database_new.Common;
 import yelm.io.yelm.database_new.user_addresses.UserAddress;
+import yelm.io.yelm.database_old.user.User;
 import yelm.io.yelm.databinding.AdressesBottomSheepDialogBinding;
+import yelm.io.yelm.old_version.maps.MapShopActivity;
+import yelm.io.yelm.order.OrderActivity;
 import yelm.io.yelm.support_stuff.AlexTAG;
 import yelm.io.yelm.user_address.adapter.UserAddressesAdapter;
 
@@ -29,6 +32,7 @@ public class AddressesBottomSheet extends BottomSheetDialogFragment {
     private AddressesBottomSheetListener listener;
     private AdressesBottomSheepDialogBinding binding;
     private UserAddressesAdapter userAddressesAdapter;
+    private static final int USER_ADDRESS_CHOOSE_REQUEST_CODE = 464;
 
     public void setListener(AddressesBottomSheetListener listener) {
         this.listener = listener;
@@ -51,7 +55,10 @@ public class AddressesBottomSheet extends BottomSheetDialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = AdressesBottomSheepDialogBinding.inflate(inflater, container, false);
         binding.addressesDone.setOnClickListener(v -> this.dismiss());
-        binding.addNewAddress.setOnClickListener(v -> startActivity(new Intent(getContext(), AddressChooseActivity.class)));
+        binding.addNewAddress.setOnClickListener(v -> {
+            startActivityForResult(new Intent(getContext(), AddressChooseActivity.class), USER_ADDRESS_CHOOSE_REQUEST_CODE);
+
+        });
         binding.recyclerUserAddresses.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         userAddressesAdapter = new UserAddressesAdapter(getContext(), Common.userAddressesRepository.getUserAddressesList());
         userAddressesAdapter.setListener(() -> {
@@ -79,7 +86,25 @@ public class AddressesBottomSheet extends BottomSheetDialogFragment {
         }
     }
 
-
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (data == null) {
+            return;
+        }
+        switch (requestCode) {
+            case USER_ADDRESS_CHOOSE_REQUEST_CODE:
+                Log.d(AlexTAG.debug, "USER_ADDRESS_CHOOSE_REQUEST_CODE");
+                for (UserAddress current : Common.userAddressesRepository.getUserAddressesList()) {
+                    if (current.isChecked) {
+                        listener.selectedAddress(current);
+                        break;
+                    }
+                }
+                userAddressesAdapter.setNewUserAddressList(Common.userAddressesRepository.getUserAddressesList());
+                break;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 
     @Override
     public void onDestroyView() {

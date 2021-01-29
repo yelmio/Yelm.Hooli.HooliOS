@@ -380,18 +380,6 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
                 || DynamicURL.getPlatformValue().equals("5f5dfa9a7023c2.94067733"));
     }
 
-//    public void updateAddress() {
-//        allowUpdateUI = true;
-//        Log.d(AlexTAG.debug, "Method - updateAddress()");
-//        for (UserAddress address : Common.userAddressesRepository.getUserAddressesList()) {
-//            if (address.isChecked) {
-//                binding.userCurrentAddress.setText(address.address);
-//                //getCategoriesWithProducts(address.latitude, address.longitude);
-//                return;
-//            }
-//        }
-//    }
-
     @Override
     public void onStop() {
         compositeDisposableBasket.clear();
@@ -404,6 +392,13 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         updateCost();
         if (allowUpdateUI) {
             redrawProducts();
+            for (UserAddress address : Common.userAddressesRepository.getUserAddressesList()) {
+                if (address.isChecked) {
+                    binding.userCurrentAddress.setText(address.address);
+                    //getCategoriesWithProducts(address.latitude, address.longitude);
+                    return;
+                }
+            }
         }
         allowUpdateUI = true;
     }
@@ -442,7 +437,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         //super.onSaveInstanceState(outState);
     }
 
-   synchronized private void redrawProducts() {
+    synchronized private void redrawProducts() {
         Log.d(AlexTAG.debug, "Method redrawProducts()");
         for (Fragment fragment : getSupportFragmentManager().getFragments()) {
             getSupportFragmentManager().beginTransaction().remove(fragment).commitAllowingStateLoss();
