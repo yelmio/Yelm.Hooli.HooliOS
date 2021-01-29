@@ -60,11 +60,16 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
     @Override
     protected void onStart() {
         super.onStart();
-        setDeliveryAddress();
+        currentAddress = setDeliveryAddress();
+        //check if there is user address in db - if there is not we just show basket and disable ordering button
         if (currentAddress != null) {
             checkBasket(currentAddress.latitude, currentAddress.longitude);
         } else {
             Log.d(AlexTAG.debug, "Method onStart() - currentAddress is null");
+            binding.addressDelivery.setText(getText(R.string.basketActivitySelectAddress));
+            setCompositeDisposableBasket();
+            basketAdapter = new BasketAdapter(this, Common.basketCartRepository.getBasketCartsList());
+            binding.recyclerCart.setAdapter(basketAdapter);
         }
     }
 
@@ -148,7 +153,10 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
             basketCart.quantity = deletedId.getAvailableCount();
             Common.basketCartRepository.updateBasketCart(basketCart);
         }
+        setCompositeDisposableBasket();
+    }
 
+    private void setCompositeDisposableBasket() {
         compositeDisposableBasket.
                 add(Common.basketCartRepository.
                         getBasketCarts().
@@ -185,10 +193,10 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
         Log.d(AlexTAG.debug, "Method updateBasket() - carts.size(): " + carts.size() + "\n" +
                 "finalCost: " + finalCost.toString());
 
-        if (carts.size() == 0){
+        if (carts.size() != 0 && currentAddress != null && allowOrdering) {
+            binding.ordering.setEnabled(true);
+        } else {
             binding.ordering.setEnabled(false);
-        }else {
-            binding.ordering.setEnabled(allowOrdering);
         }
     }
 
@@ -218,21 +226,22 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
         }
     }
 
-    public void setDeliveryAddress() {
+    public UserAddress setDeliveryAddress() {
         for (UserAddress current : Common.userAddressesRepository.getUserAddressesList()) {
             if (current.isChecked) {
-                currentAddress = current;
-                binding.addressDelivery.setText(currentAddress.address);
-                break;
+                binding.addressDelivery.setText(current.address);
+                return current;
             }
         }
+        return null;
     }
 
     @Override
     public void selectedAddress(UserAddress userAddress) {
-        Log.d(AlexTAG.debug, "Method selectedAddress() - address: " + userAddress.address);
-        binding.addressDelivery.setText(String.format("%s", userAddress.address));
-        checkBasket(userAddress.latitude, userAddress.longitude);
+        currentAddress = userAddress;
+        Log.d(AlexTAG.debug, "Method selectedAddress() - address: " + currentAddress.address);
+        binding.addressDelivery.setText(String.format("%s", currentAddress.address));
+        checkBasket(currentAddress.latitude, currentAddress.longitude);
     }
 
     @Override

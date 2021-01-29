@@ -98,7 +98,6 @@ public class AddressChooseActivity extends AppCompatActivity {
         binding.mapView.getMap().addCameraListener(cameraListener);
         setImageSpringAnimation();
 
-
         binding.getLocation.setOnClickListener(view -> {
             if (cameraPositionCurrent != null) {
                 String userStreet = "";

@@ -20,6 +20,7 @@
     <color name="colorBackgroundGray">#EDEDED</color>
     <color name="colorCircleButtonPressed">#DCDCDC</color>
     <color name="delimiterColor">#CDCDCD</color>
+    <color name="colorButtonOrderingDisable">#BDBDBD</color>
 
     <color name="whiteColor">#FFFFFF</color>
 

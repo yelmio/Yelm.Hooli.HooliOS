@@ -1,6 +1,7 @@
 package yelm.io.yelm.user_address.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -10,18 +11,34 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import yelm.io.yelm.R;
+import yelm.io.yelm.chat.adapter.ChatAdapter;
 import yelm.io.yelm.database_new.Common;
 import yelm.io.yelm.database_new.user_addresses.UserAddress;
 import yelm.io.yelm.databinding.UserAddressItemBinding;
+import yelm.io.yelm.support_stuff.AlexTAG;
 
 public class UserAddressesAdapter extends RecyclerView.Adapter<UserAddressesAdapter.ViewHolder> {
 
     private Context context;
     private List<UserAddress> userAddresses;
+    private AddressChangeListener addressChangeListener;
+
+    public interface AddressChangeListener {
+        void onAddressChange();
+    }
+
+    public void setListener(AddressChangeListener addressChangeListener) {
+        this.addressChangeListener = addressChangeListener;
+    }
 
     public UserAddressesAdapter(Context context, List<UserAddress> userAddresses) {
         this.context = context;
         this.userAddresses = userAddresses;
+    }
+
+    public void setNewUserAddressList(List<UserAddress> userAddresses){
+        this.userAddresses = userAddresses;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -36,6 +53,8 @@ public class UserAddressesAdapter extends RecyclerView.Adapter<UserAddressesAdap
         holder.binding.userAddress.setText(userAddress.address);
         if (userAddress.isChecked) {
             holder.binding.checkedIcon.setImageResource(R.drawable.ic_pin_blue_24);
+        }else {
+            holder.binding.checkedIcon.setImageResource(R.drawable.ic_pin_gray_24);
         }
         holder.binding.removeAddress.setOnClickListener(v -> {
             if (Common.userAddressesRepository.getUserAddressesList().size() == 1) {
@@ -43,22 +62,36 @@ public class UserAddressesAdapter extends RecyclerView.Adapter<UserAddressesAdap
             }
             Common.userAddressesRepository.deleteUserAddressById(userAddress.id);
             if (userAddress.isChecked) {
-                if (Common.userAddressesRepository.getUserAddressesList().size() != 0) {
-                    UserAddress temp = Common.userAddressesRepository.getUserAddressesList().get(0);
-                    temp.isChecked = true;
-                    Common.userAddressesRepository.updateUserAddresses(temp);
+                UserAddress temp = Common.userAddressesRepository.getUserAddressesList().get(0);
+                temp.isChecked = true;
+                Common.userAddressesRepository.updateUserAddresses(temp);
+                if (addressChangeListener != null) {
+                    addressChangeListener.onAddressChange();
+                    Log.d(AlexTAG.debug, "removeAddress()");
                 }
             }
         });
-        holder.binding.addressLayout.setOnClickListener(v -> {
-            for (int i = 0; i < Common.userAddressesRepository.getUserAddressesList().size(); i++) {
-                UserAddress temp = Common.userAddressesRepository.getUserAddressesList().get(i);
-                temp.isChecked = false;
-                Common.userAddressesRepository.updateUserAddresses(temp);
+
+        holder.binding.checkedIcon.setOnClickListener(v -> {
+            if (Common.userAddressesRepository.getUserAddressesList().get(position).isChecked) {
+                return;
             }
+
+            for (UserAddress current : Common.userAddressesRepository.getUserAddressesList()) {
+                if (current.isChecked) {
+                    current.isChecked = false;
+                    Common.userAddressesRepository.updateUserAddresses(current);
+                    break;
+                }
+            }
+
             UserAddress allocated = Common.userAddressesRepository.getUserAddressById(userAddress.id);
             allocated.isChecked = true;
             Common.userAddressesRepository.updateUserAddresses(allocated);
+            if (addressChangeListener != null) {
+                addressChangeListener.onAddressChange();
+                Log.d(AlexTAG.debug, "changeAddress");
+            }
         });
     }
 
