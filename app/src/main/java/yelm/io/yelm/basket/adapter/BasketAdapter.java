@@ -13,6 +13,7 @@ import com.squareup.picasso.Picasso;
 import java.math.BigDecimal;
 import java.util.List;
 
+import yelm.io.yelm.R;
 import yelm.io.yelm.database_new.basket_new.BasketCart;
 import yelm.io.yelm.database_new.Common;
 import yelm.io.yelm.databinding.BasketCartItemBinding;
@@ -56,7 +57,6 @@ public class BasketAdapter extends RecyclerView.Adapter<BasketAdapter.BasketHold
                 .resize(300, 300)
                 .into(holder.binding.imageHolder);
 
-
         if (current.startPrice.equals(current.finalPrice)) {
             holder.binding.layoutStroke.setVisibility(View.GONE);
         } else {
@@ -90,6 +90,13 @@ public class BasketAdapter extends RecyclerView.Adapter<BasketAdapter.BasketHold
                 Common.basketCartRepository.updateBasketCart(current);
             }
         });
+
+        if (new BigDecimal(current.count).compareTo(new BigDecimal(current.quantity)) > 0) {
+            holder.binding.textProductIsOver.setVisibility(View.VISIBLE);
+            holder.binding.addProduct.setEnabled(false);
+            holder.binding.addProduct.setBackgroundColor(context.getResources().getColor(R.color.colorButtonOrderingDisable));
+            holder.binding.textProductIsOver.setText(String.format("%s: %s", R.string.basketActivityProductIsOver, current.quantity));
+        }
     }
 
     private StringBuilder getModifiers(List<Modifier> modifiersList) {

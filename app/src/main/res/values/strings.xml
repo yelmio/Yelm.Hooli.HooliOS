@@ -62,6 +62,7 @@
     <string name="basket_pickup">Самовывоз</string>
     <string name="basket_address">Адрес: </string>
     <string name="basketActivityAddressPickup">Адрес самовывоза: </string>
+    <string name="basketActivityProductIsOver">Нет достаточного количества товара, всего осталось</string>
     <string name="basket_receiving">Получение</string>
     <string name="basket_yelm_delivery">Yelm\nДоставка</string>
 

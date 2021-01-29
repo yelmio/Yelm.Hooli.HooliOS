@@ -21,6 +21,7 @@
     <color name="colorCircleButtonPressed">#DCDCDC</color>
     <color name="delimiterColor">#CDCDCD</color>
     <color name="colorButtonOrderingDisable">#BDBDBD</color>
+    <color name="colorTextProductsIsOver">#EB5757</color>
 
     <color name="whiteColor">#FFFFFF</color>
 
