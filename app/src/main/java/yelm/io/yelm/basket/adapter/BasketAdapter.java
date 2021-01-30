@@ -94,8 +94,8 @@ public class BasketAdapter extends RecyclerView.Adapter<BasketAdapter.BasketHold
         if (new BigDecimal(current.count).compareTo(new BigDecimal(current.quantity)) > 0) {
             holder.binding.textProductIsOver.setVisibility(View.VISIBLE);
             holder.binding.addProduct.setEnabled(false);
-            holder.binding.addProduct.setBackgroundColor(context.getResources().getColor(R.color.colorButtonOrderingDisable));
-            holder.binding.textProductIsOver.setText(String.format("%s: %s", R.string.basketActivityProductIsOver, current.quantity));
+            holder.binding.addProduct.setBackground(context.getDrawable(R.drawable.button_circle_disable));
+            holder.binding.textProductIsOver.setText(String.format("%s: %s", context.getText(R.string.basketActivityProductIsOver), current.quantity));
         }
     }
 

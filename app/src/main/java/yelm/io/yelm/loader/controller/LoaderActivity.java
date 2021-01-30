@@ -112,8 +112,7 @@ public class LoaderActivity extends AppCompatActivity {
     private void checkUser() {
         if (settings.contains(USER_NAME)) {
             Log.d(AlexTAG.debug, "Method checkUser() - user exist: " + settings.getString(USER_NAME, ""));
-            startActivity(new Intent(LoaderActivity.this, MainActivity.class));
-            finish();
+            getApplicationSettings(settings.getString(USER_NAME, ""));
         } else {
 //            User user = new User(0, "", "", "", "", "", "", "", "", "");
             //Common.userRepository.insertToUser(user);
@@ -131,8 +130,7 @@ public class LoaderActivity extends AppCompatActivity {
                                     editor.putString(USER_NAME, response.body().getLogin()).apply();
                                     Log.d(AlexTAG.debug, "Method checkUser() - created user:" +
                                             " " + settings.getString(USER_NAME, ""));
-                                    startActivity(new Intent(LoaderActivity.this, MainActivity.class));
-                                    finish();
+                                    getApplicationSettings(response.body().getLogin());
                                 } else {
                                     Log.e(AlexTAG.error, "Method checkUser() - by some reason response is null!");
                                 }
@@ -151,7 +149,7 @@ public class LoaderActivity extends AppCompatActivity {
     }
 
     //we get main settings of app
-    private void getApplicationSettings() {
+    private void getApplicationSettings(String login) {
         RetrofitClientNew.
                 getClient(RestAPI.URL_API_MAIN).
                 create(RestAPI.class).
@@ -159,7 +157,8 @@ public class LoaderActivity extends AppCompatActivity {
                         getResources().getConfiguration().locale.getLanguage(),
                         getResources().getConfiguration().locale.getCountry(),
                         "0",
-                        "0").
+                        "0",
+                        login).
                 enqueue(new Callback<ApplicationSettings>() {
                     @Override
                     public void onResponse(@NotNull Call<ApplicationSettings> call, @NotNull final Response<ApplicationSettings> response) {
@@ -175,9 +174,9 @@ public class LoaderActivity extends AppCompatActivity {
                                 editor.putString(PRICE_IN, response.body().getSymbol());
                                 editor.putString(COUNTRY_CODE, response.body().getSettings().getRegionCode());
                                 editor.apply();
-
+                                startActivity(new Intent(LoaderActivity.this, MainActivity.class));
+                                finish();
                                 //check user if we got the main settings
-                                checkUser();
                             } else {
                                 Log.e(AlexTAG.error, "Method getApplicationSettings(): by some reason response is null!");
                             }
@@ -216,7 +215,7 @@ public class LoaderActivity extends AppCompatActivity {
             //Common.articlesRepository.emptyArticles();
             //Common.stockRepository.emptyStock();
             //Common.newsRepository.emptyNews();
-            getApplicationSettings();
+            checkUser();
         } else {
             Log.d(AlexTAG.debug, "Method init() - NetworkConnected not successful");
             Snackbar snackbar = Snackbar.make(
@@ -228,8 +227,6 @@ public class LoaderActivity extends AppCompatActivity {
 
         }
     }
-
-
 
 
 }

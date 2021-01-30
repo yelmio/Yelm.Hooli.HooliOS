@@ -24,6 +24,7 @@
     <color name="colorTextProductsIsOver">#EB5757</color>
 
     <color name="whiteColor">#FFFFFF</color>
+    <color name="colorTextGray2">#8A8A8E</color>
 
     <color name="colorPay">#6494DA</color>
     <color name="colorAcceptOrder">#3AE813</color>

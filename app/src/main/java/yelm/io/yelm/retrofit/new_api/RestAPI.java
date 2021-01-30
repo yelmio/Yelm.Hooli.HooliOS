@@ -31,7 +31,8 @@ public interface RestAPI {
                                              @Query("language_code") String LanguageCode,
                                              @Query("region_code") String RegionCode,
                                              @Query("lat") String LAT,
-                                             @Query("lon") String LON
+                                             @Query("lon") String LON,
+                                             @Query("login") String login
     );
 
     @GET("items?")

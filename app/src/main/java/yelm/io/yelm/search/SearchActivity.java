@@ -42,8 +42,6 @@ public class SearchActivity extends AppCompatActivity {
     SearchProductAdapter searchProductAdapter;
     private List<Item> products;
 
-    private final CompositeDisposable compositeDisposableBasket = new CompositeDisposable();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,10 +49,12 @@ public class SearchActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         binding.recyclerProducts.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        binding.back.setOnClickListener(v -> finish());
-
         binding.recyclerProducts.setHasFixedSize(false);
         binding.recyclerProducts.addItemDecoration(new ItemOffsetDecorationBottom((int) getResources().getDimension(R.dimen.dimen_60dp)));
+
+        getAllProducts();
+
+        binding.back.setOnClickListener(v -> finish());
 
         binding.search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -72,7 +72,6 @@ public class SearchActivity extends AppCompatActivity {
 
         binding.basket.setOnClickListener(v -> startActivity(new Intent(this, BasketActivityOnlyDelivery.class)));
 
-        getAllProducts();
     }
 
     private void getAllProducts() {
@@ -106,7 +105,6 @@ public class SearchActivity extends AppCompatActivity {
 
     @Override
     public void onStop() {
-        compositeDisposableBasket.clear();
         super.onStop();
     }
 
@@ -118,29 +116,25 @@ public class SearchActivity extends AppCompatActivity {
 
 
     private void updateCost() {
-        compositeDisposableBasket.add(Common.basketCartRepository.getBasketCarts()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(carts -> {
-                    if (carts.size() == 0) {
-                        binding.basket.setText(String.format("0 %s", LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
-                        binding.basket.setVisibility(View.GONE);
-                    } else {
-                        binding.basket.setVisibility(View.VISIBLE);
-                        BigDecimal basketPrice = new BigDecimal("0");
-                        for (BasketCart cart : carts) {
-                            BigDecimal costCurrent = new BigDecimal(cart.finalPrice);
-                            for (Modifier modifier : cart.modifier) {
-                                costCurrent = costCurrent.add(new BigDecimal(modifier.getValue()));
-                            }
-                            costCurrent = costCurrent.multiply(new BigDecimal(cart.count));
-                            basketPrice = basketPrice.add(costCurrent);
-                        }
+        List<BasketCart> carts = Common.basketCartRepository.getBasketCartsList();
+        if (carts.size() == 0) {
+            binding.basket.setText(String.format("0 %s", LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
+            binding.basket.setVisibility(View.GONE);
+        } else {
+            binding.basket.setVisibility(View.VISIBLE);
+            BigDecimal basketPrice = new BigDecimal("0");
+            for (BasketCart cart : carts) {
+                BigDecimal costCurrent = new BigDecimal(cart.finalPrice);
+                for (Modifier modifier : cart.modifier) {
+                    costCurrent = costCurrent.add(new BigDecimal(modifier.getValue()));
+                }
+                costCurrent = costCurrent.multiply(new BigDecimal(cart.count));
+                basketPrice = basketPrice.add(costCurrent);
+            }
 
-                        binding.basket.setText(String.format("%s %s", basketPrice.toString(), LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
-                        Log.d(AlexTAG.debug, "Method updateCost() - carts.size(): " + carts.size() + "\n" +
-                                "basketPrice.toString(): " + basketPrice.toString());
-                    }
-                }));
+            binding.basket.setText(String.format("%s %s", basketPrice.toString(), LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
+            Log.d(AlexTAG.debug, "Method updateCost() - carts.size(): " + carts.size() + "\n" +
+                    "basketPrice.toString(): " + basketPrice.toString());
+        }
     }
 }

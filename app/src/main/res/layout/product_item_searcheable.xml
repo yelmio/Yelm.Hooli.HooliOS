@@ -1,9 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/containerProduct"
     android:layout_width="match_parent"
     android:layout_height="100dp">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/priceLayout"
+        app:layout_constraintStart_toEndOf="@+id/imageCard"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start|center_vertical"
+            android:maxLines="2"
+            android:textColor="@color/colorText"
+            android:textSize="18sp"
+            android:theme="@style/ProDisplayTextStyle" />
+
+        <TextView
+            android:id="@+id/discountProcent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/discount_text_back"
+            android:gravity="center_vertical"
+            android:includeFontPadding="false"
+            android:padding="4dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:singleLine="true"
+            android:text="-20%"
+            android:textColor="@color/whiteColor"
+            android:theme="@style/ProDisplayTextStyle"
+            android:visibility="gone" />
+    </LinearLayout>
 
     <View
         android:id="@+id/separator"
@@ -13,6 +53,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
 
     <androidx.cardview.widget.CardView
         android:id="@+id/imageCard"
@@ -35,22 +76,6 @@
 
             android:scaleType="centerCrop" />
     </androidx.cardview.widget.CardView>
-
-    <TextView
-        android:id="@+id/description"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:gravity="start|center_vertical"
-        android:maxLines="2"
-        android:textColor="@color/colorText"
-        android:textSize="18sp"
-        android:theme="@style/ProDisplayTextStyle"
-        app:layout_constraintBottom_toTopOf="@+id/separator"
-        app:layout_constraintEnd_toStartOf="@+id/priceLayout"
-        app:layout_constraintStart_toEndOf="@+id/imageCard"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
         android:id="@+id/imageButton"
@@ -80,6 +105,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="end"
+            android:textColor="@color/colorTextGray"
             android:textSize="16sp"
             android:theme="@style/ProDisplayTextStyle" />
 

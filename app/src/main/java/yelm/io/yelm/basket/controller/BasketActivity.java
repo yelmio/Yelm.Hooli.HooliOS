@@ -217,7 +217,7 @@ public class BasketActivity extends AppCompatActivity implements AddressesBottom
                                 binding.deliveryCost.setText(String.format("%s %s", response.body().getDelivery().getPrice(), LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
                                 binding.time.setText(String.format("%s %s", response.body().getDelivery().getTime(), getText(R.string.delivery_time)));
                                 deliveryTime = response.body().getDelivery().getTime();
-                                deliveryCost = BigDecimal.valueOf(response.body().getDelivery().getPrice());
+                                deliveryCost = new BigDecimal(response.body().getDelivery().getPrice());
 
                                 //updateBasketCartsForExist(response.body().getDeletedID());
                             } else {

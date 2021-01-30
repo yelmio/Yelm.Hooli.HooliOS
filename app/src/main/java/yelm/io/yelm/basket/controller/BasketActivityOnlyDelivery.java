@@ -121,7 +121,7 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
                                 binding.deliveryCost.setText(String.format("%s %s", response.body().getDelivery().getPrice(), LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
                                 binding.time.setText(String.format("%s %s", response.body().getDelivery().getTime(), getText(R.string.delivery_time)));
                                 deliveryTime = response.body().getDelivery().getTime();
-                                deliveryCost = BigDecimal.valueOf(response.body().getDelivery().getPrice());
+                                deliveryCost = new BigDecimal(response.body().getDelivery().getPrice());
 
                                 new Thread(() -> updateBasketCartsQuantity(response.body().getDeletedId())).start();
 
@@ -142,6 +142,7 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
     }
 
     private void updateBasketCartsQuantity(List<DeletedId> deletedIDList) {
+        Log.d(AlexTAG.debug, "deletedIDList.size(): " + deletedIDList.size());
 
         for (BasketCart basketCart : Common.basketCartRepository.getBasketCartsList()) {
             basketCart.quantity = "9999";
@@ -149,8 +150,11 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
         }
 
         for (DeletedId deletedId : deletedIDList) {
+            Log.d(AlexTAG.debug, "deletedId.getAvailableCount(): " + deletedId.getAvailableCount());
             BasketCart basketCart = Common.basketCartRepository.getBasketCartById(deletedId.getId());
-            basketCart.quantity = deletedId.getAvailableCount();
+            if (basketCart!=null){
+                basketCart.quantity = deletedId.getAvailableCount();
+            }
             Common.basketCartRepository.updateBasketCart(basketCart);
         }
         setCompositeDisposableBasket();

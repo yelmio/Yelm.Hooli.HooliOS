@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
@@ -85,12 +86,16 @@ public class SearchProductAdapter extends RecyclerView.Adapter<SearchProductAdap
             }
         }
 
-        holder.binding.priceFinal.setText(String.format("%s %s", bd.toString(), LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
+        if (!current.getDiscount().equals("0")){
+            holder.binding.discountProcent.setText(String.format("- %s %%", current.getDiscount()));
+            holder.binding.discountProcent.setVisibility(View.VISIBLE);
+        }
 
+        holder.binding.priceFinal.setText(String.format("%s %s", bd.toString(), LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
 
         holder.binding.description.setText(current.getName());
 
-        holder.binding.weight.setText(String.format("%s %s", current.getUnitType(), current.getType()));
+        holder.binding.weight.setText(String.format("%s / %s", current.getUnitType(), current.getType()));
 
         holder.binding.containerProduct.setOnClickListener(v -> {
             Intent intent = new Intent(context, ItemActivity.class);

@@ -10,7 +10,7 @@ public class Delivery {
     private String time;
     @SerializedName("price")
     @Expose
-    private Double price;
+    private String price;
     @SerializedName("currency")
     @Expose
     private String currency;
@@ -26,11 +26,11 @@ public class Delivery {
         this.time = time;
     }
 
-    public Double getPrice() {
+    public String getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(String price) {
         this.price = price;
     }
 
