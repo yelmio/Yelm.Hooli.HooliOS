@@ -128,10 +128,6 @@ dependencies {
     //image slider
     implementation 'com.github.smarteist:autoimageslider:1.3.9'
 
-    //smartLocation
-    implementation 'io.nlopez.smartlocation:rx:3.3.1'
-    implementation 'io.nlopez.smartlocation:library:3.3.3'
-
     //spinner
     implementation 'com.github.arcadefire:nice-spinner:1.4.4'
 

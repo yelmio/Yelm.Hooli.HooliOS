@@ -18,12 +18,17 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.zxing.Result;
 
@@ -35,7 +40,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import io.nlopez.smartlocation.SmartLocation;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
@@ -123,10 +127,10 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     }
 
     private void getLocationPermission() {
-        Log.d(AlexTAG.debug, "Method getLocationPermission() - Getting location permission");
         if (hasLocationPermission()) {
             Log.d(AlexTAG.debug, "Method getLocationPermission() - Location permission granted");
-            getUserCurrentAddress();
+            //getUserCurrentAddress();
+            getUserCurrentLocation();
         } else {
             Log.d(AlexTAG.debug, "Method getLocationPermission() - Location permission not granted");
             ActivityCompat.requestPermissions(this, LOCATION_PERMISSIONS, LOCATION_PERMISSION_REQUEST_CODE);
@@ -145,24 +149,13 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
             case LOCATION_PERMISSION_REQUEST_CODE:
                 if (hasLocationPermission()) {
                     Log.d(AlexTAG.debug, "Method onRequestPermissionsResult() - Request Permissions Result: Success!");
-                    getUserCurrentAddress();
+                    //getUserCurrentAddress();
+                    getUserCurrentLocation();
                 } else if (shouldShowRequestPermissionRationale(permissions[0])) {
                     showDialogExplanationAboutRequestLocationPermission(getText(R.string.mainActivityRequestPermission).toString());
                 } else {
                     Log.d(AlexTAG.debug, "Method onRequestPermissionsResult() - Request Permissions Result: Failed!");
-                    binding.progress.setVisibility(View.GONE);
-                    if (Common.userAddressesRepository.getUserAddressesList() != null && Common.userAddressesRepository.getUserAddressesList().size() != 0) {
-                        for (UserAddress userAddress : Common.userAddressesRepository.getUserAddressesList()) {
-                            if (userAddress.isChecked) {
-                                binding.userCurrentAddress.setText(userAddress.address);
-                                getCategoriesWithProducts(userAddress.latitude, userAddress.longitude);
-                                break;
-                            }
-                        }
-                    } else {
-                        binding.userCurrentAddress.setText(getText(R.string.choose_address));
-                        getCategoriesWithProducts("0", "0");
-                    }
+                    performIfNoLocationPermission();
                 }
                 break;
             default:
@@ -170,6 +163,23 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
                         grantResults);
         }
     }
+
+    private void performIfNoLocationPermission() {
+        binding.progress.setVisibility(View.GONE);
+        if (Common.userAddressesRepository.getUserAddressesList() != null && Common.userAddressesRepository.getUserAddressesList().size() != 0) {
+            for (UserAddress userAddress : Common.userAddressesRepository.getUserAddressesList()) {
+                if (userAddress.isChecked) {
+                    binding.userCurrentAddress.setText(userAddress.address);
+                    getCategoriesWithProducts(userAddress.latitude, userAddress.longitude);
+                    break;
+                }
+            }
+        } else {
+            binding.userCurrentAddress.setText(getText(R.string.choose_address));
+            getCategoriesWithProducts("0", "0");
+        }
+    }
+
 
     private void showDialogExplanationAboutRequestLocationPermission(String message) {
         new AlertDialog.Builder(MainActivity.this)
@@ -186,69 +196,59 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         return super.shouldShowRequestPermissionRationale(permission);
     }
 
-    private void getUserCurrentAddress() {
-
-//        LocationRequest request = LocationRequest.create();
-//        request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-//        request.setNumUpdates(1);
-//        request.setInterval(0);
-//
-//        LocationServices.FusedLocationApi
-//                .requestLocationUpdates(mClient, request, new LocationListener() {
-//                    @Override
-//                    public void onLocationChanged(@NotNull Location location) {
-//                        Log.d(AlexTAG.debug, "Got a fix: " + location);
-//                    }
-//                });
-
-
-        SmartLocation.with(MainActivity.this).location()
-                .oneFix()
-                .start((Location smartLocation) -> {
-                    binding.progress.setVisibility(View.GONE);
-                    if (smartLocation == null) {
-                        Log.d(AlexTAG.debug, "Method getUserCurrentAddress() - location null - unexpected error");
-                        if (Common.userAddressesRepository.getUserAddressesList() != null && Common.userAddressesRepository.getUserAddressesList().size() != 0) {
-                            for (UserAddress userAddress : Common.userAddressesRepository.getUserAddressesList()) {
-                                if (userAddress.isChecked) {
-                                    binding.userCurrentAddress.setText(userAddress.address);
-                                    getCategoriesWithProducts(userAddress.latitude, userAddress.longitude);
-                                    break;
-                                }
-                            }
-                        } else {
-                            binding.userCurrentAddress.setText(getText(R.string.choose_address));
-                            getCategoriesWithProducts("0", "0");
-                        }
-                    } else {
-                        String userStreet = getUserStreet(smartLocation);
-                        Log.d(AlexTAG.debug, "Method getUserCurrentAddress() - userStreet: " + userStreet);
-                        if (Common.userAddressesRepository.getUserAddressByName(userStreet) == null) {
-                            for (UserAddress userAddress : Common.userAddressesRepository.getUserAddressesList()) {
-                                if (userAddress.isChecked) {
-                                    userAddress.isChecked = false;
-                                    Common.userAddressesRepository.updateUserAddresses(userAddress);
-                                    break;
-                                }
-                            }
-                            UserAddress userAddress = new UserAddress(
-                                    String.valueOf(smartLocation.getLatitude()),
-                                    String.valueOf(smartLocation.getLongitude()),
-                                    userStreet, true);
-                            Common.userAddressesRepository.insertToUserAddresses(userAddress);
-                            binding.userCurrentAddress.setText(userStreet);
-                        } else {
-                            for (UserAddress userAddress : Common.userAddressesRepository.getUserAddressesList()) {
-                                if (userAddress.isChecked) {
-                                    binding.userCurrentAddress.setText(userAddress.address);
-                                }
-                            }
-                        }
-                        getCategoriesWithProducts(String.valueOf(smartLocation.getLatitude()),
-                                String.valueOf(smartLocation.getLongitude()));
-                    }
-                });
+    private void getUserCurrentLocation() {
+        Log.d(AlexTAG.debug, "Method getUserCurrentLocation()");
+        LocationRequest locationRequest = new LocationRequest();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setNumUpdates(1);
+        locationRequest.setInterval(0);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            performIfNoLocationPermission();
+        } else {
+            LocationServices.getFusedLocationProviderClient(this).requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
+        }
     }
+
+    private LocationCallback locationCallback = new LocationCallback() {
+        @Override
+        public void onLocationResult(LocationResult locationResult) {
+            super.onLocationResult(locationResult);
+            binding.progress.setVisibility(View.GONE);
+            if (locationResult != null && locationResult.getLastLocation() != null) {
+                double latitude = locationResult.getLastLocation().getLatitude();
+                double longitude = locationResult.getLastLocation().getLongitude();
+                Log.d("AlexDebug", "location updated:" + "\nlatitude: " + latitude + "\nlongitude: " + longitude);
+                String userStreet = getUserStreet(locationResult.getLastLocation());
+                Log.d(AlexTAG.debug, "Method getUserCurrentLocation() - userStreet: " + userStreet);
+
+                for (UserAddress userAddress : Common.userAddressesRepository.getUserAddressesList()) {
+                    if (userAddress.isChecked) {
+                        userAddress.isChecked = false;
+                        Common.userAddressesRepository.updateUserAddresses(userAddress);
+                        break;
+                    }
+                }
+                UserAddress currentUserAddress = Common.userAddressesRepository.getUserAddressByName(userStreet);
+                if (currentUserAddress == null) {
+                    UserAddress userAddress = new UserAddress(
+                            String.valueOf(latitude),
+                            String.valueOf(longitude),
+                            userStreet, true);
+                    Common.userAddressesRepository.insertToUserAddresses(userAddress);
+                    binding.userCurrentAddress.setText(userAddress.address);
+                } else {
+                    currentUserAddress.isChecked = true;
+                    Common.userAddressesRepository.updateUserAddresses(currentUserAddress);
+                    binding.userCurrentAddress.setText(currentUserAddress.address);
+                }
+                getCategoriesWithProducts(String.valueOf(latitude),
+                        String.valueOf(longitude));
+            } else {
+                Log.d(AlexTAG.debug, "Method getUserCurrentLocation() - location null - unexpected error");
+                performIfNoLocationPermission();
+            }
+        }
+    };
 
     private String getUserStreet(Location location) {
         String userStreet = "";

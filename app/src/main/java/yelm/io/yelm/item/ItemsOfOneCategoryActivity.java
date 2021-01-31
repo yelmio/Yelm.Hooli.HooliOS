@@ -60,6 +60,7 @@ public class ItemsOfOneCategoryActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         updateCost();
+        rewriteView();
         Log.d(AlexTAG.debug, "onStart");
     }
 
@@ -68,9 +69,6 @@ public class ItemsOfOneCategoryActivity extends AppCompatActivity {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(carts -> {
-
-                    rewriteView();
-
                     if (carts.size() == 0) {
                         binding.basketLayout.setVisibility(View.GONE);
                         binding.basket.setText(String.format("0 %s", LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));

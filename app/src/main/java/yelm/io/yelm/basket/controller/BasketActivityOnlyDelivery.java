@@ -154,8 +154,8 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
             BasketCart basketCart = Common.basketCartRepository.getBasketCartById(deletedId.getId());
             if (basketCart!=null){
                 basketCart.quantity = deletedId.getAvailableCount();
+                Common.basketCartRepository.updateBasketCart(basketCart);
             }
-            Common.basketCartRepository.updateBasketCart(basketCart);
         }
         setCompositeDisposableBasket();
     }
