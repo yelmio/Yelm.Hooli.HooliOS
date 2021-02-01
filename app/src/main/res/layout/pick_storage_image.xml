@@ -11,6 +11,7 @@
     app:elevation="0dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/imageRoot"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -19,6 +20,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
+            android:duplicateParentState="true"
+
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -32,6 +35,7 @@
             android:layout_marginEnd="4dp"
             android:background="@drawable/toggle_chose_picture"
             android:button="@null"
+            android:duplicateParentState="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>

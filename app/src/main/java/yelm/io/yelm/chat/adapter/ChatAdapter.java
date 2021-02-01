@@ -92,14 +92,15 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ChatContent chatContent = chatContentList.get(position);
 
-        holder.nameSender.setText(chatContent.getNameSender());
         holder.layoutContent.removeAllViews();
         holder.layoutContent.setBackgroundResource(0);
         if (holder.getItemViewType() == MSG_TYPE_RIGHT) {
+            holder.nameSender.setVisibility(View.GONE);
             Calendar date = GregorianCalendar.getInstance();
             SimpleDateFormat formatterDate = new SimpleDateFormat("HH:mm");
             holder.date.setText(formatterDate.format(date.getTime()));
         } else {
+            holder.nameSender.setText(chatContent.getNameSender());
             holder.date.setText("date");
         }
         if (!chatContent.getTextSender().isEmpty()) {

@@ -101,7 +101,6 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
     }
 
     private void binding() {
-
         binding.sendMessage.setOnClickListener(v -> {
             if (!binding.messageField.getText().toString().trim().isEmpty()) {
                 ChatContent temp = new ChatContent(userID, binding.messageField.getText().toString().trim(), "", null);
@@ -111,7 +110,6 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
             }
         });
         binding.back.setOnClickListener(v -> finish());
-
         binding.rootLayout.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
             Rect r = new Rect();
             binding.rootLayout.getWindowVisibleDisplayFrame(r);
@@ -258,6 +256,7 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
 
 
             }
+            pickImageBottomSheet.dismiss();
         }
 
 

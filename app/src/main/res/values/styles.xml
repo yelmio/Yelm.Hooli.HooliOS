@@ -24,13 +24,25 @@
     </style>
 
 
+    <style name="ProDisplayTextStyle" parent="">
+        <item name="android:fontFamily">@font/sf_prodisplay_regular</item>
+    </style>
+
     <!--for coordinator layout in NewsActivity -->
-    <style name="CollapsingTextAppearance" parent="Base.TextAppearance.AppCompat.Widget.ActionBar.Title"/>
-    <style name="CollapsingTextAppearance.Inverse" >
+    <style name="CollapsingTextAppearance" parent="Base.TextAppearance.AppCompat.Widget.ActionBar.Title">
+    <item name="android:textSize">22sp</item>
+    <item name="android:textStyle">bold</item>
+    <item name="android:theme">@style/ProDisplayTextStyle</item>
+    <item name="android:fontFamily">@font/sf_prodisplay_regular</item>
+    <item name="android:textColor">@color/colorText</item>
+    </style>
+
+    <style name="CollapsingTextAppearance.Inverse" parent="Base.TextAppearance.AppCompat.Widget.ActionBar.Title" >
         <item name="android:textSize">22sp</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:theme">@style/ProDisplayTextStyle</item>
         <item name="android:fontFamily">@font/sf_prodisplay_regular</item>
-        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textColor">@color/colorText</item>
     </style>
 
 
@@ -262,9 +274,7 @@
     </style>
 
 
-    <style name="ProDisplayTextStyle" parent="">
-        <item name="android:fontFamily">@font/sf_prodisplay_regular</item>
-    </style>
+
 
 
 </resources>

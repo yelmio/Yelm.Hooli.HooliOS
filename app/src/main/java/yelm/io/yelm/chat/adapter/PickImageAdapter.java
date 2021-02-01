@@ -187,7 +187,6 @@ public class PickImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     if (cameraListener != null) {
                         cameraListener.onClick();
                     }
-
                 });
 
                 ((HeaderViewHolder) holder).binding.viewFinder.post(startCamera);
@@ -209,8 +208,9 @@ public class PickImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     .resize(200, 0)
                     .into(((ItemViewHolder) holder).binding.image);
 
-            ((ItemViewHolder) holder).binding.selector.setOnClickListener(view -> {
+            ((ItemViewHolder) holder).binding.imageRoot.setOnClickListener(view -> {
                 checked[position - 1] = !checked[position - 1];
+                ((ItemViewHolder) holder).binding.selector.setChecked(checked[position - 1]);
                 if (listener != null) {
                     listener.selectedPicture(position - 1, path, checked[position - 1]);
                 }

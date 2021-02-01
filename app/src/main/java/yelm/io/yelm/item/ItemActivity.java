@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.material.appbar.AppBarLayout;
 import com.squareup.picasso.Picasso;
@@ -47,8 +48,7 @@ public class ItemActivity extends AppCompatActivity implements AppBarLayout.OnOf
 
         Item item = getIntent().getParcelableExtra("item");
         if (item != null) {
-            finalPrice = new BigDecimal(item.getPrice());
-            setPrice(item, finalPrice);
+            finalPrice = getPrice(item, new BigDecimal(item.getPrice()));
             binding(item);
             bindingAddSubtractProductCount();
             bindingAddProductToBasket(item);
@@ -57,7 +57,7 @@ public class ItemActivity extends AppCompatActivity implements AppBarLayout.OnOf
         }
     }
 
-    private void setPrice(Item product, BigDecimal bd) {
+    private BigDecimal getPrice(Item product, BigDecimal bd) {
         if (!product.getDiscount().equals("0")) {
             bd = new BigDecimal(product.getDiscount()).divide(new BigDecimal("100"), 2, BigDecimal.ROUND_HALF_UP);
             bd = bd.multiply(new BigDecimal(product.getPrice())).setScale(2, BigDecimal.ROUND_HALF_UP);
@@ -68,6 +68,7 @@ public class ItemActivity extends AppCompatActivity implements AppBarLayout.OnOf
             }
         }
         binding.cost.setText(String.format("%s %s", bd.toString(), LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
+        return bd;
     }
 
     private void binding(Item item) {
@@ -113,7 +114,6 @@ public class ItemActivity extends AppCompatActivity implements AppBarLayout.OnOf
                 .centerCrop()
                 .resize(800, 0)
                 .into(binding.image);
-
     }
 
     private void bindingAddSubtractProductCount() {
@@ -145,8 +145,14 @@ public class ItemActivity extends AppCompatActivity implements AppBarLayout.OnOf
     }
 
     private void bindingAddProductToBasket(Item product) {
-
         binding.addToCart.setOnClickListener(v -> {
+            String added = (String) (binding.countProducts.getText().toString().equals("1") ? getText(R.string.productNewActivityAddedOne) : getText(R.string.productNewActivityAddedMulti));
+            Toast.makeText(this, "" +
+                    product.getName() + " " +
+                    binding.countProducts.getText().toString() + " " +
+                    getText(R.string.productNewActivityPC) + " " +
+                    added + " " +
+                    getText(R.string.productNewActivityAddedToBasket), Toast.LENGTH_SHORT).show();
 
             List<BasketCart> listCartsByID = Common.basketCartRepository.getListBasketCartByItemID(product.getId());
 

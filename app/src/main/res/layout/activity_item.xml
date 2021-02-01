@@ -270,7 +270,7 @@
                         android:layout_height="28dp"
                         android:layout_marginEnd="14dp"
                         android:adjustViewBounds="true"
-                        android:background="@drawable/button_circle_default"
+                        android:background="@drawable/circle_button_selector"
                         android:padding="4dp"
                         android:scaleType="centerInside"
                         android:theme="@style/ProDisplayTextStyle"
@@ -293,7 +293,7 @@
                         android:layout_height="28dp"
                         android:layout_marginStart="14dp"
                         android:adjustViewBounds="true"
-                        android:background="@drawable/button_circle_default"
+                        android:background="@drawable/circle_button_selector"
                         android:padding="4dp"
                         android:scaleType="centerInside"
                         android:theme="@style/ProDisplayTextStyle"
@@ -320,14 +320,13 @@
     </androidx.cardview.widget.CardView>
 
 
-
     <ImageButton
         android:id="@+id/back"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="12dp"
-        android:background="@drawable/address_back_view_blue"
+        android:background="@drawable/circle_button_selector"
         app:srcCompat="@drawable/ic_arrow_back_24" />
 
 </RelativeLayout>

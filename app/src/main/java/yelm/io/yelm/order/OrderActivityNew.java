@@ -157,7 +157,6 @@ public class OrderActivityNew extends AppCompatActivity {
 
 
     private void bindingChosePaymentType() {
-
         binding.cardPay.setOnClickListener(view -> {
             binding.cardPay.setCardBackgroundColor(getResources().getColor(R.color.mainThemeColor));
             binding.cardPayText.setTextColor(getResources().getColor(R.color.whiteColor));
@@ -166,7 +165,6 @@ public class OrderActivityNew extends AppCompatActivity {
             binding.paymentCard.setVisibility(View.VISIBLE);
             binding.googlePay.setVisibility(View.GONE);
         });
-
         binding.googlepayPay.setOnClickListener(view -> {
             binding.googlepayPay.setCardBackgroundColor(getResources().getColor(R.color.mainThemeColor));
             binding.googlePayText.setTextColor(getResources().getColor(R.color.whiteColor));

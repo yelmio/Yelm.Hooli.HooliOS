@@ -8,6 +8,11 @@
     <string name="product_specifications">Харатеристики</string>
     <string name="product_modifier">Дополнения:</string>
     <string name="button_to_basket">В корзину</string>
+    <string name="productNewActivityAddedMulti">добавлены</string>
+    <string name="productNewActivityAddedToBasket">в корзину</string>
+    <string name="productNewActivityAddedOne">добавлен</string>
+    <string name="productNewActivity">добавлены</string>
+    <string name="productNewActivityPC">шт.</string>
     <string name="productActivityAddToCart">Добавить в корзину</string>
 
     <!-- AddressPickupChooseActivity -->

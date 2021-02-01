@@ -119,7 +119,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:background="@drawable/address_back_view_blue"
+            android:background="@drawable/circle_button_selector"
             android:padding="6dp"
 
             android:scaleType="fitCenter"
@@ -153,7 +153,8 @@
         android:layout_below="@+id/layoutTitle"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp">
+        android:layout_marginEnd="16dp"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/textView29"
@@ -232,7 +233,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="TextView"
+            android:text="address"
             android:textColor="@color/colorTextGray"
             android:textSize="16sp"
             android:theme="@style/ProDisplayTextStyle"
@@ -255,9 +256,10 @@
                 android:layout_weight="1"
                 android:background="@drawable/stroke_back"
                 android:ems="10"
+                android:inputType="text"
                 android:hint="@string/entrance"
-                android:inputType="textPersonName"
                 android:paddingStart="16dp"
+                android:paddingEnd="16sp"
                 android:theme="@style/ProDisplayTextStyle" />
 
             <EditText
@@ -269,8 +271,10 @@
                 android:layout_weight="1"
                 android:background="@drawable/stroke_back"
                 android:ems="10"
+                android:maxLength="3"
                 android:hint="@string/floor"
-                android:inputType="textPersonName"
+                android:inputType="number"
+                android:paddingEnd="16sp"
                 android:paddingStart="16dp"
                 android:theme="@style/ProDisplayTextStyle" />
 
@@ -282,8 +286,9 @@
                 android:background="@drawable/stroke_back"
                 android:ems="10"
                 android:hint="@string/appartament"
-                android:inputType="textPersonName"
+                android:inputType="text"
                 android:paddingStart="16dp"
+                android:paddingEnd="16sp"
                 android:theme="@style/ProDisplayTextStyle" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

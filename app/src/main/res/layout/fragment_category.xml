@@ -30,7 +30,7 @@
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="2dp"
             android:adjustViewBounds="true"
-            android:background="@drawable/address_back_view_blue"
+            android:background="@drawable/circle_button_selector"
             android:padding="6dp"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_arrow_forward_24_white"

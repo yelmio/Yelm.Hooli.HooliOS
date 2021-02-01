@@ -100,9 +100,8 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         setContentView(binding.getRoot());
 
         binding();
-
+        getCategoriesWithProducts("0", "0");
         initNews();
-
         getLocationPermission();
     }
 
@@ -149,7 +148,6 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
             case LOCATION_PERMISSION_REQUEST_CODE:
                 if (hasLocationPermission()) {
                     Log.d(AlexTAG.debug, "Method onRequestPermissionsResult() - Request Permissions Result: Success!");
-                    //getUserCurrentAddress();
                     getUserCurrentLocation();
                 } else if (shouldShowRequestPermissionRationale(permissions[0])) {
                     showDialogExplanationAboutRequestLocationPermission(getText(R.string.mainActivityRequestPermission).toString());
@@ -176,10 +174,8 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
             }
         } else {
             binding.userCurrentAddress.setText(getText(R.string.choose_address));
-            getCategoriesWithProducts("0", "0");
         }
     }
-
 
     private void showDialogExplanationAboutRequestLocationPermission(String message) {
         new AlertDialog.Builder(MainActivity.this)
@@ -395,8 +391,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
             for (UserAddress address : Common.userAddressesRepository.getUserAddressesList()) {
                 if (address.isChecked) {
                     binding.userCurrentAddress.setText(address.address);
-                    //getCategoriesWithProducts(address.latitude, address.longitude);
-                    return;
+                    break;
                 }
             }
         }

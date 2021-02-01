@@ -1,6 +1,7 @@
 package yelm.io.yelm.main.news;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -20,9 +21,12 @@ import com.squareup.picasso.Picasso;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.List;
 
 import yelm.io.yelm.R;
 import yelm.io.yelm.databinding.ActivityNewsBinding;
+import yelm.io.yelm.main.adapter.ProductsNewMenuSquareImageAdapter;
+import yelm.io.yelm.main.model.Item;
 
 public class NewsActivity extends AppCompatActivity implements AppBarLayout.OnOffsetChangedListener, Html.ImageGetter {
 
@@ -30,6 +34,7 @@ public class NewsActivity extends AppCompatActivity implements AppBarLayout.OnOf
     private int maxScrollSize;
     private static final int PERCENTAGE_TO_SHOW_IMAGE = 80;
     private boolean isImageHidden;
+    ProductsNewMenuSquareImageAdapter productsSquareAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +45,11 @@ public class NewsActivity extends AppCompatActivity implements AppBarLayout.OnOf
         if (news != null) {
             binding(news);
         }
+        List<Item> products = getIntent().getParcelableArrayListExtra("items");
+        productsSquareAdapter = new ProductsNewMenuSquareImageAdapter(this, products);
+        binding.recycler.setLayoutManager(new StaggeredGridLayoutManager(2, 1));
+        binding.recycler.setAdapter(productsSquareAdapter);
+
 
 //        binding.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -107,12 +117,12 @@ public class NewsActivity extends AppCompatActivity implements AppBarLayout.OnOf
     }
 
 
-     class HtmlImageLoad extends AsyncTask<Object, Void, Bitmap> {
-         public HtmlImageLoad() {
-             super();
-         }
+    class HtmlImageLoad extends AsyncTask<Object, Void, Bitmap> {
+        public HtmlImageLoad() {
+            super();
+        }
 
-         private LevelListDrawable drawable;
+        private LevelListDrawable drawable;
 
         @Override
         protected Bitmap doInBackground(Object... params) {

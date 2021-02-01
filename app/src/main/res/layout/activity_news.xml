@@ -52,6 +52,8 @@
                         android:background="@drawable/coordinator_layout_top_rounded_decoration"
                         android:textColor="@color/colorText"
                         android:textSize="24sp"
+                        android:textStyle="bold"
+                        android:theme="@style/ProDisplayTextStyle"
                         android:visibility="visible" />
                 </RelativeLayout>
 
@@ -81,9 +83,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
                 android:background="@color/whiteColor"
                 android:orientation="vertical">
 
@@ -91,10 +91,32 @@
                     android:id="@+id/description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
                     android:fontFamily="@font/sf_prodisplay_regular"
                     android:lineSpacingExtra="4dp"
                     android:textColor="@color/colorText"
                     android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/title"
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:fontFamily="@font/sf_prodisplay_regular"
+                    android:text="@string/products"
+                    android:textColor="@color/colorText"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler"
+                    android:layout_marginStart="8dp" android:layout_width="match_parent"
+                    android:layout_marginEnd="8dp"
+                    android:layout_height="match_parent" />
 
                 <View
                     android:id="@+id/footer"
@@ -112,7 +134,7 @@
         android:layout_height="32dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="12dp"
-        android:background="@drawable/address_back_view_blue"
+        android:background="@drawable/circle_button_selector"
         app:srcCompat="@drawable/ic_arrow_back_24" />
 
 </RelativeLayout>

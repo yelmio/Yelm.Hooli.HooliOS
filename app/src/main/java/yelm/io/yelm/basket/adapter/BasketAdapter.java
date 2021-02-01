@@ -38,13 +38,7 @@ public class BasketAdapter extends RecyclerView.Adapter<BasketAdapter.BasketHold
 
         holder.binding.countProducts.setText(current.count);
 
-        //correct layout if modifiers exist
         if (current.modifier.size() != 0) {
-//            ConstraintLayout constraintLayout = holder.binding.containerProduct;
-//            ConstraintSet constraintSet = new ConstraintSet();
-//            constraintSet.clone(constraintLayout);
-//            constraintSet.connect(holder.binding.separator.getId(), ConstraintSet.TOP, holder.binding.addSubstractLayout.getId(), ConstraintSet.BOTTOM, (int) context.getResources().getDimension(R.dimen.ui_margin_8dp));
-//            constraintSet.applyTo(constraintLayout);
             holder.binding.modifiers.setVisibility(View.VISIBLE);
             StringBuilder modifiers = getModifiers(current.modifier);
             holder.binding.modifiers.setText(modifiers.toString());
@@ -94,7 +88,6 @@ public class BasketAdapter extends RecyclerView.Adapter<BasketAdapter.BasketHold
         if (new BigDecimal(current.count).compareTo(new BigDecimal(current.quantity)) > 0) {
             holder.binding.textProductIsOver.setVisibility(View.VISIBLE);
             holder.binding.addProduct.setEnabled(false);
-            holder.binding.addProduct.setBackground(context.getDrawable(R.drawable.button_circle_disable));
             holder.binding.textProductIsOver.setText(String.format("%s: %s", context.getText(R.string.basketActivityProductIsOver), current.quantity));
         }
     }

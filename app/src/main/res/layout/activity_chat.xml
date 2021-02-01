@@ -21,7 +21,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:background="@drawable/address_back_view_blue"
+            android:background="@drawable/circle_button_selector"
             android:padding="6dp"
             android:scaleType="fitCenter"
             app:srcCompat="@drawable/ic_arrow_back_24" />
@@ -67,7 +67,7 @@
             android:id="@+id/choosePicture"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/address_back_view_blue"
+            android:background="@drawable/circle_button_selector"
             android:padding="8dp"
             app:srcCompat="@drawable/ic_add_photo_24" />
 
@@ -94,7 +94,7 @@
             android:id="@+id/sendMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/address_back_view_blue"
+            android:background="@drawable/circle_button_selector"
             android:padding="10dp"
             app:srcCompat="@drawable/ic_send_message_24" />
 

@@ -65,20 +65,21 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsHolder> {
         }
 
         holder.binding.image.setOnClickListener(v -> {
-            if (currentNews.getItems().size() == 0) {
-                Intent intent = new Intent(context, NewsActivity.class);
-                intent.putExtra("news", currentNews);
-                context.startActivity(intent);
-            } else if (currentNews.getItems().size() == 1) {
-                Intent intentItem = new Intent(context, ItemActivity.class);
-                intentItem.putExtra("item", currentNews.getItems().get(0));
-                context.startActivity(intentItem);
-            } else {
-                Intent intentItem = new Intent(context, ItemsOfOneCategoryActivity.class);
-                intentItem.putParcelableArrayListExtra("items", (ArrayList<? extends Parcelable>) currentNews.getItems());
-                intentItem.putExtra("title", currentNews.getTitle());
-                context.startActivity(intentItem);
-            }
+            // if (currentNews.getItems().size() == 0) {
+            Intent intent = new Intent(context, NewsActivity.class);
+            intent.putExtra("news", currentNews);
+            intent.putParcelableArrayListExtra("items", (ArrayList<? extends Parcelable>) currentNews.getItems());
+            context.startActivity(intent);
+//            } else if (currentNews.getItems().size() == 1) {
+//                Intent intentItem = new Intent(context, ItemActivity.class);
+//                intentItem.putExtra("item", currentNews.getItems().get(0));
+//                context.startActivity(intentItem);
+//            } else {
+//                Intent intentItem = new Intent(context, ItemsOfOneCategoryActivity.class);
+//                intentItem.putParcelableArrayListExtra("items", (ArrayList<? extends Parcelable>) currentNews.getItems());
+//                intentItem.putExtra("title", currentNews.getTitle());
+//                context.startActivity(intentItem);
+//            }
         });
         //holder.image.setOnClickListener(view -> setLinks(currentNews.getAttachments()));
     }
