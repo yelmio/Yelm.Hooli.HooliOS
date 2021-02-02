@@ -26,6 +26,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import yelm.io.yelm.R;
 import yelm.io.yelm.loader.model.ApplicationSettings;
+import yelm.io.yelm.loader.model.ChatSettingsClass;
 import yelm.io.yelm.support_stuff.AlexTAG;
 import yelm.io.yelm.database_new.basket_new.BasketCartDataSource;
 import yelm.io.yelm.database_new.basket_new.BasketCartRepository;
@@ -58,6 +59,10 @@ public class LoaderActivity extends AppCompatActivity {
     public static final String PRICE_IN = "PRICE_IN";
     public static final String CURRENCY = "CNT";
     public static final String COUNTRY_CODE = "COUNTRY_CODE";
+    public static final String API_TOKEN = "API_TOKEN";
+    public static final String ROOM_ID = "ROOM_ID";
+    public static final String SHOP_ID = "SHOP_ID";
+    public static final String CLIENT_ID = "CLIENT_ID";
 
     public static SharedPreferences settings;
     private static final String APP_PREFERENCES = "settings";
@@ -112,7 +117,8 @@ public class LoaderActivity extends AppCompatActivity {
     private void checkUser() {
         if (settings.contains(USER_NAME)) {
             Log.d(AlexTAG.debug, "Method checkUser() - user exist: " + settings.getString(USER_NAME, ""));
-            getApplicationSettings(settings.getString(USER_NAME, ""));
+            getApplicationSettings();
+            getChatSettings(settings.getString(USER_NAME, ""));
         } else {
 //            User user = new User(0, "", "", "", "", "", "", "", "", "");
             //Common.userRepository.insertToUser(user);
@@ -128,9 +134,9 @@ public class LoaderActivity extends AppCompatActivity {
                                 if (response.body() != null) {
                                     SharedPreferences.Editor editor = settings.edit();
                                     editor.putString(USER_NAME, response.body().getLogin()).apply();
-                                    Log.d(AlexTAG.debug, "Method checkUser() - created user:" +
-                                            " " + settings.getString(USER_NAME, ""));
-                                    getApplicationSettings(response.body().getLogin());
+                                    Log.d(AlexTAG.debug, "Method checkUser() - created user: " + settings.getString(USER_NAME, ""));
+                                    getChatSettings(settings.getString(USER_NAME, ""));
+                                    getApplicationSettings();
                                 } else {
                                     Log.e(AlexTAG.error, "Method checkUser() - by some reason response is null!");
                                 }
@@ -149,16 +155,14 @@ public class LoaderActivity extends AppCompatActivity {
     }
 
     //we get main settings of app
-    private void getApplicationSettings(String login) {
+    private void getApplicationSettings() {
         RetrofitClientNew.
                 getClient(RestAPI.URL_API_MAIN).
                 create(RestAPI.class).
                 getAppSettings(RestAPI.PLATFORM_NUMBER,
                         getResources().getConfiguration().locale.getLanguage(),
-                        getResources().getConfiguration().locale.getCountry(),
-                        "0",
-                        "0",
-                        login).
+                        getResources().getConfiguration().locale.getCountry()
+                        ).
                 enqueue(new Callback<ApplicationSettings>() {
                     @Override
                     public void onResponse(@NotNull Call<ApplicationSettings> call, @NotNull final Response<ApplicationSettings> response) {
@@ -226,6 +230,43 @@ public class LoaderActivity extends AppCompatActivity {
             snackbar.show();
 
         }
+    }
+
+    private void getChatSettings(String login) {
+
+        RetrofitClientNew.
+                getClient(RestAPI.URL_API_MAIN).
+                create(RestAPI.class).
+                getChatSettings(login).
+                enqueue(new Callback<ChatSettingsClass>() {
+                    @Override
+                    public void onResponse(@NotNull Call<ChatSettingsClass> call, @NotNull final Response<ChatSettingsClass> response) {
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                Log.d(AlexTAG.debug, "ChatSettingsClass: " + response.body().toString());
+                                SharedPreferences.Editor editor = settings.edit();
+                                editor.putString(API_TOKEN, response.body().getApiToken());
+                                editor.putString(ROOM_ID, response.body().getRoomId());
+                                editor.putString(SHOP_ID, response.body().getShop());
+                                editor.putString(CLIENT_ID, response.body().getClient());
+                                editor.apply();
+                            } else {
+                                Log.e(AlexTAG.error, "Method getChatSettings(): by some reason response is null!");
+                            }
+                        } else {
+                            Log.e(AlexTAG.error, "Method getChatSettings() response is not successful." +
+                                    " Code: " + response.code() + "Message: " + response.message());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NotNull Call<ChatSettingsClass> call, @NotNull Throwable t) {
+                        Log.e(AlexTAG.error, "Method getChatSettings() failure: " + t.toString());
+                    }
+                });
+
+
+
     }
 
 

@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import com.google.android.gms.wallet.PaymentMethodToken;
 import com.google.android.gms.wallet.PaymentsClient;
 import com.google.android.gms.wallet.TransactionInfo;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,6 +46,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import ru.cloudpayments.sdk.three_ds.ThreeDsDialogFragment;
 import yelm.io.yelm.database_old.basket.Cart;
+import yelm.io.yelm.loader.model.UserLoginResponse;
 import yelm.io.yelm.old_version.maps.MapActivity;
 import yelm.io.yelm.payment.PayApi;
 import yelm.io.yelm.payment.models.Transaction;
@@ -94,7 +97,81 @@ public class OrderActivityNew extends AppCompatActivity {
 
         bindingChosePaymentType();
 
+        testOrder();
+
+
     }
+
+    private void testOrder() {
+        //payment = ['Card', 'GooglePay', 'ApplePay]
+        List<BasketCart> basketCarts = Common.basketCartRepository.getBasketCartsList();
+        JSONArray jsonObjectItems = new JSONArray();
+        try {
+            for (int i = 0; i < basketCarts.size(); i++) {
+                BigDecimal fullPrice = new BigDecimal(basketCarts.get(i).finalPrice).multiply(new BigDecimal(basketCarts.get(i).count));
+                JSONObject jsonObjectItem = new JSONObject();
+                jsonObjectItem
+                        .put("id", basketCarts.get(i).itemID)
+                        //.put("name", basketCarts.get(i).name)
+                        //.put("Quantity", basketCarts.get(i).quantity)
+                        //.put("startPrice", basketCarts.get(i).startPrice)
+                        //.put("price_item", basketCarts.get(i).finalPrice)
+                        //.put("type", basketCarts.get(i).type)
+                        .put("count", basketCarts.get(i).count
+                        //.put("imageUrl", basketCarts.get(i).imageUrl)
+                        //.put("quantityType", basketCarts.get(i).quantityType)
+                        //.put("discount_item", basketCarts.get(i).discount
+                                //.put("fullPrice", fullPrice
+                        );
+                jsonObjectItems.put(jsonObjectItem);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Log.d(AlexTAG.debug, "jsonObjectItems: " + jsonObjectItems.toString());
+
+        RetrofitClientNew.
+                getClient(RestAPI.URL_API_MAIN)
+                .create(RestAPI.class)
+                .sendOrder("+79856185757",
+                        "test",
+                        "Moscow",
+                        "45",
+                        "4",
+                        "45",
+                        "4",
+                        "546.50",
+                        "0",
+                        jsonObjectItems.toString(),
+                        "delivery",
+                        "Card",
+                        RestAPI.PLATFORM_NUMBER,
+                        "3",
+                        "4353363463"
+                )
+
+                .enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(@NotNull Call<ResponseBody> call, @NotNull Response<ResponseBody> response) {
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+
+                            } else {
+                                Log.e(AlexTAG.error, "Method checkUser() - by some reason response is null!");
+                            }
+                        } else {
+                            Log.e(AlexTAG.error, "Method checkUser() - response is not successful. " +
+                                    "Code: " + response.code() + "Message: " + response.message());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NotNull Call<ResponseBody> call, @NotNull Throwable t) {
+                        Log.e(AlexTAG.error, "Method checkUser() - failure: " + t.toString());
+                    }
+                });
+    }
+
 
     private boolean makeOrder(String paymentType) {
         String phone = binding.phone.getText().toString();
@@ -113,34 +190,34 @@ public class OrderActivityNew extends AppCompatActivity {
                 if (userAddress.isChecked) {
                     binding.userAddress.setText(userAddress.address);
                     jsonData.put("address", userAddress.address);
-                    jsonData.put("latitude", userAddress.latitude);
-                    jsonData.put("longitude", userAddress.longitude);
                     break;
                 }
             }
 
-            jsonData.put("paymentType", paymentType);
-            jsonData.put("apartment", binding.apartament.getText().toString());
+            jsonData.put("payment", paymentType);
+            jsonData.put("delivery", "delivery");
+            jsonData.put("flat", binding.apartament.getText().toString());
             jsonData.put("floor", binding.floor.getText().toString());
             jsonData.put("entrance", binding.entrance.getText().toString());
-            jsonData.put("finalPrice", getIntent().getStringExtra("finalPrice"));
+            jsonData.put("total", getIntent().getStringExtra("finalPrice"));
             List<BasketCart> basketCarts = Common.basketCartRepository.getBasketCartsList();
             JSONArray jsonObjectItems = new JSONArray();
             for (int i = 0; i < basketCarts.size(); i++) {
                 BigDecimal fullPrice = new BigDecimal(basketCarts.get(i).finalPrice).multiply(new BigDecimal(basketCarts.get(i).count));
                 JSONObject jsonObjectItem = new JSONObject();
                 jsonObjectItem
-                        .put("itemID", basketCarts.get(i).itemID)
-                        .put("name", basketCarts.get(i).name)
+                        .put("item_id", basketCarts.get(i).itemID)
+                        //.put("name", basketCarts.get(i).name)
                         //.put("Quantity", basketCarts.get(i).quantity)
-                        .put("startPrice", basketCarts.get(i).startPrice)
-                        .put("finalPrice", basketCarts.get(i).finalPrice)
-                        .put("type", basketCarts.get(i).type)
-                        .put("count", basketCarts.get(i).count)
-                        .put("imageUrl", basketCarts.get(i).imageUrl)
-                        .put("quantityType", basketCarts.get(i).quantityType)
-                        .put("discount", basketCarts.get(i).discount)
-                        .put("fullPrice", fullPrice);
+                        //.put("startPrice", basketCarts.get(i).startPrice)
+                        .put("price_item", basketCarts.get(i).finalPrice)
+                        //.put("type", basketCarts.get(i).type)
+                        .put("quantity_item", basketCarts.get(i).count)
+                        //.put("imageUrl", basketCarts.get(i).imageUrl)
+                        //.put("quantityType", basketCarts.get(i).quantityType)
+                        .put("discount_item", basketCarts.get(i).discount
+                                //.put("fullPrice", fullPrice
+                        );
                 jsonObjectItems.put(jsonObjectItem);
             }
             jsonData.put("items", jsonObjectItems);
@@ -250,7 +327,7 @@ public class OrderActivityNew extends AppCompatActivity {
                 Intent intent = new Intent(OrderActivityNew.this, PaymentActivity.class);
                 intent.putExtra("Order", order);
                 intent.putExtra("md5", md5);
-                intent.putExtra("Price", bigTotal);
+                intent.putExtra("Price", bigTotal.toString());
                 startActivity(intent);
             }
         });

@@ -15,7 +15,7 @@
         <item name="android:dropDownHorizontalOffset">2dp</item>
         <item name="android:dropDownVerticalOffset">2dp</item>
         <item name="android:layout_height">200dp</item>
-        <item name="android:popupBackground">@drawable/background_learning_button</item>
+        <item name="android:popupBackground">@drawable/background_main_button</item>
     </style>
 
     <style name="itemTextStyle.AppTheme" parent="@android:style/TextAppearance.Widget.IconMenu.Item">
@@ -85,7 +85,6 @@
         <item name="cardElevation">0dp</item>
         <item name="android:layout_marginStart">16dp</item>
         <item name="android:layout_marginTop">8dp</item>
-        <item name="android:layout_marginBottom">8dp</item>
     </style>
 
     <!--ProductCardNewMenuSquareImageStyle -->
@@ -97,7 +96,6 @@
         <item name="android:layout_marginStart">8dp</item>
         <item name="android:layout_marginEnd">8dp</item>
         <item name="android:layout_marginTop">8dp</item>
-        <item name="android:layout_marginBottom">8dp</item>
     </style>
 
 

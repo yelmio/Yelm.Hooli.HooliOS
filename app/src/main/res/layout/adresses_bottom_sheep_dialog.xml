@@ -70,7 +70,7 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginTop="16dp"
-            android:background="@drawable/background_learning_button"
+            android:background="@drawable/background_main_button"
             android:gravity="center"
             android:text="@string/addressesDone"
             android:textColor="@color/whiteColor"

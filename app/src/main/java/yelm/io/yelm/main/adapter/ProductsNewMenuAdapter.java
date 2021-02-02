@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,6 +23,7 @@ import java.math.BigDecimal;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,14 +39,51 @@ import yelm.io.yelm.main.model.Item;
 import yelm.io.yelm.main.model.Modifier;
 import yelm.io.yelm.item.ProductModifierAdapter;
 
-public class ProductsNewMenuAdapter extends RecyclerView.Adapter<ProductsNewMenuAdapter.ProductHolder> {
+public class ProductsNewMenuAdapter extends RecyclerView.Adapter<ProductsNewMenuAdapter.ProductHolder> implements Filterable {
     private Context context;
     private List<Item> products;
+    private List<Item> productsSort;
 
     public ProductsNewMenuAdapter(Context context, List<Item> products) {
         this.context = context;
         this.products = products;
+        productsSort = new ArrayList<>(products);
     }
+
+    @Override
+    public Filter getFilter() {
+        return filter;
+    }
+
+    Filter filter = new Filter() {
+        //run back
+        @Override
+        protected FilterResults performFiltering(CharSequence charSequence) {
+            List<Item> filtered = new ArrayList<>();
+            if (charSequence.toString().isEmpty()) {
+                filtered.addAll(products);
+            } else {
+                for (Item product : products) {
+                    if (product.getName().toLowerCase().contains(charSequence.toString().toLowerCase())) {
+                        Log.d(AlexTAG.debug, "Filter - request string: " + product.getName().toLowerCase());
+                        filtered.add(product);
+                    }
+                }
+            }
+            FilterResults filterResults = new FilterResults();
+            filterResults.values = filtered;
+            return filterResults;
+        }
+
+        //run ui
+        @Override
+        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+            productsSort.clear();
+            productsSort.addAll((Collection<? extends Item>) filterResults.values);
+            notifyDataSetChanged();
+        }
+    };
+
 
     @NonNull
     @Override
@@ -53,7 +93,7 @@ public class ProductsNewMenuAdapter extends RecyclerView.Adapter<ProductsNewMenu
 
     @Override
     public void onBindViewHolder(@NonNull final ProductsNewMenuAdapter.ProductHolder holder, final int position) {
-        Item current = products.get(position);
+        Item current = productsSort.get(position);
 
         //set count of item in basket into layout
         List<BasketCart> listBasketCartByItemID = Common.basketCartRepository.getListBasketCartByItemID(current.getId());
@@ -316,7 +356,7 @@ public class ProductsNewMenuAdapter extends RecyclerView.Adapter<ProductsNewMenu
 
     @Override
     public int getItemCount() {
-        return products == null ? 0 : products.size();
+        return productsSort == null ? 0 : productsSort.size();
     }
 
     public static class ProductHolder extends RecyclerView.ViewHolder {

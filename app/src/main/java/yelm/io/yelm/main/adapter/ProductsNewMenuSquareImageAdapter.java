@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,6 +23,7 @@ import com.squareup.picasso.Picasso;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,9 +40,10 @@ import yelm.io.yelm.item.ProductModifierAdapter;
 import yelm.io.yelm.support_stuff.AlexTAG;
 import yelm.io.yelm.support_stuff.ScreenDimensions;
 
-public class ProductsNewMenuSquareImageAdapter extends RecyclerView.Adapter<ProductsNewMenuSquareImageAdapter.ProductHolder> {
+public class ProductsNewMenuSquareImageAdapter extends RecyclerView.Adapter<ProductsNewMenuSquareImageAdapter.ProductHolder> implements Filterable {
     private Context context;
     private List<Item> products;
+    private List<Item> productsSort;
 
     ScreenDimensions screenDimensions;
 
@@ -47,8 +51,42 @@ public class ProductsNewMenuSquareImageAdapter extends RecyclerView.Adapter<Prod
         this.context = context;
         this.products = products;
         this.screenDimensions = new ScreenDimensions((Activity) context);
+        productsSort = new ArrayList<>(products);
     }
 
+    @Override
+    public Filter getFilter() {
+        return filter;
+    }
+
+    Filter filter = new Filter() {
+        //run back
+        @Override
+        protected FilterResults performFiltering(CharSequence charSequence) {
+            List<Item> filtered = new ArrayList<>();
+            if (charSequence.toString().isEmpty()) {
+                filtered.addAll(products);
+            } else {
+                for (Item product : products) {
+                    if (product.getName().toLowerCase().contains(charSequence.toString().toLowerCase())) {
+                        Log.d(AlexTAG.debug, "Filter - request string: " + product.getName().toLowerCase());
+                        filtered.add(product);
+                    }
+                }
+            }
+            FilterResults filterResults = new FilterResults();
+            filterResults.values = filtered;
+            return filterResults;
+        }
+
+        //run ui
+        @Override
+        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+            productsSort.clear();
+            productsSort.addAll((Collection<? extends Item>) filterResults.values);
+            notifyDataSetChanged();
+        }
+    };
     @NonNull
     @Override
     public ProductsNewMenuSquareImageAdapter.ProductHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -57,7 +95,7 @@ public class ProductsNewMenuSquareImageAdapter extends RecyclerView.Adapter<Prod
 
     @Override
     public void onBindViewHolder(@NonNull final ProductsNewMenuSquareImageAdapter.ProductHolder holder, final int position) {
-        Item current = products.get(position);
+        Item current = productsSort.get(position);
 
         holder.binding.imageHolder.getLayoutParams().height = (int) (((screenDimensions.getWidthDP() - 48) / 2) * screenDimensions.getScreenDensity() + 0.5f);
 
@@ -322,7 +360,7 @@ public class ProductsNewMenuSquareImageAdapter extends RecyclerView.Adapter<Prod
 
     @Override
     public int getItemCount() {
-        return products == null ? 0 : products.size();
+        return productsSort == null ? 0 : productsSort.size();
     }
 
     public static class ProductHolder extends RecyclerView.ViewHolder {
@@ -333,5 +371,4 @@ public class ProductsNewMenuSquareImageAdapter extends RecyclerView.Adapter<Prod
             this.binding = binding;
         }
     }
-
 }

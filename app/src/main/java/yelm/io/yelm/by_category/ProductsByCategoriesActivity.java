@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.SearchView;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -44,6 +45,8 @@ public class ProductsByCategoriesActivity extends AppCompatActivity {
     private ArrayList<ProductsByCategoryClass> productsByCategoryList = new ArrayList<>();
     private boolean allowUpdateUI = false;
 
+    private ArrayList<ProductsByCategoryFragment> listFragments = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +57,21 @@ public class ProductsByCategoriesActivity extends AppCompatActivity {
         binding.title.setText(getIntent().getStringExtra("catalogName"));
         binding.back.setOnClickListener(v -> finish());
         binding.basket.setOnClickListener(v -> startActivity(new Intent(this, BasketActivityOnlyDelivery.class)));
+
+        binding.search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                for (ProductsByCategoryFragment fragment : listFragments) {
+                    fragment.sortAdapter(s);
+                }
+                return false;
+            }
+        });
     }
 
     private void getProductByCategory(String categoryID) {
@@ -90,7 +108,6 @@ public class ProductsByCategoriesActivity extends AppCompatActivity {
                             if (response.body() != null) {
                                 productsByCategoryList = response.body();
                                 rewriteView();
-                                allowUpdateUI = true;
                             } else {
                                 Log.e(AlexTAG.error, "Method getProductByCategory() - by some reason response is null!");
                             }
@@ -110,6 +127,8 @@ public class ProductsByCategoriesActivity extends AppCompatActivity {
     @Override
     public void onStop() {
         compositeDisposableBasket.clear();
+        binding.search.setQuery("", false);
+        binding.search.clearFocus();
         super.onStop();
     }
 
@@ -119,6 +138,7 @@ public class ProductsByCategoriesActivity extends AppCompatActivity {
         if (allowUpdateUI) {
             rewriteView();
         }
+        allowUpdateUI = true;
         updateCost();
     }
 
@@ -161,11 +181,14 @@ public class ProductsByCategoriesActivity extends AppCompatActivity {
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.add(frameLayout.getId(), categoryFragment, "fragment" + i).commitAllowingStateLoss();
             binding.storeFragments.addView(frameLayout);
+
+            listFragments.add(categoryFragment);
         }
 
         View footer = new View(ProductsByCategoriesActivity.this);
         footer.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
                 (int) getResources().getDimension(R.dimen.dimen_60dp)));
         binding.storeFragments.addView(footer);
+
     }
 }

@@ -110,7 +110,7 @@
         android:layout_height="40dp"
         android:layout_gravity="center_horizontal|center_vertical"
         android:layout_margin="24dp"
-        android:background="@drawable/background_learning_button"
+        android:background="@drawable/background_main_button"
         android:fontFamily="@font/zmiin_phh3l"
 
         android:gravity="center_horizontal|center_vertical"

@@ -2,6 +2,7 @@ package yelm.io.yelm.retrofit.new_api;
 
 import java.util.ArrayList;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -11,6 +12,7 @@ import retrofit2.http.Query;
 import yelm.io.yelm.by_category.ProductsByCategoryClass;
 import yelm.io.yelm.basket.model.BasketCheckResponse;
 import yelm.io.yelm.loader.model.ApplicationSettings;
+import yelm.io.yelm.loader.model.ChatSettingsClass;
 import yelm.io.yelm.loader.model.UserLoginResponse;
 import yelm.io.yelm.main.model.CatalogsWithProductsClass;
 import yelm.io.yelm.main.model.Item;
@@ -29,10 +31,7 @@ public interface RestAPI {
     @GET("application?")
     Call<ApplicationSettings> getAppSettings(@Query("platform") String Platform,
                                              @Query("language_code") String LanguageCode,
-                                             @Query("region_code") String RegionCode,
-                                             @Query("lat") String LAT,
-                                             @Query("lon") String LON,
-                                             @Query("login") String login
+                                             @Query("region_code") String RegionCode
     );
 
     @GET("items?")
@@ -95,6 +94,32 @@ public interface RestAPI {
             @Query("id") String CategoryID,
             @Query("lat") String LAT,
             @Query("lon") String LON
+    );
+
+    @FormUrlEncoded
+    @POST("order?")
+    Call<ResponseBody> sendOrder(
+            @Query("phone") String Phone,
+            @Query("comment") String Comment,
+            @Query("address") String Address,
+            @Query("flat") String Flat,
+            @Query("intercom") String Intercom,
+            @Query("entrance") String Entrance,
+            @Query("floor") String Floor,
+            @Query("total") String Total,
+            @Query("discount") String Discount,
+            @Field("items") String Items,
+            @Query("delivery") String Delivery,
+            @Query("payment") String Payment,
+            @Query("platform") String Platform,
+            @Query("version") String Version,
+            @Query("transaction_id") String Transaction
+    );
+
+    @FormUrlEncoded
+    @POST("chat?")
+    Call<ChatSettingsClass> getChatSettings(
+            @Field("login") String Login
     );
 
 }

@@ -47,6 +47,15 @@ public class ProductsByCategoryFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+    public void sortAdapter(String s) {
+        if (horizontalLayout) {
+            productsAdapter.getFilter().filter(s.toString());
+        } else {
+            productsSquareAdapter.getFilter().filter(s.toString());
+        }
+        binding.recycler.scrollToPosition(0);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -76,7 +85,7 @@ public class ProductsByCategoryFragment extends Fragment {
             binding.recycler.setAdapter(productsSquareAdapter);
         }
 
-        binding.categoryExpand.setOnClickListener(v->{
+        binding.categoryExpand.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), ItemsOfOneCategoryActivity.class);
             intent.putParcelableArrayListExtra("items", (ArrayList<? extends Parcelable>) productsByCategory.getItems());
             intent.putExtra("title", productsByCategory.getName());

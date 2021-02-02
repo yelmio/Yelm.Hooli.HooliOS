@@ -42,7 +42,7 @@ public class PaymentActivity extends AppCompatActivity {
 
     //order dara
     BigDecimal bigTotal = new BigDecimal("0");
-    private String order;
+    private String order="";
     private String userID = LoaderActivity.settings.getString(LoaderActivity.USER_NAME, "");
     private String transactionID;
 

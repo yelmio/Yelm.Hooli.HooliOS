@@ -6,6 +6,7 @@
 
     <color name="colorYelmMediaAqua">#007AFF</color>
     <color name="colorYelmMediaDark">#0A84FF</color>
+    <color name="colorButtonPressed">#5DA9F6</color>
 
 
     <color name="mainThemeColor">#0A84FF</color>
