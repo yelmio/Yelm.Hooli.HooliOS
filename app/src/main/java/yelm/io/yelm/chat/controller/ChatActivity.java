@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.Manifest;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -41,12 +42,14 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -60,6 +63,7 @@ import yelm.io.yelm.chat.model.ChatContent;
 import yelm.io.yelm.chat.model.ChatHistoryClass;
 import yelm.io.yelm.databinding.ActivityChatBinding;
 import yelm.io.yelm.loader.controller.LoaderActivity;
+import yelm.io.yelm.retrofit.new_api.RestAPI;
 import yelm.io.yelm.retrofit.new_api.RestApiChat;
 import yelm.io.yelm.retrofit.new_api.RetrofitClientChat;
 import yelm.io.yelm.support_stuff.AlexTAG;
@@ -93,7 +97,7 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
 
     public static final String CHAT_SERVER_URL = "https://chat.yelm.io/";
     private Socket socket;
-
+    Uri imageUri = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,34 +155,7 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
         }
     };
 
-    private void attemptSend() {
-        String message = "test";
-        if (TextUtils.isEmpty(message)) {
-            return;
-        }
 
-        JSONObject jsonObjectItem = new JSONObject();
-        try {
-            jsonObjectItem.put("room_id", "8");
-            jsonObjectItem.put("from_whom", "577");
-            jsonObjectItem.put("to_whom", "614");
-            jsonObjectItem.put("message", "");
-            jsonObjectItem.put("type", "images");//"type"-"images/message"
-            jsonObjectItem.put("platform", "5fd33466e17963.29052139");
-
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.button_default);
-            String base64 = ConvertingImageToBase64(bitmap);
-            JSONArray picturesArray = new JSONArray();
-            JSONObject pictureObject = new JSONObject();
-            pictureObject.put("image", base64);
-            picturesArray.put(pictureObject);
-            picturesArray.put(pictureObject);
-            jsonObjectItem.put("images", picturesArray.toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        socket.emit("room.8", jsonObjectItem);
-    }
 
     private String ConvertingImageToBase64(Bitmap bitmap) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -275,21 +252,25 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
 
     private void binding() {
         binding.sendMessage.setOnClickListener(v -> {
-            if (!binding.messageField.getText().toString().trim().isEmpty()) {
+            String message = binding.messageField.getText().toString().trim();
+            if (!message.isEmpty()) {
                 Calendar current = GregorianCalendar.getInstance();
                 ChatContent temp = new ChatContent(
                         LoaderActivity.settings.getString(LoaderActivity.CLIENT_ID, ""),
                         LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, ""),
-                        binding.messageField.getText().toString().trim(),
+                        message,
                         printedFormatterDate.format(current.getTime()),
                         null,
                         true);
                 chatContentList.add(temp);
                 chatAdapter.notifyDataSetChanged();
                 binding.messageField.setText("");
+                socketSendMessage(message);
             }
         });
+
         binding.back.setOnClickListener(v -> finish());
+
         binding.rootLayout.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
             Rect r = new Rect();
             binding.rootLayout.getWindowVisibleDisplayFrame(r);
@@ -297,11 +278,10 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
             if (heightDiff > 0.25 * binding.rootLayout.getRootView().getHeight()) {
                 Log.d(AlexTAG.debug, "keyboard opened");
                 binding.chatRecycler.smoothScrollToPosition(chatContentList.size() - 1);
-            }else {
+            } else {
                 Log.d(AlexTAG.debug, "keyboard closed");
             }
         });
-
         binding.choosePicture.setOnClickListener(v -> requestPermissions());
     }
 
@@ -398,6 +378,18 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
 
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
             if (data != null) {
+
+//                try {
+//                    Bitmap thumbnail = MediaStore.Images.Media.getBitmap(
+//                            getContentResolver(), imageUri);
+//                    Log.d(AlexTAG.debug, "Bitmap: " + bitmap.getByteCount());
+//
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                    Log.d(AlexTAG.debug, "Bitmap error: " + e.getMessage());
+//
+//                }
+
                 Bitmap bitmap = (Bitmap) data.getExtras().get("data");
                 Log.d(AlexTAG.debug, "Bitmap: " + bitmap.getByteCount());
 
@@ -469,11 +461,69 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
 
         chatAdapter.notifyDataSetChanged();
         binding.chatRecycler.smoothScrollToPosition(chatContentList.size() - 1);
+        socketSendPictures(images);
+    }
+
+    private void socketSendPictures(ArrayList<String> images) {
+        JSONObject jsonObjectItem = new JSONObject();
+        JSONArray picturesArray = new JSONArray();
+        for (String imageUri : images) {
+            Uri uri = Uri.fromFile(new File(imageUri));
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+                String base64 = ConvertingImageToBase64(bitmap);
+                JSONObject pictureObject = new JSONObject();
+                pictureObject.put("image", base64);
+                picturesArray.put(pictureObject);
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            jsonObjectItem.put("room_id", LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, ""));
+            jsonObjectItem.put("from_whom", LoaderActivity.settings.getString(LoaderActivity.CLIENT_ID, ""));
+            jsonObjectItem.put("to_whom", LoaderActivity.settings.getString(LoaderActivity.SHOP_ID, ""));
+            jsonObjectItem.put("message", "");
+            jsonObjectItem.put("type", "images");//"type"-"images/message"
+            jsonObjectItem.put("platform", RestAPI.PLATFORM_NUMBER);
+            jsonObjectItem.put("images", picturesArray.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        socket.emit("room.8", jsonObjectItem);
+    }
+
+    private void socketSendMessage(String message) {
+        JSONObject jsonObjectItem = new JSONObject();
+        try {
+            jsonObjectItem.put("room_id", LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, ""));
+            jsonObjectItem.put("from_whom", LoaderActivity.settings.getString(LoaderActivity.CLIENT_ID, ""));
+            jsonObjectItem.put("to_whom", LoaderActivity.settings.getString(LoaderActivity.SHOP_ID, ""));
+            jsonObjectItem.put("message", message);
+            jsonObjectItem.put("type", "message");//"type"-"images/message"
+            jsonObjectItem.put("platform", RestAPI.PLATFORM_NUMBER);
+            jsonObjectItem.put("images", "");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        socket.emit("room.8", jsonObjectItem);
     }
 
     @Override
     public void onCameraClick() {
+
+//        ContentValues values = new ContentValues();
+//        values.put(MediaStore.Images.Media.TITLE, "Picture");
+//        values.put(MediaStore.Images.Media.DESCRIPTION, "Camera");
+//        imageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
+//        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+//        File file = new File(Environment.getExternalStorageDirectory(), "/" + getText(R.string.app_name) + "/photo_" + timeStamp + ".png");
+//        imageUri = Uri.fromFile(file);
+
+
         Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        //takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
         startActivityForResult(takePhotoIntent, REQUEST_TAKE_PHOTO);
     }
 
