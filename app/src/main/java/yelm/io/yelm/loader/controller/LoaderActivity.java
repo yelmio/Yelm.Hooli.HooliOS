@@ -162,7 +162,7 @@ public class LoaderActivity extends AppCompatActivity {
                 getAppSettings(RestAPI.PLATFORM_NUMBER,
                         getResources().getConfiguration().locale.getLanguage(),
                         getResources().getConfiguration().locale.getCountry()
-                        ).
+                ).
                 enqueue(new Callback<ApplicationSettings>() {
                     @Override
                     public void onResponse(@NotNull Call<ApplicationSettings> call, @NotNull final Response<ApplicationSettings> response) {
@@ -233,7 +233,6 @@ public class LoaderActivity extends AppCompatActivity {
     }
 
     private void getChatSettings(String login) {
-
         RetrofitClientNew.
                 getClient(RestAPI.URL_API_MAIN).
                 create(RestAPI.class).
@@ -246,9 +245,14 @@ public class LoaderActivity extends AppCompatActivity {
                                 Log.d(AlexTAG.debug, "ChatSettingsClass: " + response.body().toString());
                                 SharedPreferences.Editor editor = settings.edit();
                                 editor.putString(API_TOKEN, response.body().getApiToken());
-                                editor.putString(ROOM_ID, response.body().getRoomId());
                                 editor.putString(SHOP_ID, response.body().getShop());
-                                editor.putString(CLIENT_ID, response.body().getClient());
+
+                                editor.putString(ROOM_ID, "8");
+                                editor.putString(CLIENT_ID, "577");
+
+//                                editor.putString(ROOM_ID, response.body().getRoomId());
+//                                editor.putString(CLIENT_ID, response.body().getClient());
+
                                 editor.apply();
                             } else {
                                 Log.e(AlexTAG.error, "Method getChatSettings(): by some reason response is null!");
@@ -264,10 +268,5 @@ public class LoaderActivity extends AppCompatActivity {
                         Log.e(AlexTAG.error, "Method getChatSettings() failure: " + t.toString());
                     }
                 });
-
-
-
     }
-
-
 }

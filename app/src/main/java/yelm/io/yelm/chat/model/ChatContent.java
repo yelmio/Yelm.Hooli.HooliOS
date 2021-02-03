@@ -2,49 +2,71 @@ package yelm.io.yelm.chat.model;
 
 import android.net.Uri;
 
+import java.util.ArrayList;
+
 public class ChatContent {
 
-    private String nameSender;
-    private String textSender;
-    private String imageURL;
-    private String imageUri;
+    private String from_whom;
+    private String to_whom;
+    private String message;
+    private String created_at;
+    private ArrayList<String> images;
+    private boolean inner;
 
-    public String getImageUri() {
-        return imageUri;
+    public ChatContent(String from_whom, String to_whom, String message, String created_at, ArrayList<String> images, boolean inner) {
+        this.from_whom = from_whom;
+        this.to_whom = to_whom;
+        this.message = message;
+        this.created_at = created_at;
+        this.images = images;
+        this.inner = inner;
     }
 
-    public void setImageUri(String imageUri) {
-        this.imageUri = imageUri;
+    public boolean isInner() {
+        return inner;
     }
 
-    public ChatContent(String nameSender, String textSender, String imageURL, String imageUri) {
-        this.nameSender = nameSender;
-        this.textSender = textSender;
-        this.imageURL = imageURL;
-        this.imageUri = imageUri;
+    public void setInner(boolean inner) {
+        this.inner = inner;
     }
 
-    public String getNameSender() {
-        return nameSender;
+    public String getFrom_whom() {
+        return from_whom;
     }
 
-    public void setNameSender(String nameSender) {
-        this.nameSender = nameSender;
+    public void setFrom_whom(String from_whom) {
+        this.from_whom = from_whom;
     }
 
-    public String getTextSender() {
-        return textSender;
+    public String getTo_whom() {
+        return to_whom;
     }
 
-    public void setTextSender(String textSender) {
-        this.textSender = textSender;
+    public void setTo_whom(String to_whom) {
+        this.to_whom = to_whom;
     }
 
-    public String getImageURL() {
-        return imageURL;
+    public String getMessage() {
+        return message;
     }
 
-    public void setImageURL(String imageURL) {
-        this.imageURL = imageURL;
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String getCreated_at() {
+        return created_at;
+    }
+
+    public void setCreated_at(String created_at) {
+        this.created_at = created_at;
+    }
+
+    public ArrayList<String> getImages() {
+        return images;
+    }
+
+    public void setImages(ArrayList<String> images) {
+        this.images = images;
     }
 }

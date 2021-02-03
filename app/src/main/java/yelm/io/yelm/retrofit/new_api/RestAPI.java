@@ -11,6 +11,7 @@ import retrofit2.http.POST;
 import retrofit2.http.Query;
 import yelm.io.yelm.by_category.ProductsByCategoryClass;
 import yelm.io.yelm.basket.model.BasketCheckResponse;
+import yelm.io.yelm.chat.model.ChatHistoryClass;
 import yelm.io.yelm.loader.model.ApplicationSettings;
 import yelm.io.yelm.loader.model.ChatSettingsClass;
 import yelm.io.yelm.loader.model.UserLoginResponse;
@@ -52,6 +53,8 @@ public interface RestAPI {
             @Query("platform") String Platform,
             @Query("shop_id") String ShopID
     );
+
+
 
     @GET("all-news?")
     Call<ArrayList<NewNews>> getNews(

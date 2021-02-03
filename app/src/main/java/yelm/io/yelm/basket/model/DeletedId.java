@@ -28,4 +28,11 @@ public class DeletedId {
         this.availableCount = availableCount;
     }
 
+    @Override
+    public String toString() {
+        return "DeletedId{" +
+                "id='" + id + '\'' +
+                ", availableCount='" + availableCount + '\'' +
+                '}';
+    }
 }

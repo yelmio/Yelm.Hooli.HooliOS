@@ -112,17 +112,7 @@ public class OrderActivityNew extends AppCompatActivity {
                 JSONObject jsonObjectItem = new JSONObject();
                 jsonObjectItem
                         .put("id", basketCarts.get(i).itemID)
-                        //.put("name", basketCarts.get(i).name)
-                        //.put("Quantity", basketCarts.get(i).quantity)
-                        //.put("startPrice", basketCarts.get(i).startPrice)
-                        //.put("price_item", basketCarts.get(i).finalPrice)
-                        //.put("type", basketCarts.get(i).type)
-                        .put("count", basketCarts.get(i).count
-                        //.put("imageUrl", basketCarts.get(i).imageUrl)
-                        //.put("quantityType", basketCarts.get(i).quantityType)
-                        //.put("discount_item", basketCarts.get(i).discount
-                                //.put("fullPrice", fullPrice
-                        );
+                        .put("count", basketCarts.get(i).count);
                 jsonObjectItems.put(jsonObjectItem);
             }
         } catch (JSONException e) {

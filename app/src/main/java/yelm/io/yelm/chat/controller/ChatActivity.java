@@ -14,6 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
@@ -21,25 +22,46 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.webkit.MimeTypeMap;
 
+import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.IO;
+import com.github.nkzawa.socketio.client.Socket;
+
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.net.URISyntaxException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import yelm.io.yelm.R;
 import yelm.io.yelm.chat.adapter.ChatAdapter;
 import yelm.io.yelm.chat.model.ChatContent;
+import yelm.io.yelm.chat.model.ChatHistoryClass;
 import yelm.io.yelm.databinding.ActivityChatBinding;
 import yelm.io.yelm.loader.controller.LoaderActivity;
+import yelm.io.yelm.retrofit.new_api.RestApiChat;
+import yelm.io.yelm.retrofit.new_api.RetrofitClientChat;
 import yelm.io.yelm.support_stuff.AlexTAG;
 
 
@@ -53,7 +75,6 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
     Bitmap bitmap;
     PickImageBottomSheet pickImageBottomSheet = new PickImageBottomSheet();
 
-    private static final int PICK_IMAGE_REQUEST = 1;
     private static final int REQUEST_TAKE_PHOTO = 11;
 
     private static final String[] READ_WRITE_EXTERNAL_PERMISSIONS = new String[]{
@@ -67,6 +88,13 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
     private static final int REQUEST_PERMISSIONS_READ_WRITE_STORAGE = 100;
     private static final int REQUEST_PERMISSIONS_CAMERA = 10;
 
+    SimpleDateFormat currentFormatterDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    SimpleDateFormat printedFormatterDate = new SimpleDateFormat("HH:mm");
+
+    public static final String CHAT_SERVER_URL = "https://chat.yelm.io/";
+    private Socket socket;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,8 +103,161 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
 
         tuneChatRecycler();
         binding();
+
+        tuneSocketConnection();
+
+
+        getChatHistory();
     }
 
+    private void tuneSocketConnection() {
+        try {
+            IO.Options options = new IO.Options();
+            String token = "token=T6MBWl29sxDEzxVBPCNNzLyzLgk0gb9G&room_id=8&user=Client";
+            //options.query = jsonObjectItem.toString();
+            options.query = token;
+            socket = IO.socket(CHAT_SERVER_URL, options);
+            //6 - dynamic number
+            socket.on("room.8", onLogin);
+            socket.connect();
+            Log.d("AlexDebug", "connected!");
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            Log.d("AlexDebug", "error: " + e.getMessage());
+        }
+    }
+
+    private Emitter.Listener onLogin = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            ChatActivity.this.runOnUiThread(() -> {
+                Log.d("AlexDebug", "received");
+                JSONObject data = (JSONObject) args[0];
+                //String username;
+                String message;
+                try {
+                    //username = data.getString("username");
+                    message = data.getString("message");
+                } catch (JSONException e) {
+                    return;
+                }
+                //Log.d("AlexDebug", "username " + username);
+                Log.d("AlexDebug", "message " + message);
+
+
+                // add the message to view
+                //addMessage(username, message);
+            });
+        }
+    };
+
+    private void attemptSend() {
+        String message = "test";
+        if (TextUtils.isEmpty(message)) {
+            return;
+        }
+
+        JSONObject jsonObjectItem = new JSONObject();
+        try {
+            jsonObjectItem.put("room_id", "8");
+            jsonObjectItem.put("from_whom", "577");
+            jsonObjectItem.put("to_whom", "614");
+            jsonObjectItem.put("message", "");
+            jsonObjectItem.put("type", "images");//"type"-"images/message"
+            jsonObjectItem.put("platform", "5fd33466e17963.29052139");
+
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.button_default);
+            String base64 = ConvertingImageToBase64(bitmap);
+            JSONArray picturesArray = new JSONArray();
+            JSONObject pictureObject = new JSONObject();
+            pictureObject.put("image", base64);
+            picturesArray.put(pictureObject);
+            picturesArray.put(pictureObject);
+            jsonObjectItem.put("images", picturesArray.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        socket.emit("room.8", jsonObjectItem);
+    }
+
+    private String ConvertingImageToBase64(Bitmap bitmap) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] imageBytes = baos.toByteArray();
+        bitmap.recycle();
+
+        Log.d("AlexDebug", "imageBytes " + Arrays.toString(imageBytes));
+        Log.d("AlexDebug", "length " + imageBytes.length);
+
+
+        String imageString = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+        //StringBuilder builder = new StringBuilder("data:image/png;base64,").append(imageString);
+        Log.d("AlexDebug", "imageString " + imageString);
+        Log.d("AlexDebug", "imageString.length " + imageString.length());
+        //Log.d("AlexDebug", "builder " + builder);
+        //byte[] byteArray = Base64.decode(imageString, Base64.DEFAULT);
+        //Log.d(AlexTAG.debug, "Arrays.toString(byteArray) " + Arrays.toString(byteArray));
+
+
+        //byte[] decodedString = Base64.decode(imageString, Base64.DEFAULT);
+        //Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+        //binding.imageView.setImageBitmap(decodedByte);
+
+        return imageString;
+        //return "data:image/png;base64,"+imageString;
+
+    }
+
+
+    private void getChatHistory() {
+        RetrofitClientChat.
+                getClient(RestApiChat.URL_API_MAIN).
+                create(RestApiChat.class).
+                getChatHistory(RestApiChat.PLATFORM_NUMBER,
+                        LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, "")).
+                enqueue(new Callback<ArrayList<ChatHistoryClass>>() {
+                    @Override
+                    public void onResponse(@NotNull Call<ArrayList<ChatHistoryClass>> call, @NotNull final Response<ArrayList<ChatHistoryClass>> response) {
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                Log.d(AlexTAG.debug, "ChatSettingsClass: " + response.body().toString());
+                                for (ChatHistoryClass chat : response.body()) {
+                                    String value = chat.getCreatedAt();
+                                    Calendar current = GregorianCalendar.getInstance();
+                                    try {
+                                        current.setTime(currentFormatterDate.parse(value));
+                                    } catch (ParseException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    chatContentList.add(new ChatContent(chat.getFromWhom(), chat.getToWhom(), chat.getMessage(), printedFormatterDate.format(current.getTime()), chat.getImages(), false));
+                                }
+                                chatAdapter = new ChatAdapter(ChatActivity.this, chatContentList);
+                                binding.chatRecycler.setAdapter(chatAdapter);
+                                chatAdapter.setListener(new ChatAdapter.Listener() {
+                                    @Override
+                                    public void onComplete() {
+                                        Log.d(AlexTAG.debug, "onComplete");
+                                        new Handler().postDelayed(() -> binding.chatRecycler.smoothScrollToPosition(chatContentList.size() - 1), 100);
+                                    }
+                                });
+                                //connect
+
+                            } else {
+                                Log.e(AlexTAG.error, "Method getChatHistory(): by some reason response is null!");
+                            }
+                        } else {
+                            Log.e(AlexTAG.error, "Method getChatHistory() response is not successful." +
+                                    " Code: " + response.code() + "Message: " + response.message());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NotNull Call<ArrayList<ChatHistoryClass>> call, @NotNull Throwable t) {
+                        Log.e(AlexTAG.error, "Method getChatHistory() failure: " + t.toString());
+                    }
+                });
+    }
 
     private boolean hasReadExternalStoragePermission() {
         int result = ContextCompat
@@ -87,23 +268,22 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
     private void tuneChatRecycler() {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         binding.chatRecycler.setLayoutManager(linearLayoutManager);
-        chatContentList.add(new ChatContent("shop", "hi what would you like?", "", null));
+//        chatAdapter = new ChatAdapter(this, chatContentList);
+//        binding.chatRecycler.setAdapter(chatAdapter);
 
-        chatAdapter = new ChatAdapter(this, chatContentList);
-        binding.chatRecycler.setAdapter(chatAdapter);
-        chatAdapter.setListener(new ChatAdapter.Listener() {
-            @Override
-            public void onComplete() {
-                Log.d(AlexTAG.debug, "onComplete");
-                new Handler().postDelayed(() -> binding.chatRecycler.smoothScrollToPosition(chatContentList.size() - 1), 100);
-            }
-        });
     }
 
     private void binding() {
         binding.sendMessage.setOnClickListener(v -> {
             if (!binding.messageField.getText().toString().trim().isEmpty()) {
-                ChatContent temp = new ChatContent(userID, binding.messageField.getText().toString().trim(), "", null);
+                Calendar current = GregorianCalendar.getInstance();
+                ChatContent temp = new ChatContent(
+                        LoaderActivity.settings.getString(LoaderActivity.CLIENT_ID, ""),
+                        LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, ""),
+                        binding.messageField.getText().toString().trim(),
+                        printedFormatterDate.format(current.getTime()),
+                        null,
+                        true);
                 chatContentList.add(temp);
                 chatAdapter.notifyDataSetChanged();
                 binding.messageField.setText("");
@@ -117,6 +297,8 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
             if (heightDiff > 0.25 * binding.rootLayout.getRootView().getHeight()) {
                 Log.d(AlexTAG.debug, "keyboard opened");
                 binding.chatRecycler.smoothScrollToPosition(chatContentList.size() - 1);
+            }else {
+                Log.d(AlexTAG.debug, "keyboard closed");
             }
         });
 
@@ -164,7 +346,7 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
                     Log.d(AlexTAG.debug, "Method onRequestPermissionsResult() - Request STORAGE Permissions Result: Success!");
                     requestPermissions();
                 } else if (shouldShowRequestPermissionRationale(permissions[0])) {
-                    showDialogExplanationAboutRequestLocationPermission(getText(R.string.chatActivityRequestStoragePermission).toString());
+                    showDialogExplanationAboutRequestReadWriteStoragePermission(getText(R.string.chatActivityRequestStoragePermission).toString());
                 } else {
                     Log.d(AlexTAG.debug, "Method onRequestPermissionsResult() - Request STORAGE Permissions Result: Failed!");
                 }
@@ -185,7 +367,7 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
         }
     }
 
-    private void showDialogExplanationAboutRequestLocationPermission(String message) {
+    private void showDialogExplanationAboutRequestReadWriteStoragePermission(String message) {
         new AlertDialog.Builder(ChatActivity.this)
                 .setMessage(message)
                 .setTitle(getText(R.string.mainActivityAttention))
@@ -241,7 +423,15 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
                 }
                 Log.d(AlexTAG.debug, "outFile.getAbsolutePath()" + outFile.getAbsolutePath());
 
-                chatContentList.add(new ChatContent(userID, "", "", outFile.getAbsolutePath()));
+                Calendar current = GregorianCalendar.getInstance();
+                ChatContent temp = new ChatContent(
+                        LoaderActivity.settings.getString(LoaderActivity.CLIENT_ID, ""),
+                        LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, ""),
+                        "",
+                        printedFormatterDate.format(current.getTime()),
+                        new ArrayList<String>(Arrays.asList(outFile.getAbsolutePath())),
+                        true);
+                chatContentList.add(temp);
                 chatAdapter.notifyDataSetChanged();
                 binding.chatRecycler.smoothScrollToPosition(chatContentList.size() - 1);
 
@@ -254,56 +444,29 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
                             }
                         });
 
-
             }
             pickImageBottomSheet.dismiss();
         }
-
-
-//        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-//            Uri imageUri = data.getData();
-//            Log.d(AlexTAG.debug, "imageUri " + imageUri);
-//            Log.d(AlexTAG.debug, "getPath " + imageUri.getPath());
-//            chatAdapter.notifyDataSetChanged();
-//            binding.chatRecycler.smoothScrollToPosition(chatContentList.size() - 1);
-//            try {
-//                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
-//                Log.d(AlexTAG.debug, "bitmap.getWidth() " + bitmap.getWidth());
-//                Log.d(AlexTAG.debug, "bitmap.getHeight() " + bitmap.getHeight());
-//                ConvertingImageToBase64(bitmap);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-    }
-
-    private void ConvertingImageToBase64(Bitmap bitmap) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        byte[] imageBytes = baos.toByteArray();
-        //Log.d(AlexTAG.debug, "imageBytes " + Arrays.toString(imageBytes));
-
-        final String imageString = Base64.encodeToString(imageBytes, Base64.DEFAULT);
-        //Log.d(AlexTAG.debug, "imageString " + imageString);
-
-        //byte[] byteArray = Base64.decode(imageString, Base64.DEFAULT);
-        //Log.d(AlexTAG.debug, "Arrays.toString(byteArray) " + Arrays.toString(byteArray));
-
-    }
-
-    private String getFileExtension(Uri uri) {
-        ContentResolver contentResolver = getApplicationContext().getContentResolver();
-        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
-        return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri));
     }
 
     @Override
     public void onSendPictures(HashMap<Integer, String> picturesMap) {
+        ArrayList<String> images = new ArrayList<>();
         for (Map.Entry<Integer, String> picture : picturesMap.entrySet()) {
             Log.d("AlexDebug", "picture.getKey(): " + picture.getKey());
             Log.d("AlexDebug", "picture.getValue(): " + picture.getValue());
-            chatContentList.add(new ChatContent(userID, "", "", picture.getValue()));
+            images.add(picture.getValue());
         }
+
+        Calendar current = GregorianCalendar.getInstance();
+        chatContentList.add(new ChatContent(
+                LoaderActivity.settings.getString(LoaderActivity.CLIENT_ID, ""),
+                LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, ""),
+                binding.messageField.getText().toString().trim(),
+                printedFormatterDate.format(current.getTime()),
+                images,
+                true));
+
         chatAdapter.notifyDataSetChanged();
         binding.chatRecycler.smoothScrollToPosition(chatContentList.size() - 1);
     }
@@ -313,6 +476,11 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
         Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(takePhotoIntent, REQUEST_TAKE_PHOTO);
     }
+
+    @Override
+    protected void onDestroy() {
+        socket.off("room.8", onLogin);
+        socket.disconnect();
+        super.onDestroy();
+    }
 }
-
-

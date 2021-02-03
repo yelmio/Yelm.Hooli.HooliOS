@@ -215,6 +215,15 @@ public class PickImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     listener.selectedPicture(position - 1, path, checked[position - 1]);
                 }
             });
+
+            ((ItemViewHolder) holder).binding.selector.setOnClickListener(view -> {
+                checked[position - 1] = !checked[position - 1];
+                ((ItemViewHolder) holder).binding.selector.setChecked(checked[position - 1]);
+                if (listener != null) {
+                    listener.selectedPicture(position - 1, path, checked[position - 1]);
+                }
+            });
+
         }
     }
 

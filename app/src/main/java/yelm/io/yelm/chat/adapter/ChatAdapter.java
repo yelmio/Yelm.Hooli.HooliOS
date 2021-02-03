@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
@@ -13,6 +14,7 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.Layout;
 import android.text.SpannableStringBuilder;
 import android.text.style.ImageSpan;
 import android.util.Log;
@@ -33,17 +35,22 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import yelm.io.yelm.R;
+import yelm.io.yelm.chat.controller.ChatActivity;
 import yelm.io.yelm.chat.model.ChatContent;
 import yelm.io.yelm.loader.controller.LoaderActivity;
 import yelm.io.yelm.support_stuff.AlexTAG;
@@ -94,76 +101,207 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
         holder.layoutContent.removeAllViews();
         holder.layoutContent.setBackgroundResource(0);
+        holder.date.setText(chatContent.getCreated_at());
+
         if (holder.getItemViewType() == MSG_TYPE_RIGHT) {
             holder.nameSender.setVisibility(View.GONE);
-            Calendar date = GregorianCalendar.getInstance();
-            SimpleDateFormat formatterDate = new SimpleDateFormat("HH:mm");
-            holder.date.setText(formatterDate.format(date.getTime()));
         } else {
-            holder.nameSender.setText(chatContent.getNameSender());
-            holder.date.setText("date");
+            holder.nameSender.setText(chatContent.getFrom_whom());
         }
-        if (!chatContent.getTextSender().isEmpty()) {
+
+        if (chatContent.getMessage().isEmpty()) {
+            if (chatContent.isInner()) {
+                Log.d(AlexTAG.debug, "Inner");
+                setImageInner(holder, chatContent);
+            } else {
+                Log.d(AlexTAG.debug, "Outer");
+                setImageOuter(holder, chatContent);
+            }
+        } else {
             setText(holder, chatContent);
         }
-
-        if (chatContent.getImageUri() != null && chatContent.getTextSender().isEmpty()) {
-            setImage(holder, chatContent);
-        }
     }
 
-    private void setImage(@NonNull ViewHolder holder, ChatContent chatContent) {
-        ImageCornerRadius imageCornerRadius = new ImageCornerRadius(context);
-        Bitmap bitmap = null;
-        imageCornerRadius.setCornerRadius((int) context.getResources().getDimension(R.dimen.dimens_10dp));
-        imageCornerRadius.setRoundedCorners(ImageCornerRadius.CORNER_ALL);
-        LinearLayout.LayoutParams paramsImage = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT);
-        imageCornerRadius.setLayoutParams(paramsImage);
-        int newWight = 0;
-        int newHeight = 0;
-        Uri uri = Uri.fromFile(new File(chatContent.getImageUri()));
-        try {
-            bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(),
-                    uri);
-            Log.d(AlexTAG.debug, "bitmap.getWidth() " + bitmap.getWidth());
-            Log.d(AlexTAG.debug, "bitmap.getHeight() " + bitmap.getHeight());
-            newWight = bitmap.getWidth();
-            newHeight = bitmap.getHeight();
-            double ratio = (double) bitmap.getWidth() / bitmap.getHeight();
+    private void setImageInner(@NonNull ViewHolder holder, ChatContent chatContent) {
+        for (String image : chatContent.getImages()) {
+            ImageCornerRadius imageCornerRadius = new ImageCornerRadius(context);
+            imageCornerRadius.setCornerRadius((int) context.getResources().getDimension(R.dimen.dimens_10dp));
+            imageCornerRadius.setRoundedCorners(ImageCornerRadius.CORNER_ALL);
+            LinearLayout.LayoutParams paramsImage = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
+            imageCornerRadius.setLayoutParams(paramsImage);
+            Bitmap bitmap = null;
+            int newWight = 0;
+            int newHeight = 0;
+            Uri uri = Uri.fromFile(new File(image));
+            Log.d(AlexTAG.debug, "image " + image);
 
-            newWight = (int) ((screenDimensions.getWidthDP() - 32) * screenDimensions.getScreenDensity() / 1.7);
-            if (bitmap.getHeight() > bitmap.getWidth()) {
-                newWight = (int) ((screenDimensions.getWidthDP() - 32) * screenDimensions.getScreenDensity() / 2.4);
-            }
-            newHeight = (int) (newWight / ratio);
+            try {
+                bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
+                Log.d(AlexTAG.debug, "bitmap.getWidth() " + bitmap.getWidth());
+                Log.d(AlexTAG.debug, "bitmap.getHeight() " + bitmap.getHeight());
+                newWight = bitmap.getWidth();
+                newHeight = bitmap.getHeight();
+                double ratio = (double) bitmap.getWidth() / bitmap.getHeight();
 
-//            if (newWight > (screenDimensions.getWidthDP() - 64) * screenDimensions.getScreenDensity()) {
-//                newWight = (int) ((screenDimensions.getWidthDP() - 64) * screenDimensions.getScreenDensity());
+                if (newWight > (screenDimensions.getWidthDP() - 64) * screenDimensions.getScreenDensity()) {
+                    newWight = (int) ((screenDimensions.getWidthDP() - 64) * screenDimensions.getScreenDensity());
+                    newHeight = (int) (newWight / ratio);
+                }
+
+//                newWight = (int) ((screenDimensions.getWidthDP() - 32) * screenDimensions.getScreenDensity() / 1.7);
+//                if (bitmap.getHeight() > bitmap.getWidth()) {
+//                    newWight = (int) ((screenDimensions.getWidthDP() - 32) * screenDimensions.getScreenDensity() / 2.4);
+//                }
 //                newHeight = (int) (newWight / ratio);
-//            }
 
-            Log.d(AlexTAG.debug, "ratio " + ratio);
-            Log.d(AlexTAG.debug, "newHeight " + newHeight);
-            Log.d(AlexTAG.debug, "newWight " + newWight);
+                Log.d(AlexTAG.debug, "ratio " + ratio);
+                Log.d(AlexTAG.debug, "newHeight " + newHeight);
+                Log.d(AlexTAG.debug, "newWight " + newWight);
 
-            Picasso.get().load(uri)
-                    .resize(newWight, newHeight)
-                    .into(imageCornerRadius);
+                Picasso.get().load(uri)
+                        .resize(newWight, newHeight)
+                        .into(imageCornerRadius, new Callback() {
+                            @Override
+                            public void onSuccess() {
+                                listener.onComplete();
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+
+                            }
+                        });
+                holder.layoutContent.addView(imageCornerRadius);
+                Bitmap finalBitmap = bitmap;
+                imageCornerRadius.setOnLongClickListener(v -> {
+                    popupMenu(context, imageCornerRadius, finalBitmap);
+                    return true;
+                });
+
+
+            } catch (
+                    IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+    }
+
+    private void setImageOuter(@NonNull ViewHolder holder, ChatContent chatContent) {
+        for (String image : chatContent.getImages()) {
+            ImageCornerRadius imageCornerRadius = new ImageCornerRadius(context);
+            imageCornerRadius.setCornerRadius((int) context.getResources().getDimension(R.dimen.dimens_10dp));
+            imageCornerRadius.setRoundedCorners(ImageCornerRadius.CORNER_ALL);
+            LinearLayout.LayoutParams paramsImage = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
+            imageCornerRadius.setLayoutParams(paramsImage);
             holder.layoutContent.addView(imageCornerRadius);
-            Bitmap finalBitmap = bitmap;
-            imageCornerRadius.setOnLongClickListener(v -> {
-                popupMenu(context, imageCornerRadius, finalBitmap);
-                return true;
+
+            Log.d(AlexTAG.debug, "image " + image);
+
+            Picasso.get().load(image).into(new Target() {
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    Log.d(AlexTAG.debug, "onBitmapLoaded - bitmap.getByteCount(): " + bitmap.getByteCount());
+
+                    int newWight = 0;
+                    int newHeight = 0;
+                    Log.d(AlexTAG.debug, "bitmap.getWidth() " + bitmap.getWidth());
+                    Log.d(AlexTAG.debug, "bitmap.getHeight() " + bitmap.getHeight());
+                    newWight = bitmap.getWidth();
+                    newHeight = bitmap.getHeight();
+                    double ratio = (double) bitmap.getWidth() / bitmap.getHeight();
+                    if (newWight > (screenDimensions.getWidthDP() - 64) * screenDimensions.getScreenDensity()) {
+                        newWight = (int) ((screenDimensions.getWidthDP() - 64) * screenDimensions.getScreenDensity());
+                        newHeight = (int) (newWight / ratio);
+                    }
+//                    newWight = (int) ((screenDimensions.getWidthDP() - 32) * screenDimensions.getScreenDensity() / 1.7);
+//                    if (bitmap.getHeight() > bitmap.getWidth()) {
+//                        newWight = (int) ((screenDimensions.getWidthDP() - 32) * screenDimensions.getScreenDensity() / 2.4);
+//                    }
+                    newHeight = (int) (newWight / ratio);
+                    Log.d(AlexTAG.debug, "ratio " + ratio);
+                    Log.d(AlexTAG.debug, "newHeight " + newHeight);
+                    Log.d(AlexTAG.debug, "newWight " + newWight);
+                    imageCornerRadius.setImageBitmap(Bitmap.createBitmap(bitmap, 0, 0, newWight, newHeight));
+//                    Picasso.get().load(image)
+//                            .resize(newWight, newHeight)
+//                            .into(imageCornerRadius);
+                    imageCornerRadius.setOnLongClickListener(v -> {
+                        popupMenu(context, imageCornerRadius, bitmap);
+                        return true;
+                    });
+                }
+
+                @Override
+                public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+                    Log.d(AlexTAG.debug, "onBitmapFailed " + e.toString());
+
+                }
+
+
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+                }
             });
 
+//                Bitmap bitmap = getBitmapFromURL(image);
+//                int newWight = 0;
+//                int newHeight = 0;
+//                Log.d(AlexTAG.debug, "bitmap.getWidth() " + bitmap.getWidth());
+//                Log.d(AlexTAG.debug, "bitmap.getHeight() " + bitmap.getHeight());
+//                newWight = bitmap.getWidth();
+//                newHeight = bitmap.getHeight();
+//                double ratio = (double) bitmap.getWidth() / bitmap.getHeight();
+//
+//                //            if (newWight > (screenDimensions.getWidthDP() - 64) * screenDimensions.getScreenDensity()) {
+////                newWight = (int) ((screenDimensions.getWidthDP() - 64) * screenDimensions.getScreenDensity());
+////                newHeight = (int) (newWight / ratio);
+////            }
+//
+//                newWight = (int) ((screenDimensions.getWidthDP() - 32) * screenDimensions.getScreenDensity() / 1.7);
+//                if (bitmap.getHeight() > bitmap.getWidth()) {
+//                    newWight = (int) ((screenDimensions.getWidthDP() - 32) * screenDimensions.getScreenDensity() / 2.4);
+//                }
+//                newHeight = (int) (newWight / ratio);
+//
+//
+//                Log.d(AlexTAG.debug, "ratio " + ratio);
+//                Log.d(AlexTAG.debug, "newHeight " + newHeight);
+//                Log.d(AlexTAG.debug, "newWight " + newWight);
+//
+//
+//                Picasso.get().load(image)
+//                        .resize(newWight, newHeight)
+//                        .into(imageCornerRadius);
+//                Bitmap finalBitmap = bitmap;
+//                imageCornerRadius.setOnLongClickListener(v -> {
+//                    popupMenu(context, imageCornerRadius, finalBitmap);
+//                    return true;
+//                });
 
-        } catch (
-                IOException e) {
-            e.printStackTrace();
         }
-
     }
+
+
+    public static Bitmap getBitmapFromURL(String src) {
+        try {
+            URL url = new URL(src);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            Bitmap myBitmap = BitmapFactory.decodeStream(input);
+            return myBitmap;
+        } catch (IOException e) {
+            Log.d(AlexTAG.debug, "IOException: " + e.getMessage());
+            Log.d(AlexTAG.debug, "IOException: " + e.toString());
+            return null;
+        }
+    }
+
 
     private void saveImage(Bitmap bitmap) {
         new Thread(() -> {
@@ -286,7 +424,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             holder.layoutContent.setBackgroundResource(R.drawable.chat_message_left);
         }
         textView.setLayoutParams(paramsText);
-        textView.setText(chatContent.getTextSender());
+        textView.setText(chatContent.getMessage());
         holder.layoutContent.addView(textView);
     }
 
@@ -309,7 +447,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
     @Override
     public int getItemViewType(int position) {
-        if (chatContentList.get(position).getNameSender().equals(LoaderActivity.settings.getString(LoaderActivity.USER_NAME, ""))) {
+        if (chatContentList.get(position).getFrom_whom().equals(LoaderActivity.settings.getString(LoaderActivity.CLIENT_ID, ""))) {
             return MSG_TYPE_RIGHT;
         } else {
             return MSG_TYPE_LEFT;
