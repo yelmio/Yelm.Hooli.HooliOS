@@ -7,7 +7,7 @@
     tools:context=".fragments.ChatFragment">
 
     <WebView
-        android:id="@+id/chat"
+        android:id="@+id/chatStatus"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="60dp"

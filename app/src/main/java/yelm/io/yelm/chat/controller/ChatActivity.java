@@ -33,6 +33,8 @@ import android.webkit.MimeTypeMap;
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
@@ -43,6 +45,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -117,13 +120,15 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
     private void tuneSocketConnection() {
         try {
             IO.Options options = new IO.Options();
-            String token = "token=T6MBWl29sxDEzxVBPCNNzLyzLgk0gb9G&room_id=8&user=Client";
-            //options.query = jsonObjectItem.toString();
+            String token = "token=" + LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, "")
+                    + "&room_id=" + LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, "")
+                    + "&user=Client";
             options.query = token;
             socket = IO.socket(CHAT_SERVER_URL, options);
-            //6 - dynamic number
-            socket.on("room.8", onLogin);
+            socket.on("room." + LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, ""), onLogin);
             socket.connect();
+            Log.d("AlexDebug", "room: " + LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, ""));
+
             Log.d("AlexDebug", "connected!");
         } catch (URISyntaxException e) {
             e.printStackTrace();
@@ -137,24 +142,70 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
             ChatActivity.this.runOnUiThread(() -> {
                 Log.d("AlexDebug", "received");
                 JSONObject data = (JSONObject) args[0];
-                //String username;
-                String message;
-                try {
-                    //username = data.getString("username");
-                    message = data.getString("message");
-                } catch (JSONException e) {
+                if (data.has("role")) {
+                    try {
+                        String role = data.getString("role");
+                        Log.d("AlexDebug", "role: " + role);
+                        String type = data.getString("type");
+                        Log.d("AlexDebug", "type: " + type);
+                        if (data.getString("type").equals("connected")) {
+                            binding.chatStatus.setText(getText(R.string.chatActivityOnline));
+                            binding.chatStatus.setTextColor(getResources().getColor(R.color.colorAcceptOrder));
+                        } else {
+                            binding.chatStatus.setText(getText(R.string.chatActivityOffline));
+                            binding.chatStatus.setTextColor(getResources().getColor(R.color.colorRedDiscount));
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.d("AlexDebug", "JSONException: " + e.getMessage());
+                    }
                     return;
                 }
-                //Log.d("AlexDebug", "username " + username);
-                Log.d("AlexDebug", "message " + message);
 
+                try {
+                    Log.d("AlexDebug", "data.toString(): " + data.toString());
 
-                // add the message to view
-                //addMessage(username, message);
+                    if (data.getString("type").equals("message")) {
+                        String message = data.getString("message");
+                        Calendar current = GregorianCalendar.getInstance();
+                        ChatContent temp = new ChatContent(
+                                LoaderActivity.settings.getString(LoaderActivity.SHOP_ID, ""),
+                                LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, ""),
+                                message,
+                                printedFormatterDate.format(current.getTime()),
+                                null,
+                                true);
+                        chatContentList.add(temp);
+                        chatAdapter.notifyDataSetChanged();
+                        binding.messageField.setText("");
+                        Log.d("AlexDebug", "message " + message);
+                    } else {
+                        String arrayImages = data.getString("images");
+                        Gson gson = new Gson();
+                        Type typeString = new TypeToken<ArrayList<String>>() {}.getType();
+                        ArrayList<String> arrayImagesList = gson.fromJson(arrayImages, typeString);
+                        Calendar current = GregorianCalendar.getInstance();
+
+                        ChatContent temp = new ChatContent(
+                                LoaderActivity.settings.getString(LoaderActivity.SHOP_ID, ""),
+                                LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, ""),
+                                "",
+                                printedFormatterDate.format(current.getTime()),
+                                arrayImagesList,
+                                false);
+                        chatContentList.add(temp);
+                        chatAdapter.notifyDataSetChanged();
+                        binding.messageField.setText("");
+                        Log.d("AlexDebug", "arrayImagesList: " + arrayImagesList.toString());
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.d("AlexDebug", "JSONException: " + e.getMessage());
+                }
             });
         }
     };
-
 
 
     private String ConvertingImageToBase64(Bitmap bitmap) {
@@ -277,7 +328,9 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
             int heightDiff = binding.rootLayout.getRootView().getHeight() - r.height();
             if (heightDiff > 0.25 * binding.rootLayout.getRootView().getHeight()) {
                 Log.d(AlexTAG.debug, "keyboard opened");
-                binding.chatRecycler.smoothScrollToPosition(chatContentList.size() - 1);
+                if (chatContentList.size() != 0) {
+                    binding.chatRecycler.smoothScrollToPosition(chatContentList.size() - 1);
+                }
             } else {
                 Log.d(AlexTAG.debug, "keyboard closed");
             }
@@ -454,14 +507,17 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
         chatContentList.add(new ChatContent(
                 LoaderActivity.settings.getString(LoaderActivity.CLIENT_ID, ""),
                 LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, ""),
-                binding.messageField.getText().toString().trim(),
+                "",
                 printedFormatterDate.format(current.getTime()),
                 images,
                 true));
 
         chatAdapter.notifyDataSetChanged();
         binding.chatRecycler.smoothScrollToPosition(chatContentList.size() - 1);
-        socketSendPictures(images);
+
+        new Thread(()->{
+            socketSendPictures(images);
+        }).start();
     }
 
     private void socketSendPictures(ArrayList<String> images) {
@@ -490,7 +546,7 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        socket.emit("room.8", jsonObjectItem);
+        //socket.emit("room." + LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, ""), jsonObjectItem);
     }
 
     private void socketSendMessage(String message) {
@@ -506,7 +562,24 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        socket.emit("room.8", jsonObjectItem);
+        socket.emit("room." + LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, ""), jsonObjectItem);
+
+//        JSONObject jsonItem = new JSONObject();
+//        try {
+//            jsonItem.put("room_id", LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, ""));
+//            jsonItem.put("from_whom", LoaderActivity.settings.getString(LoaderActivity.CLIENT_ID, ""));
+//            jsonItem.put("to_whom", LoaderActivity.settings.getString(LoaderActivity.SHOP_ID, ""));
+//            jsonItem.put("language_code", getResources().getConfiguration().locale.getLanguage());
+//            jsonItem.put("region_code", getResources().getConfiguration().locale.getCountry());
+//            jsonItem.put("message", "");
+//            jsonItem.put("id", "6141");
+//            jsonItem.put("type", "items");//"type"-"images/message"/items
+//            jsonItem.put("platform", RestAPI.PLATFORM_NUMBER);
+//            jsonItem.put("images", "");
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        socket.emit("room." + LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, ""), jsonItem);
     }
 
     @Override
@@ -529,7 +602,7 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
 
     @Override
     protected void onDestroy() {
-        socket.off("room.8", onLogin);
+        socket.off("room." + LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, ""));
         socket.disconnect();
         super.onDestroy();
     }

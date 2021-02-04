@@ -140,37 +140,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/description">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/layoutStroke"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="visible">
-
-                <View
-                    android:id="@+id/stroke"
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:background="@color/colorTextGrayStrokeThrough"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@+id/priceStart"
-                    app:layout_constraintStart_toStartOf="@+id/priceStart"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/priceStart"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="end"
-                    android:text="ewrwrewr"
-                    android:textColor="@color/colorTextGray"
-                    android:textSize="12sp"
-                    android:theme="@style/ProDisplayTextStyle"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
             <TextView
                 android:id="@+id/priceFinal"
                 android:layout_width="wrap_content"
@@ -180,6 +149,14 @@
                 android:textColor="@color/colorYelmMediaDark"
                 android:textSize="16sp"
                 android:theme="@style/ProDisplayTextStyle" />
+
+            <TextView
+                android:id="@+id/weight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="TextView" />
+
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

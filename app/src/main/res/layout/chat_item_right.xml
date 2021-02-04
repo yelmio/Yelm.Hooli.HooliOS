@@ -20,12 +20,14 @@
         android:singleLine="true"
         android:text="sender"
         android:textColor="@color/colorChatMessageTextSender"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/layoutContent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="end"
         android:orientation="vertical"></LinearLayout>
 
     <TextView

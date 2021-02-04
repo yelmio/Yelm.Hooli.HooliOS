@@ -1,6 +1,7 @@
 package yelm.io.yelm.basket.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,9 +35,10 @@ public class BasketAdapter extends RecyclerView.Adapter<BasketAdapter.BasketHold
     public void onBindViewHolder(@NonNull final BasketAdapter.BasketHolder holder, final int position) {
         BasketCart current = basket.get(position);
 
-        holder.binding.description.setText(String.format("%s %s %s", current.name, current.quantityType, current.type));
-
+        holder.binding.description.setText(current.name);
         holder.binding.countProducts.setText(current.count);
+        BigDecimal weight = new BigDecimal(current.count).multiply(new BigDecimal(current.quantityType));
+        holder.binding.weight.setText(String.format("%s %s", weight.toString(), current.type));
 
         if (current.modifier.size() != 0) {
             holder.binding.modifiers.setVisibility(View.VISIBLE);
@@ -50,17 +52,6 @@ public class BasketAdapter extends RecyclerView.Adapter<BasketAdapter.BasketHold
                 .centerCrop()
                 .resize(300, 300)
                 .into(holder.binding.imageHolder);
-
-        if (current.startPrice.equals(current.finalPrice)) {
-            holder.binding.layoutStroke.setVisibility(View.GONE);
-        } else {
-            BigDecimal currentStartPrice = new BigDecimal(current.startPrice);
-            for (Modifier modifier : current.modifier) {
-                currentStartPrice = currentStartPrice.add(new BigDecimal(modifier.getValue()));
-            }
-            currentStartPrice = currentStartPrice.multiply(new BigDecimal(current.count));
-            holder.binding.priceStart.setText(String.format("%s %s", currentStartPrice, LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
-        }
 
         BigDecimal currentStartFinal = new BigDecimal(current.finalPrice);
         for (Modifier modifier : current.modifier) {
@@ -84,6 +75,10 @@ public class BasketAdapter extends RecyclerView.Adapter<BasketAdapter.BasketHold
                 Common.basketCartRepository.updateBasketCart(current);
             }
         });
+
+        if (new BigDecimal(current.count).compareTo(new BigDecimal(current.quantity)) == 0) {
+            holder.binding.addProduct.setEnabled(false);
+        }
 
         if (new BigDecimal(current.count).compareTo(new BigDecimal(current.quantity)) > 0) {
             holder.binding.textProductIsOver.setVisibility(View.VISIBLE);

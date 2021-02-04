@@ -103,9 +103,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         holder.layoutContent.setBackgroundResource(0);
         holder.date.setText(chatContent.getCreated_at());
 
-        if (holder.getItemViewType() == MSG_TYPE_RIGHT) {
-            holder.nameSender.setVisibility(View.GONE);
-        } else {
+        if (holder.getItemViewType() == MSG_TYPE_LEFT) {
             holder.nameSender.setText(chatContent.getFrom_whom());
         }
 
@@ -129,6 +127,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             imageCornerRadius.setRoundedCorners(ImageCornerRadius.CORNER_ALL);
             LinearLayout.LayoutParams paramsImage = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT);
+            paramsImage.setMargins(0, 0, 0, (int) context.getResources().getDimension(R.dimen.dimens_4dp));
+
             imageCornerRadius.setLayoutParams(paramsImage);
             Bitmap bitmap = null;
             int newWight = 0;
@@ -144,16 +144,15 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                 newHeight = bitmap.getHeight();
                 double ratio = (double) bitmap.getWidth() / bitmap.getHeight();
 
-                if (newWight > (screenDimensions.getWidthDP() - 64) * screenDimensions.getScreenDensity()) {
-                    newWight = (int) ((screenDimensions.getWidthDP() - 64) * screenDimensions.getScreenDensity());
-                    newHeight = (int) (newWight / ratio);
+//                if (newWight > (screenDimensions.getWidthDP() - 64) * screenDimensions.getScreenDensity()) {
+//                    newWight = (int) ((screenDimensions.getWidthDP() - 64) * screenDimensions.getScreenDensity());
+//                }
+                newWight = (int) ((screenDimensions.getWidthDP() - 32) * screenDimensions.getScreenDensity() / 1.7);
+                if (bitmap.getHeight() > bitmap.getWidth()) {
+                    newWight = (int) ((screenDimensions.getWidthDP() - 32) * screenDimensions.getScreenDensity() / 2.4);
                 }
 
-//                newWight = (int) ((screenDimensions.getWidthDP() - 32) * screenDimensions.getScreenDensity() / 1.7);
-//                if (bitmap.getHeight() > bitmap.getWidth()) {
-//                    newWight = (int) ((screenDimensions.getWidthDP() - 32) * screenDimensions.getScreenDensity() / 2.4);
-//                }
-//                newHeight = (int) (newWight / ratio);
+                newHeight = (int) (newWight / ratio);
 
                 Log.d(AlexTAG.debug, "ratio " + ratio);
                 Log.d(AlexTAG.debug, "newHeight " + newHeight);
@@ -161,10 +160,11 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
                 Picasso.get().load(uri)
                         .resize(newWight, newHeight)
+                        .centerCrop()
                         .into(imageCornerRadius, new Callback() {
                             @Override
                             public void onSuccess() {
-                                listener.onComplete();
+                                //listener.onComplete();
                             }
 
                             @Override
@@ -173,9 +173,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                             }
                         });
                 holder.layoutContent.addView(imageCornerRadius);
-                Bitmap finalBitmap = bitmap;
                 imageCornerRadius.setOnLongClickListener(v -> {
-                    popupMenu(context, imageCornerRadius, finalBitmap);
+                    popupMenu(context, imageCornerRadius, image);
                     return true;
                 });
 
@@ -185,8 +184,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                 e.printStackTrace();
             }
         }
-
-
     }
 
     private void setImageOuter(@NonNull ViewHolder holder, ChatContent chatContent) {
@@ -206,21 +203,18 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                     Log.d(AlexTAG.debug, "onBitmapLoaded - bitmap.getByteCount(): " + bitmap.getByteCount());
 
-                    int newWight = 0;
-                    int newHeight = 0;
+                    int newWight = bitmap.getWidth();
+                    int newHeight = bitmap.getHeight();
                     Log.d(AlexTAG.debug, "bitmap.getWidth() " + bitmap.getWidth());
                     Log.d(AlexTAG.debug, "bitmap.getHeight() " + bitmap.getHeight());
-                    newWight = bitmap.getWidth();
-                    newHeight = bitmap.getHeight();
                     double ratio = (double) bitmap.getWidth() / bitmap.getHeight();
-                    if (newWight > (screenDimensions.getWidthDP() - 64) * screenDimensions.getScreenDensity()) {
-                        newWight = (int) ((screenDimensions.getWidthDP() - 64) * screenDimensions.getScreenDensity());
-                        newHeight = (int) (newWight / ratio);
-                    }
-//                    newWight = (int) ((screenDimensions.getWidthDP() - 32) * screenDimensions.getScreenDensity() / 1.7);
-//                    if (bitmap.getHeight() > bitmap.getWidth()) {
-//                        newWight = (int) ((screenDimensions.getWidthDP() - 32) * screenDimensions.getScreenDensity() / 2.4);
+//                    if (newWight > (screenDimensions.getWidthDP() - 64) * screenDimensions.getScreenDensity()) {
+//                        newWight = (int) ((screenDimensions.getWidthDP() - 64) * screenDimensions.getScreenDensity());
 //                    }
+                    newWight = (int) ((screenDimensions.getWidthDP() - 32) * screenDimensions.getScreenDensity() / 1.7);
+                    if (bitmap.getHeight() > bitmap.getWidth()) {
+                        newWight = (int) ((screenDimensions.getWidthDP() - 32) * screenDimensions.getScreenDensity() / 2.4);
+                    }
                     newHeight = (int) (newWight / ratio);
                     Log.d(AlexTAG.debug, "ratio " + ratio);
                     Log.d(AlexTAG.debug, "newHeight " + newHeight);
@@ -230,7 +224,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 //                            .resize(newWight, newHeight)
 //                            .into(imageCornerRadius);
                     imageCornerRadius.setOnLongClickListener(v -> {
-                        popupMenu(context, imageCornerRadius, bitmap);
+                        //popupMenu(context, imageCornerRadius, bitmap);
                         return true;
                     });
                 }
@@ -238,9 +232,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                 @Override
                 public void onBitmapFailed(Exception e, Drawable errorDrawable) {
                     Log.d(AlexTAG.debug, "onBitmapFailed " + e.toString());
-
                 }
-
 
                 @Override
                 public void onPrepareLoad(Drawable placeHolderDrawable) {
@@ -285,7 +277,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         }
     }
 
-
     public static Bitmap getBitmapFromURL(String src) {
         try {
             URL url = new URL(src);
@@ -301,7 +292,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             return null;
         }
     }
-
 
     private void saveImage(Bitmap bitmap) {
         new Thread(() -> {
@@ -348,24 +338,35 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         }).start();
     }
 
-    private void popupMenu(Context context, View view, Bitmap bitmap) {
+    private void popupMenu(Context context, View view, String image) {
+        Log.d(AlexTAG.debug, "image " + image);
         PopupMenu popupMenu = new PopupMenu(context, view);
         popupMenu.inflate(R.menu.popup_menu);
         popupMenu.setOnMenuItemClickListener(menuItem -> {
             switch (menuItem.getItemId()) {
                 case R.id.save:
-                    saveImage(bitmap);
-                    Toast.makeText(context, context.getText(R.string.chatActivitySavedImage), Toast.LENGTH_SHORT).show();
+                    new Thread(() -> {
+                        Uri uri = Uri.fromFile(new File(image));
+                        Log.d(AlexTAG.debug, "uri: " + uri.getPath());
+                        Bitmap bitmap;
+                        try {
+                            bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
+                            saveImage(bitmap);
+                            Toast.makeText(context, context.getText(R.string.chatActivitySavedImage), Toast.LENGTH_SHORT).show();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            Log.d(AlexTAG.debug, "IOException: " + e.getMessage());
+                        }
+                    }).start();
                     return true;
                 default:
                     return true;
             }
         });
-
         insertMenuItemIcons(context, popupMenu);
         popupMenu.show();
-
     }
+
 
     public void insertMenuItemIcons(Context context, PopupMenu popupMenu) {
         Menu menu = popupMenu.getMenu();
@@ -443,6 +444,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             date = itemView.findViewById(R.id.date);
             layoutContent = itemView.findViewById(R.id.layoutContent);
         }
+
     }
 
     @Override

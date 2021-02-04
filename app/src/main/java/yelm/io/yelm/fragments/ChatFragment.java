@@ -30,7 +30,7 @@ public class ChatFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_chat, container, false);
-        chat = v.findViewById(R.id.chat);
+        chat = v.findViewById(R.id.chatStatus);
         chat.getSettings().setJavaScriptEnabled(true);
         String url = "https://webview.yelm.io/" + userID + "/"+DynamicURL.getPlatformValue();
         chat.loadUrl(url);

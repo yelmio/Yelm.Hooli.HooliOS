@@ -246,12 +246,8 @@ public class LoaderActivity extends AppCompatActivity {
                                 SharedPreferences.Editor editor = settings.edit();
                                 editor.putString(API_TOKEN, response.body().getApiToken());
                                 editor.putString(SHOP_ID, response.body().getShop());
-
-                                editor.putString(ROOM_ID, "8");
-                                editor.putString(CLIENT_ID, "577");
-
-//                                editor.putString(ROOM_ID, response.body().getRoomId());
-//                                editor.putString(CLIENT_ID, response.body().getClient());
+                                editor.putString(ROOM_ID, response.body().getRoomId());
+                                editor.putString(CLIENT_ID, response.body().getClient());
 
                                 editor.apply();
                             } else {
