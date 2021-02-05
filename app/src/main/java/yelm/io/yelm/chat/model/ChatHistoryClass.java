@@ -5,6 +5,8 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
+import yelm.io.yelm.main.model.Item;
+
 public class ChatHistoryClass {
 
     @SerializedName("id")
@@ -34,6 +36,29 @@ public class ChatHistoryClass {
     @SerializedName("updated_at")
     @Expose
     private String updatedAt;
+    @SerializedName("items")
+    @Expose
+    private Item items;
+    @SerializedName("type")
+    @Expose
+    private String type;
+
+    @Override
+    public String toString() {
+        return "ChatHistoryClass{" +
+                "id='" + id + '\'' +
+                ", roomId='" + roomId + '\'' +
+                ", fromWhom='" + fromWhom + '\'' +
+                ", toWhom='" + toWhom + '\'' +
+                ", message='" + message + '\'' +
+                ", images=" + images +
+                ", platform='" + platform + '\'' +
+                ", createdAt='" + createdAt + '\'' +
+                ", updatedAt='" + updatedAt + '\'' +
+                ", items=" + items +
+                ", type='" + type + '\'' +
+                '}';
+    }
 
     public String getId() {
         return id;
@@ -107,18 +132,19 @@ public class ChatHistoryClass {
         this.updatedAt = updatedAt;
     }
 
-    @Override
-    public String toString() {
-        return "ChatHistoryClass{" +
-                "id=" + id +
-                ", roomId=" + roomId +
-                ", fromWhom=" + fromWhom +
-                ", toWhom=" + toWhom +
-                ", message='" + message + '\'' +
-                ", images='" + images + '\'' +
-                ", platform='" + platform + '\'' +
-                ", createdAt='" + createdAt + '\'' +
-                ", updatedAt='" + updatedAt + '\'' +
-                '}';
+    public Item getItems() {
+        return items;
+    }
+
+    public void setItems(Item items) {
+        this.items = items;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

@@ -56,6 +56,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -66,6 +67,7 @@ import yelm.io.yelm.chat.model.ChatContent;
 import yelm.io.yelm.chat.model.ChatHistoryClass;
 import yelm.io.yelm.databinding.ActivityChatBinding;
 import yelm.io.yelm.loader.controller.LoaderActivity;
+import yelm.io.yelm.main.model.Item;
 import yelm.io.yelm.retrofit.new_api.RestAPI;
 import yelm.io.yelm.retrofit.new_api.RestApiChat;
 import yelm.io.yelm.retrofit.new_api.RetrofitClientChat;
@@ -110,10 +112,7 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
 
         tuneChatRecycler();
         binding();
-
         tuneSocketConnection();
-
-
         getChatHistory();
     }
 
@@ -164,40 +163,63 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
 
                 try {
                     Log.d("AlexDebug", "data.toString(): " + data.toString());
-
+                    if (data.getString("from_whom").equals(LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, ""))) {
+                        return;
+                    }
                     if (data.getString("type").equals("message")) {
                         String message = data.getString("message");
                         Calendar current = GregorianCalendar.getInstance();
-                        ChatContent temp = new ChatContent(
-                                LoaderActivity.settings.getString(LoaderActivity.SHOP_ID, ""),
+                        ChatContent chatMessage = new ChatContent(
                                 LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, ""),
+                                LoaderActivity.settings.getString(LoaderActivity.SHOP_ID, ""),
                                 message,
                                 printedFormatterDate.format(current.getTime()),
+                                "message",
+                                "",
                                 null,
-                                true);
-                        chatContentList.add(temp);
+                                false);
+                        chatContentList.add(chatMessage);
                         chatAdapter.notifyDataSetChanged();
-                        binding.messageField.setText("");
                         Log.d("AlexDebug", "message " + message);
-                    } else {
+                    } else if (data.getString("type").equals("images")) {
                         String arrayImages = data.getString("images");
                         Gson gson = new Gson();
-                        Type typeString = new TypeToken<ArrayList<String>>() {}.getType();
+                        Type typeString = new TypeToken<ArrayList<String>>() {
+                        }.getType();
                         ArrayList<String> arrayImagesList = gson.fromJson(arrayImages, typeString);
+                        Log.d("AlexDebug", "arrayImagesList " + arrayImagesList.toString());
+                        for (String image: arrayImagesList){
+                            Calendar current = GregorianCalendar.getInstance();
+                            ChatContent temp = new ChatContent(
+                                    LoaderActivity.settings.getString(LoaderActivity.SHOP_ID, ""),
+                                    LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, ""),
+                                    "",
+                                    printedFormatterDate.format(current.getTime()),
+                                    "images",
+                                    image,
+                                    null,
+                                    false);
+                            chatContentList.add(temp);
+                            chatAdapter.notifyDataSetChanged();
+                        }
+                    } else {
+                        String itemString = data.getString("items");
+                        Gson gson = new Gson();
+                        Type typeItem = new TypeToken<Item>() {
+                        }.getType();
+                        Item item = gson.fromJson(itemString, typeItem);
                         Calendar current = GregorianCalendar.getInstance();
-
                         ChatContent temp = new ChatContent(
                                 LoaderActivity.settings.getString(LoaderActivity.SHOP_ID, ""),
                                 LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, ""),
                                 "",
                                 printedFormatterDate.format(current.getTime()),
-                                arrayImagesList,
+                                "items",
+                                null,
+                                item,
                                 false);
                         chatContentList.add(temp);
                         chatAdapter.notifyDataSetChanged();
-                        binding.messageField.setText("");
-                        Log.d("AlexDebug", "arrayImagesList: " + arrayImagesList.toString());
-
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -253,22 +275,41 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
                                     String value = chat.getCreatedAt();
                                     Calendar current = GregorianCalendar.getInstance();
                                     try {
-                                        current.setTime(currentFormatterDate.parse(value));
+                                        current.setTime(Objects.requireNonNull(currentFormatterDate.parse(value)));
                                     } catch (ParseException e) {
                                         e.printStackTrace();
                                     }
-
-                                    chatContentList.add(new ChatContent(chat.getFromWhom(), chat.getToWhom(), chat.getMessage(), printedFormatterDate.format(current.getTime()), chat.getImages(), false));
+                                    if (chat.getImages().size()==0){
+                                        chatContentList.add(new ChatContent(chat.getFromWhom(),
+                                                chat.getToWhom(),
+                                                chat.getMessage(),
+                                                printedFormatterDate.format(current.getTime()),
+                                                chat.getType(),
+                                                "",
+                                                chat.getItems(),
+                                                false));
+                                    }else {
+                                        for (String image:chat.getImages()){
+                                            chatContentList.add(new ChatContent(chat.getFromWhom(),
+                                                    chat.getToWhom(),
+                                                    chat.getMessage(),
+                                                    printedFormatterDate.format(current.getTime()),
+                                                    chat.getType(),
+                                                    image,
+                                                    chat.getItems(),
+                                                    false));
+                                        }
+                                    }
                                 }
                                 chatAdapter = new ChatAdapter(ChatActivity.this, chatContentList);
                                 binding.chatRecycler.setAdapter(chatAdapter);
-                                chatAdapter.setListener(new ChatAdapter.Listener() {
-                                    @Override
-                                    public void onComplete() {
-                                        Log.d(AlexTAG.debug, "onComplete");
-                                        new Handler().postDelayed(() -> binding.chatRecycler.smoothScrollToPosition(chatContentList.size() - 1), 100);
-                                    }
-                                });
+//                                chatAdapter.setListener(new ChatAdapter.Listener() {
+//                                    @Override
+//                                    public void onComplete() {
+//                                        Log.d(AlexTAG.debug, "onComplete");
+//                                        new Handler().postDelayed(() -> binding.chatRecycler.smoothScrollToPosition(chatContentList.size() - 1), 100);
+//                                    }
+//                                });
                                 //connect
 
                             } else {
@@ -296,9 +337,8 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
     private void tuneChatRecycler() {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         binding.chatRecycler.setLayoutManager(linearLayoutManager);
-//        chatAdapter = new ChatAdapter(this, chatContentList);
-//        binding.chatRecycler.setAdapter(chatAdapter);
-
+        chatAdapter = new ChatAdapter(this, chatContentList);
+        binding.chatRecycler.setAdapter(chatAdapter);
     }
 
     private void binding() {
@@ -311,6 +351,8 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
                         LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, ""),
                         message,
                         printedFormatterDate.format(current.getTime()),
+                        "message",
+                        "",
                         null,
                         true);
                 chatContentList.add(temp);
@@ -474,7 +516,9 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
                         LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, ""),
                         "",
                         printedFormatterDate.format(current.getTime()),
-                        new ArrayList<String>(Arrays.asList(outFile.getAbsolutePath())),
+                        "images",
+                        outFile.getAbsolutePath(),
+                        null,
                         true);
                 chatContentList.add(temp);
                 chatAdapter.notifyDataSetChanged();
@@ -488,7 +532,6 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
                                 Log.d(AlexTAG.debug, "-> uri=" + uri);
                             }
                         });
-
             }
             pickImageBottomSheet.dismiss();
         }
@@ -502,22 +545,23 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
             Log.d("AlexDebug", "picture.getValue(): " + picture.getValue());
             images.add(picture.getValue());
         }
-
-        Calendar current = GregorianCalendar.getInstance();
-        chatContentList.add(new ChatContent(
-                LoaderActivity.settings.getString(LoaderActivity.CLIENT_ID, ""),
-                LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, ""),
-                "",
-                printedFormatterDate.format(current.getTime()),
-                images,
-                true));
-
-        chatAdapter.notifyDataSetChanged();
-        binding.chatRecycler.smoothScrollToPosition(chatContentList.size() - 1);
-
-        new Thread(()->{
-            socketSendPictures(images);
-        }).start();
+        for (String image : images) {
+            Calendar current = GregorianCalendar.getInstance();
+            chatContentList.add(new ChatContent(
+                    LoaderActivity.settings.getString(LoaderActivity.CLIENT_ID, ""),
+                    LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, ""),
+                    "",
+                    printedFormatterDate.format(current.getTime()),
+                    "images",
+                    image,
+                    null,
+                    true));
+            chatAdapter.notifyDataSetChanged();
+            binding.chatRecycler.smoothScrollToPosition(chatContentList.size() - 1);
+            new Thread(() -> {
+                //socketSendPictures(images);
+            }).start();
+        }
     }
 
     private void socketSendPictures(ArrayList<String> images) {

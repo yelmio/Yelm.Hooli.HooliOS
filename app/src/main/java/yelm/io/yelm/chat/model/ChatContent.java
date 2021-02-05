@@ -1,8 +1,8 @@
 package yelm.io.yelm.chat.model;
 
-import android.net.Uri;
-
 import java.util.ArrayList;
+
+import yelm.io.yelm.main.model.Item;
 
 public class ChatContent {
 
@@ -10,16 +10,36 @@ public class ChatContent {
     private String to_whom;
     private String message;
     private String created_at;
-    private ArrayList<String> images;
+    private String type;
+    private String image;
+    private Item item;
     private boolean inner;
 
-    public ChatContent(String from_whom, String to_whom, String message, String created_at, ArrayList<String> images, boolean inner) {
+    public ChatContent(String from_whom, String to_whom, String message, String created_at, String type, String image, Item item, boolean inner) {
         this.from_whom = from_whom;
         this.to_whom = to_whom;
         this.message = message;
         this.created_at = created_at;
-        this.images = images;
+        this.type = type;
+        this.image = image;
+        this.item = item;
         this.inner = inner;
+    }
+
+    public Item getItem() {
+        return item;
+    }
+
+    public void setItem(Item item) {
+        this.item = item;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public boolean isInner() {
@@ -62,11 +82,11 @@ public class ChatContent {
         this.created_at = created_at;
     }
 
-    public ArrayList<String> getImages() {
-        return images;
+    public String getImage() {
+        return image;
     }
 
-    public void setImages(ArrayList<String> images) {
-        this.images = images;
+    public void setImage(String image) {
+        this.image = image;
     }
 }
