@@ -69,9 +69,7 @@ public class SearchActivity extends AppCompatActivity {
                 return false;
             }
         });
-
         binding.basket.setOnClickListener(v -> startActivity(new Intent(this, BasketActivityOnlyDelivery.class)));
-
     }
 
     private void getAllProducts() {

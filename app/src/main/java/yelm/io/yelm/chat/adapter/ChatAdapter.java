@@ -2,9 +2,11 @@ package yelm.io.yelm.chat.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.MediaScannerConnection;
@@ -19,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
@@ -26,6 +29,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Callback;
@@ -36,12 +41,18 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import yelm.io.yelm.R;
 import yelm.io.yelm.chat.model.ChatContent;
+import yelm.io.yelm.database_new.Common;
+import yelm.io.yelm.database_new.basket_new.BasketCart;
+import yelm.io.yelm.item.ItemActivity;
 import yelm.io.yelm.loader.controller.LoaderActivity;
 import yelm.io.yelm.support_stuff.AlexTAG;
 import yelm.io.yelm.support_stuff.ImageCornerRadius;
@@ -83,19 +94,21 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         switch (viewType) {
             case MSG_TYPE_MESSAGE_LEFT:
                 return new MessageHolder(LayoutInflater.from(context).inflate(R.layout.chat_type_message_left, parent, false));
+            case MSG_TYPE_MESSAGE_RIGHT:
+                return new MessageHolder(LayoutInflater.from(context).inflate(R.layout.chat_type_message_right, parent, false));
             case MSG_TYPE_PICTURE_RIGHT:
                 return new PictureHolder(LayoutInflater.from(context).inflate(R.layout.chat_type_picture_right, parent, false));
             case MSG_TYPE_PICTURE_LEFT:
                 return new PictureHolder(LayoutInflater.from(context).inflate(R.layout.chat_type_picture_left, parent, false));
             default:
-                return new MessageHolder(LayoutInflater.from(context).inflate(R.layout.chat_type_message_right, parent, false));
+                return new ItemHolder(LayoutInflater.from(context).inflate(R.layout.chat_type_item, parent, false));
+
         }
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ChatContent chatContent = chatContentList.get(position);
-
         if (holder instanceof MessageHolder) {
             Log.d(AlexTAG.debug, "MessageHolder");
             ((MessageHolder) holder).date.setText(chatContent.getCreated_at());
@@ -113,9 +126,138 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 Log.d(AlexTAG.debug, "Outer");
                 setImageOuter((PictureHolder) holder, chatContent);
             }
+        }
+        if (holder instanceof ItemHolder) {
+            Log.d(AlexTAG.debug, "ItemHolder");
+            setItem((ItemHolder) holder, chatContent);
+        }
+    }
 
+    private void setItem(@NonNull ItemHolder holder, ChatContent chatContent) {
+        holder.date.setText(chatContent.getCreated_at());
+        holder.nameSender.setText(context.getResources().getText(R.string.app_name));
+        Picasso.get().load(chatContent.getItem().getPreviewImage())
+                .resize(300, 300)
+                .centerCrop()
+                .into(holder.image);
+
+        List<BasketCart> listBasketCartByItemID = Common.basketCartRepository.getListBasketCartByItemID(chatContent.getItem().getId());
+        if (listBasketCartByItemID != null && listBasketCartByItemID.size() != 0) {
+            BigInteger countOfAllProducts = new BigInteger("0");
+            for (BasketCart basketCart : listBasketCartByItemID) {
+                countOfAllProducts = countOfAllProducts.add(new BigInteger(basketCart.count));
+            }
+            holder.countItemInCart.setText(String.format("%s", countOfAllProducts));
+            holder.removeProduct.setVisibility(View.VISIBLE);
+            holder.countItemsLayout.setVisibility(View.VISIBLE);
+        }
+        holder.cardProduct.setOnClickListener(v -> {
+            Intent intent = new Intent(context, ItemActivity.class);
+            intent.putExtra("item", chatContent.getItem());
+            context.startActivity(intent);
+        });
+        holder.description.setText(chatContent.getItem().getName());
+        holder.weight.setText(String.format("%s %s", chatContent.getItem().getUnitType(), chatContent.getItem().getType()));
+
+        //calculate final price depending on the discount
+        BigDecimal bd = new BigDecimal(chatContent.getItem().getPrice());
+        if (chatContent.getItem().getDiscount().equals("0")) {
+            holder.priceFinal.setText(String.format("%s %s", bd.toString(), LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
+            holder.priceStart.setVisibility(View.GONE);
+        } else {
+            holder.discountProcent.setVisibility(View.VISIBLE);
+            holder.discountProcent.setText(String.format("- %s %%", chatContent.getItem().getDiscount()));
+            bd = new BigDecimal(chatContent.getItem().getDiscount()).divide(new BigDecimal("100"), 2, BigDecimal.ROUND_HALF_UP);
+            bd = bd.multiply(new BigDecimal(chatContent.getItem().getPrice())).setScale(2, BigDecimal.ROUND_HALF_UP);
+            bd = new BigDecimal(chatContent.getItem().getPrice()).subtract(bd);
+            //trim zeros if after comma there are only zeros: 45.00 -> 45
+            if (bd.compareTo(new BigDecimal(String.valueOf(bd.setScale(0, BigDecimal.ROUND_HALF_UP)))) == 0) {
+                bd = bd.setScale(0, BigDecimal.ROUND_HALF_UP);
+            }
+            holder.priceFinal.setText(String.format("%s %s", bd.toString(), LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
+            holder.priceStart.setText(String.format("%s %s", chatContent.getItem().getPrice(), LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
+            holder.priceStart.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
         }
 
+        //add product into basket
+        BigDecimal finalBd = bd;
+        holder.addProduct.setOnClickListener(v -> {
+            if (chatContent.getItem().getModifier().size() != 0) {
+                //showBottomSheetDialog(holder, current, finalBd);
+            } else {
+                holder.countItemsLayout.setVisibility(View.VISIBLE);
+                List<BasketCart> listCartsByID = Common.basketCartRepository.getListBasketCartByItemID(chatContent.getItem().getId());
+                if (listCartsByID != null && listCartsByID.size() != 0) {
+                    BigInteger countOfAllProducts = new BigInteger("0");
+                    for (BasketCart basketCart : listCartsByID) {
+                        countOfAllProducts = countOfAllProducts.add(new BigInteger(basketCart.count));
+                    }
+                    for (BasketCart basketCart : listCartsByID) {
+                        if (basketCart.modifier.equals(chatContent.getItem().getModifier())) {
+                            basketCart.count = new BigDecimal(basketCart.count).add(new BigDecimal("1")).toString();
+                            holder.countItemInCart.setText(String.format("%s", countOfAllProducts.add(new BigInteger("1"))));
+                            Common.basketCartRepository.updateBasketCart(basketCart);
+                            Log.d(AlexTAG.debug, "Method add BasketCart to Basket. No modifiers - listCartsByID !=null:  " + basketCart.toString());
+                            return;
+                        }
+                    }
+                }
+                holder.removeProduct.setVisibility(View.VISIBLE);
+                holder.countItemInCart.setText("1");
+                BasketCart cartItem = new BasketCart();
+                cartItem.itemID = chatContent.getItem().getId();
+                cartItem.name = chatContent.getItem().getName();
+                cartItem.discount = chatContent.getItem().getDiscount();
+                cartItem.startPrice = chatContent.getItem().getPrice();
+                cartItem.finalPrice = finalBd.toString();
+                cartItem.type = chatContent.getItem().getType();
+                cartItem.count = "1";
+                cartItem.imageUrl = chatContent.getItem().getPreviewImage();
+                cartItem.discount = chatContent.getItem().getDiscount();
+                cartItem.modifier = chatContent.getItem().getModifier();
+                cartItem.isPromo = false;
+                cartItem.isExist = true;
+                cartItem.quantityType = chatContent.getItem().getUnitType();
+                Common.basketCartRepository.insertToBasketCart(cartItem);
+                Log.d(AlexTAG.debug, "Method add BasketCart to Basket. No modifiers - listCartsByID == null:  " + cartItem.toString());
+            }
+        });
+
+        //remove product from basket
+        holder.removeProduct.setOnClickListener(v -> {
+            List<BasketCart> listCartsByID = Common.basketCartRepository.getListBasketCartByItemID(chatContent.getItem().getId());
+            if (listCartsByID != null && listCartsByID.size() != 0) {
+                if (listCartsByID.size() == 1) {
+                    BasketCart cartItem = listCartsByID.get(0);
+                    BigInteger countOfProduct = new BigInteger(cartItem.count);
+                    if (countOfProduct.equals(new BigInteger("1"))) {
+                        holder.countItemsLayout.setVisibility(View.GONE);
+                        holder.removeProduct.setVisibility(View.GONE);
+                        Common.basketCartRepository.deleteBasketCart(cartItem);
+                    } else {
+                        countOfProduct = countOfProduct.subtract(new BigInteger("1"));
+                        cartItem.count = countOfProduct.toString();
+                        holder.countItemInCart.setText(cartItem.count);
+                        Common.basketCartRepository.updateBasketCart(cartItem);
+                    }
+                } else {
+                    BigInteger countOfAllProducts = new BigInteger("0");
+                    for (BasketCart basketCart : listCartsByID) {
+                        countOfAllProducts = countOfAllProducts.add(new BigInteger(basketCart.count));
+                    }
+                    BasketCart cartItem = listCartsByID.get(listCartsByID.size() - 1);
+                    BigInteger countOfProduct = new BigInteger(cartItem.count);
+                    if (countOfProduct.equals(new BigInteger("1"))) {
+                        Common.basketCartRepository.deleteBasketCart(cartItem);
+                    } else {
+                        countOfProduct = countOfProduct.subtract(new BigInteger("1"));
+                        cartItem.count = countOfProduct.toString();
+                        holder.countItemInCart.setText(String.format("%s", countOfAllProducts.subtract(new BigInteger("1"))));
+                        Common.basketCartRepository.updateBasketCart(cartItem);
+                    }
+                }
+            }
+        });
     }
 
     private void setImageInner(@NonNull PictureHolder holder, ChatContent chatContent) {
@@ -137,8 +279,6 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 newWight = widthFixedLandscape;
             }
             newHeight = (int) (newWight / ratio);
-            newWight = bitmap.getWidth();
-            newHeight = bitmap.getHeight();
 //                if (newWight > (screenDimensions.getWidthDP() - 64) * screenDimensions.getScreenDensity()) {
 //                    newWight = (int) ((screenDimensions.getWidthDP() - 64) * screenDimensions.getScreenDensity());
 //                }
@@ -292,7 +432,6 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         popupMenu.show();
     }
 
-
     public static Bitmap getBitmapFromURL(String src) {
         try {
             URL url = new URL(src);
@@ -353,7 +492,6 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     });
         }).start();
     }
-
 
     public void insertMenuItemIcons(Context context, PopupMenu popupMenu) {
         Menu menu = popupMenu.getMenu();
@@ -418,6 +556,32 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             nameSender = itemView.findViewById(R.id.nameSender);
             date = itemView.findViewById(R.id.date);
             image = itemView.findViewById(R.id.image);
+
+        }
+    }
+
+    public static class ItemHolder extends RecyclerView.ViewHolder {
+        public TextView nameSender, date, description, priceStart, weight, priceFinal, discountProcent, countItemInCart;
+        public ImageView image;
+        public ImageButton removeProduct, addProduct;
+        public ConstraintLayout countItemsLayout;
+        public CardView cardProduct;
+
+        public ItemHolder(@NonNull View itemView) {
+            super(itemView);
+            nameSender = itemView.findViewById(R.id.nameSender);
+            date = itemView.findViewById(R.id.date);
+            image = itemView.findViewById(R.id.image);
+            cardProduct = itemView.findViewById(R.id.cardProduct);
+            description = itemView.findViewById(R.id.description);
+            priceStart = itemView.findViewById(R.id.priceStart);
+            weight = itemView.findViewById(R.id.weight);
+            priceFinal = itemView.findViewById(R.id.priceFinal);
+            removeProduct = itemView.findViewById(R.id.removeProduct);
+            addProduct = itemView.findViewById(R.id.addProduct);
+            discountProcent = itemView.findViewById(R.id.discountProcent);
+            countItemsLayout = itemView.findViewById(R.id.countItemsLayout);
+            countItemInCart = itemView.findViewById(R.id.countItemInCart);
         }
     }
 
