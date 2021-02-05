@@ -3,6 +3,7 @@ package yelm.io.yelm.order;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -82,11 +83,20 @@ public class OrderActivityNew extends AppCompatActivity {
     private String md5 = "";
     private String userID = LoaderActivity.settings.getString(LoaderActivity.USER_NAME, "");
 
+    private static final String ENTRANCE = "ENTRANCE";
+    private static final String FLOOR = "FLOOR";
+    private static final String FLAT = "FLAT";
+    private static final String PHONE = "PHONE";
+    private static SharedPreferences userSettings;
+    private static final String USER_PREFERENCES = "user_data";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityOrderNewBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        userSettings = getSharedPreferences(USER_PREFERENCES, Context.MODE_PRIVATE);
+
         bigTotal = new BigDecimal(getIntent().getStringExtra("finalPrice"));
         deliveryCost = new BigDecimal(getIntent().getStringExtra("deliveryCost"));
         deliveryTime = getIntent().getStringExtra("deliveryTime");
@@ -98,8 +108,28 @@ public class OrderActivityNew extends AppCompatActivity {
         bindingChosePaymentType();
 
         testOrder();
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (userSettings.contains(ENTRANCE)) {
+            binding.entrance.setText(userSettings.getString(ENTRANCE, ""));
+            binding.floor.setText(userSettings.getString(FLOOR, ""));
+            binding.flat.setText(userSettings.getString(FLAT, ""));
+            binding.phone.setText(userSettings.getString(PHONE, ""));
+        }
+    }
 
+    @Override
+    protected void onStop() {
+        SharedPreferences.Editor editor = userSettings.edit();
+        editor.putString(ENTRANCE, binding.entrance.getText().toString());
+        editor.putString(FLOOR, binding.floor.getText().toString());
+        editor.putString(FLAT, binding.flat.getText().toString());
+        editor.putString(PHONE, binding.phone.getText().toString());
+        editor.apply();
+        super.onStop();
     }
 
     private void testOrder() {
@@ -186,7 +216,7 @@ public class OrderActivityNew extends AppCompatActivity {
 
             jsonData.put("payment", paymentType);
             jsonData.put("delivery", "delivery");
-            jsonData.put("flat", binding.apartament.getText().toString());
+            jsonData.put("flat", binding.flat.getText().toString());
             jsonData.put("floor", binding.floor.getText().toString());
             jsonData.put("entrance", binding.entrance.getText().toString());
             jsonData.put("total", getIntent().getStringExtra("finalPrice"));
