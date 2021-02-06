@@ -9,9 +9,8 @@ import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
+import yelm.io.yelm.basket.model.BasketCheckPOJO;
 import yelm.io.yelm.by_category.ProductsByCategoryClass;
-import yelm.io.yelm.basket.model.BasketCheckResponse;
-import yelm.io.yelm.chat.model.ChatHistoryClass;
 import yelm.io.yelm.loader.model.ApplicationSettings;
 import yelm.io.yelm.loader.model.ChatSettingsClass;
 import yelm.io.yelm.loader.model.UserLoginResponse;
@@ -77,7 +76,7 @@ public interface RestAPI {
     //not accessible items!!
     @FormUrlEncoded
     @POST("basket?")
-    Call<BasketCheckResponse> checkBasket(
+    Call<BasketCheckPOJO> checkBasket(
             @Query("platform") String Platform,
             @Query("shop_id") String ShopID,
             @Query("language_code") String LanguageCode,
@@ -102,21 +101,28 @@ public interface RestAPI {
     @FormUrlEncoded
     @POST("order?")
     Call<ResponseBody> sendOrder(
-            @Query("phone") String Phone,
-            @Query("comment") String Comment,
-            @Query("address") String Address,
-            @Query("flat") String Flat,
-            @Query("intercom") String Intercom,
-            @Query("entrance") String Entrance,
-            @Query("floor") String Floor,
-            @Query("total") String Total,
-            @Query("discount") String Discount,
-            @Field("items") String Items,
-            @Query("delivery") String Delivery,
-            @Query("payment") String Payment,
-            @Query("platform") String Platform,
-            @Query("version") String Version,
-            @Query("transaction_id") String Transaction
+            @Query("version") String version,
+            @Query("region_code") String regionCode,
+            @Query("language_code") String languageCode,
+            @Query("platform") String platform,
+            @Query("lat") String lat,
+            @Query("lon") String lon,
+            @Query("comment") String comment,
+            @Query("start_total") String startTotal,
+            @Query("discount") String discount,
+            @Query("transaction_id") String transactionID,
+            @Query("login") String login,
+            @Query("address") String address,
+            @Query("payment") String payment,
+            @Query("floor") String floor,
+            @Query("entrance") String entrance,
+            @Query("end_total") String endTotal,
+            @Query("phone") String phone,
+            @Query("flat") String flat,
+            @Query("delivery") String delivery,
+            @Field("items") String items,
+            @Field("delivery_price") String deliveryPrice,
+            @Field("currency") String currency
     );
 
     @FormUrlEncoded

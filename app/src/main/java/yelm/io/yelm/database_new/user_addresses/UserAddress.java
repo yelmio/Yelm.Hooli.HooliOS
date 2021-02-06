@@ -5,8 +5,10 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import java.io.Serializable;
+
 @Entity(tableName="UserAddresses")
-public class UserAddress {
+public class UserAddress implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name="id")
@@ -40,5 +42,6 @@ public class UserAddress {
         this.address = address;
         this.isChecked = isChecked;
     }
+
 
 }

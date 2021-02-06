@@ -7,9 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
-import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -32,8 +30,6 @@ import org.json.JSONObject;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.UnknownHostException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -46,10 +42,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import ru.cloudpayments.sdk.three_ds.ThreeDsDialogFragment;
-import yelm.io.yelm.database_old.basket.Cart;
-import yelm.io.yelm.loader.model.UserLoginResponse;
-import yelm.io.yelm.old_version.maps.MapActivity;
 import yelm.io.yelm.payment.PayApi;
+import yelm.io.yelm.payment.PaymentActivity;
 import yelm.io.yelm.payment.models.Transaction;
 import yelm.io.yelm.payment.response.PayApiError;
 import yelm.io.yelm.retrofit.new_api.RestAPI;
@@ -61,7 +55,6 @@ import yelm.io.yelm.database_new.Common;
 import yelm.io.yelm.database_new.user_addresses.UserAddress;
 import yelm.io.yelm.databinding.ActivityOrderNewBinding;
 import yelm.io.yelm.loader.controller.LoaderActivity;
-import yelm.io.yelm.payment.PaymentActivity;
 import yelm.io.yelm.payment.googleplay.PaymentsUtil;
 import yelm.io.yelm.support_stuff.PhoneTextFormatter;
 
@@ -72,16 +65,20 @@ public class OrderActivityNew extends AppCompatActivity {
     private static final int PAYMENT_SUCCESS = 77;
 
     private PaymentsClient paymentsClient;
-    BigDecimal bigTotal = new BigDecimal("0");
+    private BigDecimal finalCost = new BigDecimal("0");
     private BigDecimal deliveryCost = new BigDecimal("0");
+    private BigDecimal startCost = new BigDecimal("0");
+    private BigDecimal discountPromo = new BigDecimal("0");
     private String deliveryTime = "";
+    UserAddress currentAddress;
 
     private static final int LOAD_PAYMENT_DATA_REQUEST_CODE = 991;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private String transactionID = "";
     private String order = "";
-    private String md5 = "";
+    //payment = ['Card', 'GooglePay', 'ApplePay]
     private String userID = LoaderActivity.settings.getString(LoaderActivity.USER_NAME, "");
+    private String currency = LoaderActivity.settings.getString(LoaderActivity.CURRENCY, "");
 
     private static final String ENTRANCE = "ENTRANCE";
     private static final String FLOOR = "FLOOR";
@@ -97,43 +94,32 @@ public class OrderActivityNew extends AppCompatActivity {
         setContentView(binding.getRoot());
         userSettings = getSharedPreferences(USER_PREFERENCES, Context.MODE_PRIVATE);
 
-        bigTotal = new BigDecimal(getIntent().getStringExtra("finalPrice"));
-        deliveryCost = new BigDecimal(getIntent().getStringExtra("deliveryCost"));
-        deliveryTime = getIntent().getStringExtra("deliveryTime");
+        Bundle args = getIntent().getExtras();
+        if (args != null) {
+            finalCost = new BigDecimal(args.getString("finalPrice"));
+            startCost = new BigDecimal(args.getString("startCost"));
+            deliveryCost = new BigDecimal(args.getString("deliveryCost"));
+            discountPromo = new BigDecimal(args.getString("discountPromo"));
+            deliveryTime = args.getString("deliveryTime");
+            currentAddress = (UserAddress) args.getSerializable(UserAddress.class.getSimpleName());
+            Log.d(AlexTAG.debug, "finalCost: " + finalCost);
+            Log.d(AlexTAG.debug, "startCost: " + startCost);
+            Log.d(AlexTAG.debug, "deliveryCost: " + discountPromo);
+            Log.d(AlexTAG.debug, "deliveryPrice: " + deliveryCost);
+            Log.d(AlexTAG.debug, "deliveryTime: " + deliveryTime);
+            Log.d(AlexTAG.debug, "currentAddress: " + currentAddress.toString());
+        }
+
         binding();
 
         paymentsClient = PaymentsUtil.createPaymentsClient(this);
         checkIsReadyToPay();
 
         bindingChosePaymentType();
-
-        testOrder();
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (userSettings.contains(ENTRANCE)) {
-            binding.entrance.setText(userSettings.getString(ENTRANCE, ""));
-            binding.floor.setText(userSettings.getString(FLOOR, ""));
-            binding.flat.setText(userSettings.getString(FLAT, ""));
-            binding.phone.setText(userSettings.getString(PHONE, ""));
-        }
-    }
 
-    @Override
-    protected void onStop() {
-        SharedPreferences.Editor editor = userSettings.edit();
-        editor.putString(ENTRANCE, binding.entrance.getText().toString());
-        editor.putString(FLOOR, binding.floor.getText().toString());
-        editor.putString(FLAT, binding.flat.getText().toString());
-        editor.putString(PHONE, binding.phone.getText().toString());
-        editor.apply();
-        super.onStop();
-    }
-
-    private void testOrder() {
-        //payment = ['Card', 'GooglePay', 'ApplePay]
+    private boolean sendOrder() {
         List<BasketCart> basketCarts = Common.basketCartRepository.getBasketCartsList();
         JSONArray jsonObjectItems = new JSONArray();
         try {
@@ -141,59 +127,62 @@ public class OrderActivityNew extends AppCompatActivity {
                 BigDecimal fullPrice = new BigDecimal(basketCarts.get(i).finalPrice).multiply(new BigDecimal(basketCarts.get(i).count));
                 JSONObject jsonObjectItem = new JSONObject();
                 jsonObjectItem
-                        .put("id", basketCarts.get(i).itemID)
-                        .put("count", basketCarts.get(i).count);
+                        .put("item_id", basketCarts.get(i).itemID)
+                        .put("quantity_item", basketCarts.get(i).count)
+                        .put("discount_item", basketCarts.get(i).discount)
+                        .put("price_item", basketCarts.get(i).finalPrice);
                 jsonObjectItems.put(jsonObjectItem);
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
         Log.d(AlexTAG.debug, "jsonObjectItems: " + jsonObjectItems.toString());
-
         RetrofitClientNew.
                 getClient(RestAPI.URL_API_MAIN)
                 .create(RestAPI.class)
-                .sendOrder("+79856185757",
-                        "test",
-                        "Moscow",
-                        "45",
-                        "4",
-                        "45",
-                        "4",
-                        "546.50",
-                        "0",
-                        jsonObjectItems.toString(),
-                        "delivery",
-                        "Card",
+                .sendOrder("3",
+                        getResources().getConfiguration().locale.getCountry(),
+                        getResources().getConfiguration().locale.getLanguage(),
                         RestAPI.PLATFORM_NUMBER,
-                        "3",
-                        "4353363463"
-                )
+                        currentAddress.latitude,
+                        currentAddress.longitude,
+                        "",
+                        startCost.toString(),
+                        discountPromo.toString(),
+                        jsonObjectItems.toString(),
+                        userID,
+                        currentAddress.address,
+                        "GooglePay",
+                        binding.floor.getText().toString(),
+                        binding.entrance.getText().toString(),
+                        finalCost.toString(),
+                        binding.phone.getText().toString(),
+                        binding.flat.getText().toString(),
+                        "delivery",
+                        jsonObjectItems.toString(),
+                        deliveryCost.toString(),
+                        currency
+                ).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(@NotNull Call<ResponseBody> call, @NotNull Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    Log.d(AlexTAG.debug, "Method sendOrder() - response.code(): " + response.code());
+                } else {
+                    Log.e(AlexTAG.error, "Method sendOrder() - response is not successful. " +
+                            "Code: " + response.code() + "Message: " + response.message());
+                }
+            }
 
-                .enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(@NotNull Call<ResponseBody> call, @NotNull Response<ResponseBody> response) {
-                        if (response.isSuccessful()) {
-                            if (response.body() != null) {
-
-                            } else {
-                                Log.e(AlexTAG.error, "Method checkUser() - by some reason response is null!");
-                            }
-                        } else {
-                            Log.e(AlexTAG.error, "Method checkUser() - response is not successful. " +
-                                    "Code: " + response.code() + "Message: " + response.message());
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(@NotNull Call<ResponseBody> call, @NotNull Throwable t) {
-                        Log.e(AlexTAG.error, "Method checkUser() - failure: " + t.toString());
-                    }
-                });
+            @Override
+            public void onFailure(@NotNull Call<ResponseBody> call, @NotNull Throwable t) {
+                Log.e(AlexTAG.error, "Method sendOrder() - failure: " + t.toString());
+            }
+        });
+        return true;
     }
 
 
-    private boolean makeOrder(String paymentType) {
+    private boolean preparePayment(String payment) {
         String phone = binding.phone.getText().toString();
         Log.d("AlexDebug", "phone: " + phone);
         phone = phone.replaceAll("\\D", "");
@@ -202,53 +191,43 @@ public class OrderActivityNew extends AppCompatActivity {
             showToast(getText(R.string.orderActivityEnterCorrectPhone).toString());
             return false;
         }
-
-        JSONObject jsonData = new JSONObject();
-        try {
-            jsonData.put("phone", phone);
-            for (UserAddress userAddress : Common.userAddressesRepository.getUserAddressesList()) {
-                if (userAddress.isChecked) {
-                    binding.userAddress.setText(userAddress.address);
-                    jsonData.put("address", userAddress.address);
-                    break;
-                }
-            }
-
-            jsonData.put("payment", paymentType);
-            jsonData.put("delivery", "delivery");
-            jsonData.put("flat", binding.flat.getText().toString());
-            jsonData.put("floor", binding.floor.getText().toString());
-            jsonData.put("entrance", binding.entrance.getText().toString());
-            jsonData.put("total", getIntent().getStringExtra("finalPrice"));
-            List<BasketCart> basketCarts = Common.basketCartRepository.getBasketCartsList();
-            JSONArray jsonObjectItems = new JSONArray();
-            for (int i = 0; i < basketCarts.size(); i++) {
-                BigDecimal fullPrice = new BigDecimal(basketCarts.get(i).finalPrice).multiply(new BigDecimal(basketCarts.get(i).count));
-                JSONObject jsonObjectItem = new JSONObject();
-                jsonObjectItem
-                        .put("item_id", basketCarts.get(i).itemID)
-                        //.put("name", basketCarts.get(i).name)
-                        //.put("Quantity", basketCarts.get(i).quantity)
-                        //.put("startPrice", basketCarts.get(i).startPrice)
-                        .put("price_item", basketCarts.get(i).finalPrice)
-                        //.put("type", basketCarts.get(i).type)
-                        .put("quantity_item", basketCarts.get(i).count)
-                        //.put("imageUrl", basketCarts.get(i).imageUrl)
-                        //.put("quantityType", basketCarts.get(i).quantityType)
-                        .put("discount_item", basketCarts.get(i).discount
-                                //.put("fullPrice", fullPrice
-                        );
-                jsonObjectItems.put(jsonObjectItem);
-            }
-            jsonData.put("items", jsonObjectItems);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        order = jsonData.toString();
-        Log.d("AlexDebug", "order:" + order);
-        md5 = md5("45yu3d7h9Jca0ppq2l" + order);
-
+//
+//        JSONObject jsonData = new JSONObject();
+//        try {
+//            jsonData.put("phone", phone);
+//            jsonData.put("payment", payment);
+//            jsonData.put("delivery", "delivery");
+//            jsonData.put("flat", binding.flat.getText().toString());
+//            jsonData.put("floor", binding.floor.getText().toString());
+//            jsonData.put("entrance", binding.entrance.getText().toString());
+//            jsonData.put("total", getIntent().getStringExtra("finalPrice"));
+//            List<BasketCart> basketCarts = Common.basketCartRepository.getBasketCartsList();
+//            JSONArray jsonObjectItems = new JSONArray();
+//            for (int i = 0; i < basketCarts.size(); i++) {
+//                BigDecimal fullPrice = new BigDecimal(basketCarts.get(i).finalPrice).multiply(new BigDecimal(basketCarts.get(i).count));
+//                JSONObject jsonObjectItem = new JSONObject();
+//                jsonObjectItem
+//                        .put("item_id", basketCarts.get(i).itemID)
+//                        //.put("name", basketCarts.get(i).name)
+//                        //.put("Quantity", basketCarts.get(i).quantity)
+//                        //.put("startPrice", basketCarts.get(i).startPrice)
+//                        .put("price_item", basketCarts.get(i).finalPrice)
+//                        //.put("type", basketCarts.get(i).type)
+//                        .put("quantity_item", basketCarts.get(i).count)
+//                        //.put("imageUrl", basketCarts.get(i).imageUrl)
+//                        //.put("quantityType", basketCarts.get(i).quantityType)
+//                        .put("discount_item", basketCarts.get(i).discount
+//                                //.put("fullPrice", fullPrice
+//                        );
+//                jsonObjectItems.put(jsonObjectItem);
+//            }
+//            jsonData.put("items", jsonObjectItems);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//
+//        order = jsonData.toString();
+//        Log.d("AlexDebug", "order:" + order);
         return true;
     }
 
@@ -312,8 +291,8 @@ public class OrderActivityNew extends AppCompatActivity {
     }
 
     private void binding() {
-        binding.startPrice.setText(String.format("%s %s", bigTotal.subtract(deliveryCost), LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
-        binding.finalPrice.setText(String.format("%s %s", bigTotal, LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
+        binding.startPrice.setText(String.format("%s %s", finalCost.subtract(deliveryCost), LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
+        binding.finalPrice.setText(String.format("%s %s", finalCost, LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
         binding.back.setOnClickListener(v -> finish());
         binding.deliveryPrice.setText(String.format("%s %s", deliveryCost, LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
 
@@ -325,12 +304,7 @@ public class OrderActivityNew extends AppCompatActivity {
         binding.amountOfProducts.setText(String.format("%s %s %s", getText(R.string.inYourOrderProductsCount), productsAmount, getText(R.string.inYourOrderProductsPC)));
 
         //set chosen user address
-        for (UserAddress address : Common.userAddressesRepository.getUserAddressesList()) {
-            if (address.isChecked) {
-                binding.userAddress.setText(address.address);
-                break;
-            }
-        }
+        //binding.userAddress.setText(currentAddress.address);
 
         binding.phone.addTextChangedListener(new PhoneTextFormatter(binding.phone, "+# (###) ###-##-##"));
 
@@ -343,37 +317,19 @@ public class OrderActivityNew extends AppCompatActivity {
 //        }
 
         binding.paymentCard.setOnClickListener(v -> {
-            if (makeOrder("Payment card")) {
+            if (preparePayment("Card")) {
                 Intent intent = new Intent(OrderActivityNew.this, PaymentActivity.class);
-                intent.putExtra("Order", order);
-                intent.putExtra("md5", md5);
-                intent.putExtra("Price", bigTotal.toString());
+                intent.putExtra("startCost", startCost.toString());
+                intent.putExtra("finalPrice", finalCost.toString());
+                intent.putExtra("discountPromo", discountPromo.toString());
+                intent.putExtra("deliveryCost", deliveryCost.toString());
+                intent.putExtra("deliveryTime", deliveryTime);
+                intent.putExtra("order", deliveryTime);
+                intent.putExtra("paymentType", "Card");
+                intent.putExtra(UserAddress.class.getSimpleName(), currentAddress);
                 startActivity(intent);
             }
         });
-    }
-
-    private String md5(final String s) {
-        final String MD5 = "MD5";
-        try {
-            // Create MD5 Hash
-            MessageDigest digest = java.security.MessageDigest
-                    .getInstance(MD5);
-            digest.update(s.getBytes());
-            byte[] messageDigest = digest.digest();
-            // Create Hex String
-            StringBuilder hexString = new StringBuilder();
-            for (byte aMessageDigest : messageDigest) {
-                String h = Integer.toHexString(0xFF & aMessageDigest);
-                while (h.length() < 2)
-                    h = "0" + h;
-                hexString.append(h);
-            }
-            return hexString.toString();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        return "";
     }
 
     private void checkIsReadyToPay() {
@@ -409,7 +365,17 @@ public class OrderActivityNew extends AppCompatActivity {
         binding.pwgStatus.setVisibility(View.GONE);
         binding.pwgButton.getRoot().setVisibility(View.VISIBLE);
         binding.pwgButton.getRoot().setOnClickListener(v -> {
-            if (makeOrder("Google Pay")) {
+            if (preparePayment("GooglePay")) {
+                //testing
+                sendOrder();
+                Common.cartRepository.emptyCart();
+                Intent intentGP = new Intent();
+                intentGP.putExtra("success", "googlePay");
+                setResult(RESULT_OK, intentGP);
+                finish();
+                //testing
+
+
                 //requestPayment(paymentsClient);
             }
         });
@@ -422,7 +388,7 @@ public class OrderActivityNew extends AppCompatActivity {
 
         // The price provided to the API should include taxes and shipping.
         // This price is not displayed to the user.
-        String price = bigTotal.toString();
+        String price = finalCost.toString();
 
         TransactionInfo transaction = PaymentsUtil.createTransaction(price);
         PaymentDataRequest request = PaymentsUtil.createPaymentDataRequest(transaction);
@@ -447,7 +413,7 @@ public class OrderActivityNew extends AppCompatActivity {
             Toast.makeText(this, getString(R.string.payments_show_name, billingName), Toast.LENGTH_LONG).show();
             // Use token.getToken() to get the token string.
             Log.d("AlexDebug", token.getToken());
-            charge(token.getToken(), "Google Pay", bigTotal, order);
+            charge(token.getToken(), "Google Pay", finalCost, order);
         }
     }
 
@@ -459,7 +425,7 @@ public class OrderActivityNew extends AppCompatActivity {
         Log.d("AlexDebug", String.format("Error code: %d", statusCode));
     }
 
-    // Запрос на прведение одностадийного платежа
+    // Запрос на проведение одностадийного платежа
     private void charge(String cardCryptogramPacket, String cardHolderName, BigDecimal bigTotal, String order) {
         compositeDisposable.add(PayApi
                 .charge(cardCryptogramPacket, cardHolderName, bigTotal, order)
@@ -485,7 +451,7 @@ public class OrderActivityNew extends AppCompatActivity {
             if (transaction.getReasonCode() == 0) {
                 transactionID = transaction.getId();
                 Log.d("AlexDebug", "transaction.getId(): " + transaction.getId());
-                sendOrderToServer();
+                sendOrder();
                 Common.cartRepository.emptyCart();
                 Intent intentGP = new Intent();
                 intentGP.putExtra("success", "googlePay payment");
@@ -525,28 +491,25 @@ public class OrderActivityNew extends AppCompatActivity {
         Toast.makeText(OrderActivityNew.this, message, Toast.LENGTH_SHORT).show();
     }
 
-    private void sendOrderToServer() {
-//        RetrofitClientNew.
-//                getClient(RestAPI.URL_API_MAIN)
-//                .create(RestAPI.class)
-//                .postOrder(order, md5, userID, "new", transactionID)
-//                .enqueue(new Callback<ResponseBody>() {
-//                    @Override
-//                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-//                        if (response.isSuccessful()) {
-//                            //Log.d("AlexDebug", "response: " + response.body().getStatus());
-//                            //Log.d("AlexDebug", "response: " + response.body().getId());
-//                        } else {
-//                            Log.e("AlexDebug", "Code: " + response.code() + "Message: " + response.message());
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-//                        Log.e("AlexDebug", "sendOrderToServer Failer: " + t.toString());
-//                    }
-//                });
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (userSettings.contains(ENTRANCE)) {
+            binding.entrance.setText(userSettings.getString(ENTRANCE, ""));
+            binding.floor.setText(userSettings.getString(FLOOR, ""));
+            binding.flat.setText(userSettings.getString(FLAT, ""));
+            binding.phone.setText(userSettings.getString(PHONE, ""));
+        }
     }
 
-
+    @Override
+    protected void onStop() {
+        SharedPreferences.Editor editor = userSettings.edit();
+        editor.putString(ENTRANCE, binding.entrance.getText().toString());
+        editor.putString(FLOOR, binding.floor.getText().toString());
+        editor.putString(FLAT, binding.flat.getText().toString());
+        editor.putString(PHONE, binding.phone.getText().toString());
+        editor.apply();
+        super.onStop();
+    }
 }

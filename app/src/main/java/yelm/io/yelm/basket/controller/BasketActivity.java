@@ -21,10 +21,10 @@ import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import yelm.io.yelm.basket.model.BasketCheckPOJO;
 import yelm.io.yelm.pickup_address.controller.AddressPickupChooseActivity;
 import yelm.io.yelm.support_stuff.AlexTAG;
 import yelm.io.yelm.R;
-import yelm.io.yelm.basket.model.BasketCheckResponse;
 import yelm.io.yelm.basket.adapter.BasketAdapter;
 import yelm.io.yelm.database_new.basket_new.BasketCart;
 import yelm.io.yelm.database_new.Common;
@@ -206,9 +206,9 @@ public class BasketActivity extends AppCompatActivity implements AddressesBottom
                         Lat,
                         Lon
                 ).
-                enqueue(new Callback<BasketCheckResponse>() {
+                enqueue(new Callback<BasketCheckPOJO>() {
                     @Override
-                    public void onResponse(@NotNull Call<BasketCheckResponse> call, @NotNull final Response<BasketCheckResponse> response) {
+                    public void onResponse(@NotNull Call<BasketCheckPOJO> call, @NotNull final Response<BasketCheckPOJO> response) {
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
                                 Log.d(AlexTAG.debug, "Method checkBasket() - PriceDelivery(): " + response.body().getDelivery().getPrice());
@@ -230,7 +230,7 @@ public class BasketActivity extends AppCompatActivity implements AddressesBottom
                     }
 
                     @Override
-                    public void onFailure(@NotNull Call<BasketCheckResponse> call, @NotNull Throwable t) {
+                    public void onFailure(@NotNull Call<BasketCheckPOJO> call, @NotNull Throwable t) {
                         Log.e(AlexTAG.error, "Method checkBasket() - failure: " + t.toString());
                     }
                 });

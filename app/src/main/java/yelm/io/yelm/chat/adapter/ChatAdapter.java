@@ -323,10 +323,10 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 Log.d(AlexTAG.debug, "ratio " + ratio);
                 Log.d(AlexTAG.debug, "newHeight " + newHeight);
                 Log.d(AlexTAG.debug, "newWight " + newWight);
-                holder.image.setImageBitmap(Bitmap.createBitmap(bitmap, 0, 0, newWight, newHeight));
-//                    Picasso.get().load(image)
-//                            .resize(newWight, newHeight)
-//                            .into(holder.image);
+                //holder.image.setImageBitmap(Bitmap.createBitmap(bitmap, 0, 0, newWight, newHeight));
+                    Picasso.get().load(chatContent.getImage())
+                            .resize(newWight, newHeight)
+                            .into(holder.image);
                 holder.image.setOnLongClickListener(v -> {
                     popupMenu(context, holder.image, chatContent.getImage(), chatContent.isInner());
                     return true;
@@ -393,12 +393,12 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         try {
                             bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
                             saveImage(bitmap);
-                            Toast.makeText(context, context.getText(R.string.chatActivitySavedImage), Toast.LENGTH_SHORT).show();
                         } catch (IOException e) {
                             e.printStackTrace();
                             Log.d(AlexTAG.debug, "IOException: " + e.getMessage());
                         }
                     }).start();
+                    Toast.makeText(context, context.getText(R.string.chatActivitySavedImage), Toast.LENGTH_SHORT).show();
                     return true;
                 }
                 return true;

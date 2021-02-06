@@ -163,7 +163,7 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
 
                 try {
                     Log.d("AlexDebug", "data.toString(): " + data.toString());
-                    if (data.getString("from_whom").equals(LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, ""))) {
+                    if (data.getString("from_whom").equals(LoaderActivity.settings.getString(LoaderActivity.CLIENT_ID, ""))) {
                         return;
                     }
                     if (data.getString("type").equals("message")) {
@@ -368,7 +368,7 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
                 chatContentList.add(temp);
                 chatAdapter.notifyDataSetChanged();
                 binding.messageField.setText("");
-                //socketSendMessage(message);
+                socketSendMessage(message);
             }
         });
 
@@ -569,7 +569,7 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
             chatAdapter.notifyDataSetChanged();
             binding.chatRecycler.smoothScrollToPosition(chatContentList.size() - 1);
             new Thread(() -> {
-                //socketSendPictures(images);
+                socketSendPictures(images);
             }).start();
         }
     }
@@ -589,6 +589,7 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
                 jsonObjectItem.put("from_whom", LoaderActivity.settings.getString(LoaderActivity.CLIENT_ID, ""));
                 jsonObjectItem.put("to_whom", LoaderActivity.settings.getString(LoaderActivity.SHOP_ID, ""));
                 jsonObjectItem.put("message", "");
+                jsonObjectItem.put("items", "{}");
                 jsonObjectItem.put("type", "images");//"type"-"images/message"
                 jsonObjectItem.put("platform", RestAPI.PLATFORM_NUMBER);
                 jsonObjectItem.put("images", picturesArray.toString());
@@ -608,7 +609,8 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
             jsonObjectItem.put("message", message);
             jsonObjectItem.put("type", "message");//"type"-"images/message"
             jsonObjectItem.put("platform", RestAPI.PLATFORM_NUMBER);
-            jsonObjectItem.put("images", "");
+            jsonObjectItem.put("images", "[]");
+            jsonObjectItem.put("items", "{}");
         } catch (JSONException e) {
             e.printStackTrace();
         }

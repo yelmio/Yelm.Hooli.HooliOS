@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class BasketCheckResponse {
+public class BasketCheckPOJO {
 
     @SerializedName("deleted_id")
     @Expose
@@ -30,4 +30,11 @@ public class BasketCheckResponse {
         this.delivery = delivery;
     }
 
+    @Override
+    public String toString() {
+        return "BasketCheckPOJO{" +
+                "deletedId=" + deletedId +
+                ", delivery=" + delivery +
+                '}';
+    }
 }

@@ -1,10 +1,13 @@
 package yelm.io.yelm.basket.controller;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 
@@ -24,8 +27,9 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import yelm.io.yelm.R;
 import yelm.io.yelm.basket.adapter.BasketAdapter;
-import yelm.io.yelm.basket.model.BasketCheckResponse;
+import yelm.io.yelm.basket.model.BasketCheckPOJO;
 import yelm.io.yelm.basket.model.DeletedId;
+import yelm.io.yelm.constants.Constants;
 import yelm.io.yelm.database_new.Common;
 import yelm.io.yelm.database_new.basket_new.BasketCart;
 import yelm.io.yelm.database_new.user_addresses.UserAddress;
@@ -47,7 +51,10 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
     AddressesBottomSheet addressesBottomSheet = new AddressesBottomSheet();
     private BigDecimal deliveryCost = new BigDecimal("0");
     private BigDecimal finalCost = new BigDecimal("0");
+    private BigDecimal startCost = new BigDecimal("0");
+    private BigDecimal discountPromo = new BigDecimal("0");
     private String deliveryTime = "";
+    private static final int PAYMENT_SUCCESS = 777;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,58 +80,50 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
         super.onStart();
     }
 
-    synchronized private void checkBasket(String Lat, String Lon) {
+    synchronized private void checkBasket(String lat, String lon) {
+        //stop upgrade basket UI
         compositeDisposableBasket.clear();
 
         JSONArray jsonObjectItems = new JSONArray();
         List<BasketCart> basketCarts = Common.basketCartRepository.getBasketCartsList();
-        try {
-            JSONObject jsonObjectItem1 = new JSONObject();
-            jsonObjectItem1
-                    .put("id", "6137")
-                    .put("count", "10");
-            jsonObjectItems.put(jsonObjectItem1);
+        for (BasketCart basketCart : basketCarts) {
+            try {
+                JSONObject jsonObjectItem = new JSONObject();
+                jsonObjectItem
+                        .put("id", basketCart.itemID)
+                        .put("count", basketCart.count);
+                jsonObjectItems.put(jsonObjectItem);
 
-            JSONObject jsonObjectItem2 = new JSONObject();
-            jsonObjectItem2
-                    .put("id", "6138")
-                    .put("count", "100");
-            jsonObjectItems.put(jsonObjectItem2);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
+        Log.d(AlexTAG.debug, "Method checkBasket() - jsonObjectItems: " + jsonObjectItems.toString());
 
         RetrofitClientNew.
                 getClient(RestAPI.URL_API_MAIN).
                 create(RestAPI.class).
                 checkBasket(
                         RestAPI.PLATFORM_NUMBER,
-                        "11",
                         //Constants.ShopID,
+                        "11",
                         getResources().getConfiguration().locale.getLanguage(),
                         getResources().getConfiguration().locale.getCountry(),
-                        "55.78487156477965",
-                        //Lat,
-                        //Lon
-                        "37.56303011869477",
+                        lat,
+                        lon,
                         jsonObjectItems.toString()
                 ).
-                enqueue(new Callback<BasketCheckResponse>() {
+                enqueue(new Callback<BasketCheckPOJO>() {
                     @Override
-                    public void onResponse(@NotNull Call<BasketCheckResponse> call, @NotNull final Response<BasketCheckResponse> response) {
+                    public void onResponse(@NotNull Call<BasketCheckPOJO> call, @NotNull final Response<BasketCheckPOJO> response) {
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
-                                Log.d(AlexTAG.debug, "Method checkBasket() - PriceDelivery(): " + response.body().getDelivery().getPrice());
-                                Log.d(AlexTAG.debug, "Method checkBasket() - TimeDelivery(): " + response.body().getDelivery().getTime());
-                                Log.d(AlexTAG.debug, "Method checkBasket() - response.getDeletedID(): " + response.body().getDeletedId().toString());
-                                binding.deliveryCost.setText(String.format("%s %s", response.body().getDelivery().getPrice(), LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
-                                binding.time.setText(String.format("%s %s", response.body().getDelivery().getTime(), getText(R.string.delivery_time)));
+                                Log.d(AlexTAG.debug, "Method checkBasket() - BasketCheckPOJO: " + response.body().toString());
                                 deliveryTime = response.body().getDelivery().getTime();
+                                binding.time.setText(String.format("%s %s", deliveryTime, getText(R.string.delivery_time)));
                                 deliveryCost = new BigDecimal(response.body().getDelivery().getPrice());
-
+                                binding.deliveryCost.setText(String.format("%s %s", deliveryCost, LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
                                 new Thread(() -> updateBasketCartsQuantity(response.body().getDeletedId())).start();
-
                             } else {
                                 Log.e(AlexTAG.error, "Method checkBasket() - by some reason response is null!");
                             }
@@ -135,24 +134,21 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
                     }
 
                     @Override
-                    public void onFailure(@NotNull Call<BasketCheckResponse> call, @NotNull Throwable t) {
+                    public void onFailure(@NotNull Call<BasketCheckPOJO> call, @NotNull Throwable t) {
                         Log.e(AlexTAG.error, "Method checkBasket() - failure: " + t.toString());
                     }
                 });
     }
 
     private void updateBasketCartsQuantity(List<DeletedId> deletedIDList) {
-        Log.d(AlexTAG.debug, "deletedIDList.size(): " + deletedIDList.size());
-
         for (BasketCart basketCart : Common.basketCartRepository.getBasketCartsList()) {
             basketCart.quantity = "9999";
             Common.basketCartRepository.updateBasketCart(basketCart);
         }
-
         for (DeletedId deletedId : deletedIDList) {
-            Log.d(AlexTAG.debug, "deletedId.getAvailableCount(): " + deletedId.getAvailableCount());
+            Log.d(AlexTAG.debug, "deletedId: " + deletedId.toString());
             BasketCart basketCart = Common.basketCartRepository.getBasketCartById(deletedId.getId());
-            if (basketCart!=null){
+            if (basketCart != null) {
                 basketCart.quantity = deletedId.getAvailableCount();
                 Common.basketCartRepository.updateBasketCart(basketCart);
             }
@@ -192,10 +188,9 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
                 allowOrdering = false;
             }
         }
-
+        startCost = finalCost;
         binding.finalPrice.setText(String.format("%s %s", finalCost, LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
-        Log.d(AlexTAG.debug, "Method updateBasket() - carts.size(): " + carts.size() + "\n" +
-                "finalCost: " + finalCost.toString());
+        Log.d(AlexTAG.debug, "Method updateBasket() - finalCost: " + finalCost.toString());
 
         if (carts.size() != 0 && currentAddress != null && allowOrdering) {
             binding.ordering.setEnabled(true);
@@ -215,10 +210,13 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
         binding.addressDelivery.setOnClickListener(v -> callAddressesBottomSheet());
         binding.ordering.setOnClickListener(v -> {
             Intent intent = new Intent(this, OrderActivityNew.class);
+            intent.putExtra("startCost", startCost.toString());
             intent.putExtra("finalPrice", finalCost.toString());
+            intent.putExtra("discountPromo", discountPromo.toString());
             intent.putExtra("deliveryCost", deliveryCost.toString());
             intent.putExtra("deliveryTime", deliveryTime);
-            startActivity(intent);
+            intent.putExtra(UserAddress.class.getSimpleName(), currentAddress);
+            startActivityForResult(intent, PAYMENT_SUCCESS);
         });
     }
 
@@ -247,6 +245,37 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
         binding.addressDelivery.setText(String.format("%s", currentAddress.address));
         checkBasket(currentAddress.latitude, currentAddress.longitude);
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (data == null) {
+            return;
+        }
+        switch (requestCode) {
+            case PAYMENT_SUCCESS:
+                Common.cartRepository.emptyCart();
+                Log.d("AlexDebug", "PAYMENT_SUCCESS " + data.getStringExtra("success"));
+                binding.paymentResult.setVisibility(View.VISIBLE);
+                 if (data.getStringExtra("success").equals("card")) {
+                    binding.paymentResultText.setText(getText(R.string.order_is_accepted_by_card));
+                } else {
+                    binding.paymentResultText.setText(getText(R.string.order_is_accepted_by_google_pay));
+                }
+                binding.lotti.playAnimation();
+                break;
+        }
+        new Handler(Looper.getMainLooper()) {{
+            postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    binding.paymentResult.setVisibility(View.GONE);
+                }
+            }, 2000);
+        }};
+    }
+
+
 
     @Override
     protected void onDestroy() {
