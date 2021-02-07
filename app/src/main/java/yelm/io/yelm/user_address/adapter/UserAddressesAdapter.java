@@ -65,10 +65,10 @@ public class UserAddressesAdapter extends RecyclerView.Adapter<UserAddressesAdap
                 UserAddress temp = Common.userAddressesRepository.getUserAddressesList().get(0);
                 temp.isChecked = true;
                 Common.userAddressesRepository.updateUserAddresses(temp);
-                if (addressChangeListener != null) {
-                    addressChangeListener.onAddressChange();
-                    Log.d(AlexTAG.debug, "removeAddress()");
-                }
+            }
+            if (addressChangeListener != null) {
+                addressChangeListener.onAddressChange();
+                Log.d(AlexTAG.debug, "removeAddress()");
             }
         });
 

@@ -93,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
     private boolean allowUpdateUI = false;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -128,7 +129,6 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     private void getLocationPermission() {
         if (hasLocationPermission()) {
             Log.d(AlexTAG.debug, "Method getLocationPermission() - Location permission granted");
-            //getUserCurrentAddress();
             getUserCurrentLocation();
         } else {
             Log.d(AlexTAG.debug, "Method getLocationPermission() - Location permission not granted");
@@ -308,12 +308,11 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     }
 
     @Override
-    public void selectedAddress(UserAddress userAddress) {
-        Log.d(AlexTAG.debug, "Method selectedAddress() - address: " + userAddress.address);
-        binding.userCurrentAddress.setText(userAddress.address);
-        //getCategoriesWithProducts(userAddress.latitude,userAddress.longitude);
+    public void selectedAddress(UserAddress selectedUserAddress) {
+        Log.d(AlexTAG.debug, "Method selectedAddress() - address: " + selectedUserAddress.address);
+        binding.userCurrentAddress.setText(selectedUserAddress.address);
+        getCategoriesWithProducts(selectedUserAddress.latitude, selectedUserAddress.longitude);
     }
-
 
     private void initNews() {
         RetrofitClientNew.
@@ -370,12 +369,6 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
     }
 
-    private boolean checkPlatform() {
-        return (DynamicURL.getPlatformValue().equals("5f771d465f4191.76733056")
-                || DynamicURL.getPlatformValue().equals("5f8561895c51f7.73864076")
-                || DynamicURL.getPlatformValue().equals("5f5dfa9a7023c2.94067733"));
-    }
-
     @Override
     public void onStop() {
         compositeDisposableBasket.clear();
@@ -388,12 +381,6 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         updateCost();
         if (allowUpdateUI) {
             redrawProducts();
-            for (UserAddress address : Common.userAddressesRepository.getUserAddressesList()) {
-                if (address.isChecked) {
-                    binding.userCurrentAddress.setText(address.address);
-                    break;
-                }
-            }
         }
         allowUpdateUI = true;
     }
@@ -435,7 +422,9 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     synchronized private void redrawProducts() {
         Log.d(AlexTAG.debug, "Method redrawProducts()");
         for (Fragment fragment : getSupportFragmentManager().getFragments()) {
-            getSupportFragmentManager().beginTransaction().remove(fragment).commitAllowingStateLoss();
+            if (!fragment.getTag().equals("addressBottomSheet")){
+                getSupportFragmentManager().beginTransaction().remove(fragment).commitAllowingStateLoss();
+            }
         }
         binding.storeFragments.removeAllViews();
         for (int i = 0; i < catalogsWithProductsList.size(); i++) {
@@ -455,6 +444,12 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     public void setScanCode(String code) {
         DynamicURL.setPLATFORM(code);
         Toast.makeText(this, "QRCode получен", Toast.LENGTH_SHORT).show();
+    }
+
+    private boolean checkPlatform() {
+        return (DynamicURL.getPlatformValue().equals("5f771d465f4191.76733056")
+                || DynamicURL.getPlatformValue().equals("5f8561895c51f7.73864076")
+                || DynamicURL.getPlatformValue().equals("5f5dfa9a7023c2.94067733"));
     }
 
     @Override

@@ -51,9 +51,8 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
     AddressesBottomSheet addressesBottomSheet = new AddressesBottomSheet();
     private BigDecimal deliveryCost = new BigDecimal("0");
     private BigDecimal finalCost = new BigDecimal("0");
-    private BigDecimal startCost = new BigDecimal("0");
     private BigDecimal discountPromo = new BigDecimal("0");
-    private String deliveryTime = "";
+    private String deliveryTime = "0";
     private static final int PAYMENT_SUCCESS = 777;
 
     @Override
@@ -64,11 +63,13 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
         binding();
         currentAddress = setDeliveryAddress();
         //check if there is user address in db - if there is not we just show basket and disable ordering button
-        if (currentAddress != null) {
+        if (currentAddress != null && !Constants.ShopID.equals("0")) {
             checkBasket(currentAddress.latitude, currentAddress.longitude);
         } else {
             Log.d(AlexTAG.debug, "Method onStart() - currentAddress is null");
-            binding.addressDelivery.setText(getText(R.string.basketActivitySelectAddress));
+            //binding.addressDelivery.setText(getText(R.string.basketActivitySelectAddress));
+            binding.time.setText(String.format("%s %s", deliveryTime, getText(R.string.delivery_time)));
+            binding.layoutDeliveryNotAvailable.setVisibility(View.VISIBLE);
             setCompositeDisposableBasket();
             basketAdapter = new BasketAdapter(this, Common.basketCartRepository.getBasketCartsList());
             binding.recyclerCart.setAdapter(basketAdapter);
@@ -105,8 +106,7 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
                 create(RestAPI.class).
                 checkBasket(
                         RestAPI.PLATFORM_NUMBER,
-                        //Constants.ShopID,
-                        "11",
+                        Constants.ShopID,
                         getResources().getConfiguration().locale.getLanguage(),
                         getResources().getConfiguration().locale.getCountry(),
                         lat,
@@ -188,11 +188,9 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
                 allowOrdering = false;
             }
         }
-        startCost = finalCost;
         binding.finalPrice.setText(String.format("%s %s", finalCost, LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
         Log.d(AlexTAG.debug, "Method updateBasket() - finalCost: " + finalCost.toString());
-
-        if (carts.size() != 0 && currentAddress != null && allowOrdering) {
+        if (carts.size() != 0 && allowOrdering && currentAddress != null && !Constants.ShopID.equals("0")) {
             binding.ordering.setEnabled(true);
         } else {
             binding.ordering.setEnabled(false);
@@ -210,7 +208,6 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
         binding.addressDelivery.setOnClickListener(v -> callAddressesBottomSheet());
         binding.ordering.setOnClickListener(v -> {
             Intent intent = new Intent(this, OrderActivityNew.class);
-            intent.putExtra("startCost", startCost.toString());
             intent.putExtra("finalPrice", finalCost.toString());
             intent.putExtra("discountPromo", discountPromo.toString());
             intent.putExtra("deliveryCost", deliveryCost.toString());
@@ -257,7 +254,7 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
                 Common.cartRepository.emptyCart();
                 Log.d("AlexDebug", "PAYMENT_SUCCESS " + data.getStringExtra("success"));
                 binding.paymentResult.setVisibility(View.VISIBLE);
-                 if (data.getStringExtra("success").equals("card")) {
+                if (data.getStringExtra("success").equals("card")) {
                     binding.paymentResultText.setText(getText(R.string.order_is_accepted_by_card));
                 } else {
                     binding.paymentResultText.setText(getText(R.string.order_is_accepted_by_google_pay));
@@ -274,7 +271,6 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
             }, 2000);
         }};
     }
-
 
 
     @Override

@@ -97,7 +97,7 @@ public class OrderActivityNew extends AppCompatActivity {
         Bundle args = getIntent().getExtras();
         if (args != null) {
             finalCost = new BigDecimal(args.getString("finalPrice"));
-            startCost = new BigDecimal(args.getString("startCost"));
+            startCost = finalCost;
             deliveryCost = new BigDecimal(args.getString("deliveryCost"));
             discountPromo = new BigDecimal(args.getString("discountPromo"));
             deliveryTime = args.getString("deliveryTime");
