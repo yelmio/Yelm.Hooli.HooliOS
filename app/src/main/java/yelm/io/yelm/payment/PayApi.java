@@ -21,7 +21,7 @@ public class PayApi {
         // Параметры:
         PayRequestArgs args = new PayRequestArgs();
         args.setAmount(amount.toString());  // Сумма платежа (Обязательный)
-        args.setCurrency(LoaderActivity.settings.getString(LoaderActivity.CURRENCY, "")); // Валюта (Обязательный)
+        args.setCurrency("RUB"); // Валюта (Обязательный)
         args.setName(cardHolderName); // Имя держателя карты в латинице (Обязательный для всех платежей кроме Apple Pay и Google Pay)
         args.setCardCryptogramPacket(cardCryptogramPacket); // Криптограмма платежных данных (Обязательный)
 

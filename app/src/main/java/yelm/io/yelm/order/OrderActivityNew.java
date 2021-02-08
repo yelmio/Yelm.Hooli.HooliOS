@@ -66,6 +66,7 @@ public class OrderActivityNew extends AppCompatActivity {
 
     private PaymentsClient paymentsClient;
     private BigDecimal finalCost = new BigDecimal("0");
+    private BigDecimal convertedCost = new BigDecimal("0");
     private BigDecimal deliveryCost = new BigDecimal("0");
     private BigDecimal startCost = new BigDecimal("0");
     private BigDecimal discountPromo = new BigDecimal("0");
@@ -97,7 +98,8 @@ public class OrderActivityNew extends AppCompatActivity {
         Bundle args = getIntent().getExtras();
         if (args != null) {
             finalCost = new BigDecimal(args.getString("finalPrice"));
-            startCost = finalCost;
+            startCost = finalCost; //minus discount
+            convertedCost = finalCost;
             deliveryCost = new BigDecimal(args.getString("deliveryCost"));
             discountPromo = new BigDecimal(args.getString("discountPromo"));
             deliveryTime = args.getString("deliveryTime");
@@ -255,7 +257,7 @@ public class OrderActivityNew extends AppCompatActivity {
         switch (requestCode) {
             case PAYMENT_SUCCESS:
                 Intent intent = new Intent();
-                intent.putExtra("success", "card payment");
+                intent.putExtra("success", "card");
                 setResult(RESULT_OK, intent);
                 finish();
                 break;
@@ -322,11 +324,8 @@ public class OrderActivityNew extends AppCompatActivity {
                 intent.putExtra("entrance", binding.entrance.getText().toString());
                 intent.putExtra("phone", binding.phone.getText().toString());
                 intent.putExtra("flat", binding.flat.getText().toString());
-
-
-
                 intent.putExtra(UserAddress.class.getSimpleName(), currentAddress);
-                startActivity(intent);
+                startActivityForResult(intent, PAYMENT_SUCCESS);
             }
         });
     }
@@ -365,16 +364,18 @@ public class OrderActivityNew extends AppCompatActivity {
         binding.pwgButton.getRoot().setVisibility(View.VISIBLE);
         binding.pwgButton.getRoot().setOnClickListener(v -> {
             if (preparePayment("GooglePay")) {
-                //testing
+//                //testing
 //                sendOrder();
-//                Common.cartRepository.emptyCart();
 //                Intent intentGP = new Intent();
 //                intentGP.putExtra("success", "googlePay");
 //                setResult(RESULT_OK, intentGP);
 //                finish();
-                //testing
-
-                requestPayment(paymentsClient);
+//                //testing
+                if (Objects.equals(LoaderActivity.settings.getString(LoaderActivity.CURRENCY, ""), "RUB")){
+                    //requestPayment(paymentsClient);
+                }else {
+                    convertPrice();
+                }
             }
         });
     }
@@ -386,7 +387,7 @@ public class OrderActivityNew extends AppCompatActivity {
 
         // The price provided to the API should include taxes and shipping.
         // This price is not displayed to the user.
-        String price = finalCost.toString();
+        String price = convertedCost.toString();
 
         TransactionInfo transaction = PaymentsUtil.createTransaction(price);
         PaymentDataRequest request = PaymentsUtil.createPaymentDataRequest(transaction);
@@ -396,6 +397,39 @@ public class OrderActivityNew extends AppCompatActivity {
         // onActivityResult will be called with the result.
         AutoResolveHelper.resolveTask(futurePaymentData, Objects.requireNonNull(this), LOAD_PAYMENT_DATA_REQUEST_CODE);
     }
+
+    private void convertPrice() {
+        Log.d(AlexTAG.debug, "Method convertPrice()");
+        RetrofitClientNew.
+                getClient(RestAPI.URL_API_MAIN)
+                .create(RestAPI.class)
+                .convertPrice(
+                        finalCost.toString(),
+                        LoaderActivity.settings.getString(LoaderActivity.CURRENCY, "")
+                ).enqueue(new Callback<PriceConverterResponseClass>() {
+            @Override
+            public void onResponse(@NotNull Call<PriceConverterResponseClass> call, @NotNull Response<PriceConverterResponseClass> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        Log.d(AlexTAG.debug, "Method convertPrice() - response.code(): " + response.code());
+                        convertedCost = new BigDecimal(response.body().getPrice());
+                        requestPayment(paymentsClient);
+                    } else {
+                        Log.e(AlexTAG.error, "Method convertPrice() - by some reason response is null!");
+                    }
+                } else {
+                    Log.e(AlexTAG.error, "Method convertPrice() - response is not successful. " +
+                            "Code: " + response.code() + "Message: " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call<PriceConverterResponseClass> call, @NotNull Throwable t) {
+                Log.e(AlexTAG.error, "Method convertPrice() - failure: " + t.toString());
+            }
+        });
+    }
+
 
     private void handlePaymentSuccess(PaymentData paymentData) {
         // PaymentMethodToken contains the payment information, as well as any additional
@@ -411,7 +445,7 @@ public class OrderActivityNew extends AppCompatActivity {
             Toast.makeText(this, getString(R.string.payments_show_name, billingName), Toast.LENGTH_LONG).show();
             // Use token.getToken() to get the token string.
             Log.d("AlexDebug", token.getToken());
-            charge(token.getToken(), "Google Pay", finalCost, order);
+            charge(token.getToken(), "Google Pay", convertedCost, order);
         }
     }
 
@@ -424,9 +458,9 @@ public class OrderActivityNew extends AppCompatActivity {
     }
 
     // Запрос на проведение одностадийного платежа
-    private void charge(String cardCryptogramPacket, String cardHolderName, BigDecimal finalCost, String order) {
+    private void charge(String cardCryptogramPacket, String cardHolderName, BigDecimal convertedCost, String order) {
         compositeDisposable.add(PayApi
-                .charge(cardCryptogramPacket, cardHolderName, finalCost, order)
+                .charge(cardCryptogramPacket, cardHolderName, convertedCost, order)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
 //                .doOnSubscribe(disposable -> showLoading())
@@ -450,7 +484,6 @@ public class OrderActivityNew extends AppCompatActivity {
                 transactionID = transaction.getId();
                 Log.d("AlexDebug", "transaction.getId(): " + transaction.getId());
                 sendOrder();
-                Common.cartRepository.emptyCart();
                 Intent intentGP = new Intent();
                 intentGP.putExtra("success", "googlePay payment");
                 setResult(RESULT_OK, intentGP);

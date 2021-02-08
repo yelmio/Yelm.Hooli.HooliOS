@@ -378,6 +378,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     @Override
     protected void onStart() {
         super.onStart();
+        Log.d("AlexDebug", "allowUpdateUI: " + allowUpdateUI);
         updateCost();
         if (allowUpdateUI) {
             redrawProducts();

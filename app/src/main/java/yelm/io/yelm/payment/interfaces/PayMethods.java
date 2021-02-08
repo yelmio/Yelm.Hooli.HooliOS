@@ -13,9 +13,9 @@ public interface PayMethods {
     @POST("cp_charge.php?platform=5fd33466e17963.29052139")
     Observable<PayApiResponse<Transaction>> charge(@Header("Content-Type") String contentType, @Body PayRequestArgs args);
 
-    @POST("cp_auth.php?platform=5fd33466e17963.29052139")
+    @POST("cryptogram?platform=5fd33466e17963.29052139")
     Observable<PayApiResponse<Transaction>> auth(@Header("Content-Type") String contentType, @Body PayRequestArgs args);
 
-    @POST("cp_post3ds.php?platform=5fd33466e17963.29052139")
+    @POST("processing?platform=5fd33466e17963.29052139")
     Observable<PayApiResponse<Transaction>> post3ds(@Header("Content-Type") String contentType, @Body Post3dsRequestArgs args);
 }

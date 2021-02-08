@@ -17,6 +17,7 @@ import yelm.io.yelm.loader.model.UserLoginResponse;
 import yelm.io.yelm.main.model.CatalogsWithProductsClass;
 import yelm.io.yelm.main.model.Item;
 import yelm.io.yelm.main.news.NewNews;
+import yelm.io.yelm.order.PriceConverterResponseClass;
 
 public interface RestAPI {
 
@@ -42,6 +43,13 @@ public interface RestAPI {
             @Query("platform") String Platform,
             @Query("lat") String LAT,
             @Query("lon") String LON
+    );
+
+    @FormUrlEncoded
+    @GET("converter?")
+    Call<PriceConverterResponseClass> convertPrice(
+            @Field("price") String price,
+            @Field("currency") String currency
     );
 
     @GET("search?")

@@ -247,7 +247,9 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
         }
         switch (requestCode) {
             case PAYMENT_SUCCESS:
-                Common.cartRepository.emptyCart();
+                deliveryCost = new BigDecimal("0");
+                Common.basketCartRepository.emptyBasketCart();
+                binding.time.setText(String.format("0 %s", getText(R.string.delivery_time)));
                 Log.d("AlexDebug", "PAYMENT_SUCCESS " + data.getStringExtra("success"));
                 binding.paymentResult.setVisibility(View.VISIBLE);
                 if (data.getStringExtra("success").equals("card")) {
