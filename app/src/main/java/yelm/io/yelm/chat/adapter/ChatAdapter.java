@@ -65,6 +65,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int MSG_TYPE_PICTURE_LEFT = 2;
     private static final int MSG_TYPE_PICTURE_RIGHT = 3;
     private static final int MSG_TYPE_ITEM = 4;
+    private static final int MSG_TYPE_ORDER = 5;
     private ArrayList<ChatContent> chatContentList;
     private Context context;
     ScreenDimensions screenDimensions;
@@ -91,18 +92,20 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        Log.d(AlexTAG.debug, "viewType: "+viewType);
         switch (viewType) {
-            case MSG_TYPE_MESSAGE_LEFT:
-                return new MessageHolder(LayoutInflater.from(context).inflate(R.layout.chat_type_message_left, parent, false));
+            case MSG_TYPE_ITEM:
+                return new ItemHolder(LayoutInflater.from(context).inflate(R.layout.chat_type_item, parent, false));
             case MSG_TYPE_MESSAGE_RIGHT:
                 return new MessageHolder(LayoutInflater.from(context).inflate(R.layout.chat_type_message_right, parent, false));
             case MSG_TYPE_PICTURE_RIGHT:
                 return new PictureHolder(LayoutInflater.from(context).inflate(R.layout.chat_type_picture_right, parent, false));
             case MSG_TYPE_PICTURE_LEFT:
                 return new PictureHolder(LayoutInflater.from(context).inflate(R.layout.chat_type_picture_left, parent, false));
+            case MSG_TYPE_ORDER:
+                return new OrderHolder(LayoutInflater.from(context).inflate(R.layout.chat_type_order, parent, false));
             default:
-                return new ItemHolder(LayoutInflater.from(context).inflate(R.layout.chat_type_item, parent, false));
-
+                return new MessageHolder(LayoutInflater.from(context).inflate(R.layout.chat_type_message_left, parent, false));
         }
     }
 
@@ -131,6 +134,15 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             Log.d(AlexTAG.debug, "ItemHolder");
             setItem((ItemHolder) holder, chatContent);
         }
+
+        if (holder instanceof OrderHolder) {
+            Log.d(AlexTAG.debug, "OrderHolder");
+            ((OrderHolder) holder).date.setText(chatContent.getCreated_at());
+            ((OrderHolder) holder).nameSender.setText(context.getResources().getText(R.string.app_name));
+            ((OrderHolder) holder).message.setText(chatContent.getMessage());
+        }
+
+
     }
 
     private void setItem(@NonNull ItemHolder holder, ChatContent chatContent) {
@@ -212,6 +224,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 cartItem.finalPrice = finalBd.toString();
                 cartItem.type = chatContent.getItem().getType();
                 cartItem.count = "1";
+                cartItem.quantity = chatContent.getItem().getQuantity();
                 cartItem.imageUrl = chatContent.getItem().getPreviewImage();
                 cartItem.discount = chatContent.getItem().getDiscount();
                 cartItem.modifier = chatContent.getItem().getModifier();
@@ -324,9 +337,9 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 Log.d(AlexTAG.debug, "newHeight " + newHeight);
                 Log.d(AlexTAG.debug, "newWight " + newWight);
                 //holder.image.setImageBitmap(Bitmap.createBitmap(bitmap, 0, 0, newWight, newHeight));
-                    Picasso.get().load(chatContent.getImage())
-                            .resize(newWight, newHeight)
-                            .into(holder.image);
+                Picasso.get().load(chatContent.getImage())
+                        .resize(newWight, newHeight)
+                        .into(holder.image);
                 holder.image.setOnLongClickListener(v -> {
                     popupMenu(context, holder.image, chatContent.getImage(), chatContent.isInner());
                     return true;
@@ -537,9 +550,21 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     public static class MessageHolder extends RecyclerView.ViewHolder {
-        public TextView nameSender, date, message;
+        public TextView nameSender, date, message, details;
 
         public MessageHolder(@NonNull View itemView) {
+            super(itemView);
+            nameSender = itemView.findViewById(R.id.nameSender);
+            date = itemView.findViewById(R.id.date);
+            message = itemView.findViewById(R.id.message);
+            details = itemView.findViewById(R.id.details);
+        }
+    }
+
+    public static class OrderHolder extends RecyclerView.ViewHolder {
+        public TextView nameSender, date, message;
+
+        public OrderHolder(@NonNull View itemView) {
             super(itemView);
             nameSender = itemView.findViewById(R.id.nameSender);
             date = itemView.findViewById(R.id.date);
@@ -587,9 +612,13 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public int getItemViewType(int position) {
+        Log.d(AlexTAG.debug, "chatContentList.get(position).getType(): "+chatContentList.get(position).getType());
+
         switch (chatContentList.get(position).getType()) {
             case "items":
                 return MSG_TYPE_ITEM;
+            case "order":
+                return MSG_TYPE_ORDER;
             case "message":
                 if (chatContentList.get(position).getFrom_whom().equals(LoaderActivity.settings.getString(LoaderActivity.CLIENT_ID, ""))) {
                     return MSG_TYPE_MESSAGE_RIGHT;

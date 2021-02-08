@@ -27,5 +27,4 @@ public class ModifiersConverter {
     public static String ListToString(List<Modifier> someObjects) {
         return gson.toJson(someObjects);
     }
-
 }

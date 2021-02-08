@@ -53,7 +53,7 @@ public class ItemActivity extends AppCompatActivity implements AppBarLayout.OnOf
             bindingAddSubtractProductCount();
             bindingAddProductToBasket(item);
         } else {
-            Log.e(AlexTAG.error, "Method onCreate() in ProductNewActivity: by some reason product==null");
+            Log.e(AlexTAG.error, "Method onCreate() in ItemActivity: by some reason item==null");
         }
     }
 
@@ -184,7 +184,7 @@ public class ItemActivity extends AppCompatActivity implements AppBarLayout.OnOf
             cartItem.type = product.getType();
             cartItem.count = binding.countProducts.getText().toString();
             cartItem.imageUrl = product.getPreviewImage();
-            //cartItem.quantity = current.getQuantity();
+            cartItem.quantity = product.getQuantity();
             cartItem.discount = product.getDiscount();
             cartItem.modifier = listModifiers;
             cartItem.isPromo = false;
@@ -193,8 +193,6 @@ public class ItemActivity extends AppCompatActivity implements AppBarLayout.OnOf
             Common.basketCartRepository.insertToBasketCart(cartItem);
             Log.d(AlexTAG.debug, "Method add Product to Basket. listCartsByID == null:  " + cartItem.toString());
         });
-
-
     }
 
 

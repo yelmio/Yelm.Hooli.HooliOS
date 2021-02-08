@@ -177,7 +177,8 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
                                 "message",
                                 "",
                                 null,
-                                false);
+                                false,
+                                "0");
                         chatContentList.add(chatMessage);
                         chatAdapter.notifyDataSetChanged();
                         Log.d("AlexDebug", "message " + message);
@@ -198,11 +199,12 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
                                     "images",
                                     image,
                                     null,
-                                    false);
+                                    false,
+                                    "0");
                             chatContentList.add(temp);
                             chatAdapter.notifyDataSetChanged();
                         }
-                    } else {
+                    } else if (data.getString("type").equals("items")) {
                         String itemString = data.getString("items");
                         Gson gson = new Gson();
                         Type typeItem = new TypeToken<Item>() {
@@ -217,7 +219,8 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
                                 "items",
                                 null,
                                 item,
-                                false);
+                                false,
+                                "0");
                         chatContentList.add(temp);
                         chatAdapter.notifyDataSetChanged();
                     }
@@ -261,10 +264,10 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
         RetrofitClientChat.
                 getClient(RestApiChat.URL_API_MAIN).
                 create(RestApiChat.class).
-//                getChatHistory(RestApiChat.PLATFORM_NUMBER,
-//                        LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, "")).
-        getChatHistory("5fd33466e17963.29052139",
-        "13").
+                getChatHistory(RestApiChat.PLATFORM_NUMBER,
+                        LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, "")).
+//        getChatHistory("5fd33466e17963.29052139",
+//        "13").
                 enqueue(new Callback<ArrayList<ChatHistoryClass>>() {
                     @Override
                     public void onResponse(@NotNull Call<ArrayList<ChatHistoryClass>> call, @NotNull final Response<ArrayList<ChatHistoryClass>> response) {
@@ -288,7 +291,8 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
                                                 "message",
                                                 "",
                                                 null,
-                                                false));
+                                                false,
+                                                chat.getOrderID()));
                                     } else if (chat.getType().equals("images")) {
                                         for (String image : chat.getImages()) {
                                             chatContentList.add(new ChatContent(chat.getFromWhom(),
@@ -298,9 +302,10 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
                                                     "images",
                                                     image,
                                                     null,
-                                                    false));
+                                                    false,
+                                                    chat.getOrderID()));
                                         }
-                                    } else {
+                                    } else if (chat.getType().equals("items")) {
                                         chatContentList.add(new ChatContent(chat.getFromWhom(),
                                                 chat.getToWhom(),
                                                 chat.getMessage(),
@@ -308,7 +313,18 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
                                                 "items",
                                                 "",
                                                 chat.getItems(),
-                                                false));
+                                                false,
+                                                chat.getOrderID()));
+                                    }else {
+                                        chatContentList.add(new ChatContent(chat.getFromWhom(),
+                                                chat.getToWhom(),
+                                                chat.getMessage(),
+                                                printedFormatterDate.format(current.getTime()),
+                                                "order",
+                                                "",
+                                                null,
+                                                false,
+                                                chat.getOrderID()));
                                     }
                                 }
                                 chatAdapter = new ChatAdapter(ChatActivity.this, chatContentList);
@@ -364,7 +380,8 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
                         "message",
                         "",
                         null,
-                        true);
+                        true,
+                        "0");
                 chatContentList.add(temp);
                 chatAdapter.notifyDataSetChanged();
                 binding.messageField.setText("");
@@ -529,7 +546,8 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
                         "images",
                         outFile.getAbsolutePath(),
                         null,
-                        true);
+                        true,
+                        "0");
                 chatContentList.add(temp);
                 chatAdapter.notifyDataSetChanged();
                 binding.chatRecycler.smoothScrollToPosition(chatContentList.size() - 1);
@@ -565,7 +583,8 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
                     "images",
                     image,
                     null,
-                    true));
+                    true,
+                    "0"));
             chatAdapter.notifyDataSetChanged();
             binding.chatRecycler.smoothScrollToPosition(chatContentList.size() - 1);
             new Thread(() -> {

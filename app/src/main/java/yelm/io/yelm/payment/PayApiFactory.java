@@ -45,7 +45,7 @@ public class PayApiFactory  {
     @NonNull
     private static Retrofit getRetrofit() {
         return new Retrofit.Builder()
-                .baseUrl("https://api.yelm.io/payments/")
+                .baseUrl(HOST)
                 .addConverterFactory(GsonConverterFactory.create(GSON))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(CLIENT)

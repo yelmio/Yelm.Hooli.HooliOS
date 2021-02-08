@@ -49,9 +49,6 @@
             android:name=".basket.controller.BasketActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".item.ProductNewActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".search.SearchActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />

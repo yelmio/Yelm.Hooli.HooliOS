@@ -1,5 +1,8 @@
 package yelm.io.yelm.chat.model;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 import yelm.io.yelm.main.model.Item;
@@ -14,8 +17,9 @@ public class ChatContent {
     private String image;
     private Item item;
     private boolean inner;
+    private String orderID;
 
-    public ChatContent(String from_whom, String to_whom, String message, String created_at, String type, String image, Item item, boolean inner) {
+    public ChatContent(String from_whom, String to_whom, String message, String created_at, String type, String image, Item item, boolean inner, String orderID) {
         this.from_whom = from_whom;
         this.to_whom = to_whom;
         this.message = message;
@@ -24,6 +28,15 @@ public class ChatContent {
         this.image = image;
         this.item = item;
         this.inner = inner;
+        this.orderID = orderID;
+    }
+
+    public String getOrderID() {
+        return orderID;
+    }
+
+    public void setOrderID(String orderID) {
+        this.orderID = orderID;
     }
 
     public Item getItem() {

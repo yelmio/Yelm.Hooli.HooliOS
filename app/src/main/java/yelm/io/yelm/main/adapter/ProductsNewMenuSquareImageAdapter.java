@@ -174,7 +174,7 @@ public class ProductsNewMenuSquareImageAdapter extends RecyclerView.Adapter<Prod
                 cartItem.type = current.getType();
                 cartItem.count = "1";
                 cartItem.imageUrl = current.getPreviewImage();
-                //cartItem.quantity = current.getQuantity();
+                cartItem.quantity = current.getQuantity();
                 cartItem.discount = current.getDiscount();
                 cartItem.modifier = current.getModifier();
                 cartItem.isPromo = false;
@@ -337,7 +337,7 @@ public class ProductsNewMenuSquareImageAdapter extends RecyclerView.Adapter<Prod
             cartItem.type = current.getType();
             cartItem.count = countProducts.getText().toString();
             cartItem.imageUrl = current.getPreviewImage();
-            //cartItem.quantity = current.getQuantity();
+            cartItem.quantity = current.getQuantity();
             cartItem.discount = current.getDiscount();
             cartItem.modifier = listModifiers;
             cartItem.isPromo = false;

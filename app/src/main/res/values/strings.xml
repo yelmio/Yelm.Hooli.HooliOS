@@ -3,7 +3,7 @@
     <string name="yelm_app" translatable="false">Yelm App</string>
     <string name="yandex_maps_API_key" translatable="false">09ee0a39-0ad1-490a-9ea8-8600c46b9ef8</string>
 
-    <!-- ProductNewActivity -->
+    <!-- ItemActivity -->
     <string name="product_discount">Скидка</string>
     <string name="product_specifications">Харатеристики</string>
     <string name="product_modifier">Дополнения:</string>
@@ -47,6 +47,8 @@
 
     <!-- ChatActivity -->
     <string name="chatActivityTitle">Чат</string>
+    <string name="chatActivityDetails">Подробности</string>
+
     <string name="chatActivityOffline">Офлайн</string>
     <string name="chatActivityOnline">Онлайн</string>
     <string name="chatActivitySaveImage">Сохранить</string>

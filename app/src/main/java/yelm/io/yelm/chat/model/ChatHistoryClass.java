@@ -43,6 +43,10 @@ public class ChatHistoryClass {
     @Expose
     private String type;
 
+    @SerializedName("order_id")
+    @Expose
+    private String orderID;
+
     @Override
     public String toString() {
         return "ChatHistoryClass{" +
@@ -58,6 +62,14 @@ public class ChatHistoryClass {
                 ", items=" + items +
                 ", type='" + type + '\'' +
                 '}';
+    }
+
+    public String getOrderID() {
+        return orderID;
+    }
+
+    public void setOrderID(String orderID) {
+        this.orderID = orderID;
     }
 
     public String getId() {

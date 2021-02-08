@@ -119,7 +119,7 @@ public class OrderActivityNew extends AppCompatActivity {
     }
 
 
-    private boolean sendOrder() {
+    private void sendOrder() {
         List<BasketCart> basketCarts = Common.basketCartRepository.getBasketCartsList();
         JSONArray jsonObjectItems = new JSONArray();
         try {
@@ -127,10 +127,8 @@ public class OrderActivityNew extends AppCompatActivity {
                 BigDecimal fullPrice = new BigDecimal(basketCarts.get(i).finalPrice).multiply(new BigDecimal(basketCarts.get(i).count));
                 JSONObject jsonObjectItem = new JSONObject();
                 jsonObjectItem
-                        .put("item_id", basketCarts.get(i).itemID)
-                        .put("quantity_item", basketCarts.get(i).count)
-                        .put("discount_item", basketCarts.get(i).discount)
-                        .put("price_item", basketCarts.get(i).finalPrice);
+                        .put("id", basketCarts.get(i).itemID)
+                        .put("count", basketCarts.get(i).count);
                 jsonObjectItems.put(jsonObjectItem);
             }
         } catch (JSONException e) {
@@ -146,10 +144,10 @@ public class OrderActivityNew extends AppCompatActivity {
                         RestAPI.PLATFORM_NUMBER,
                         currentAddress.latitude,
                         currentAddress.longitude,
-                        "",
+                        "test",
                         startCost.toString(),
                         discountPromo.toString(),
-                        jsonObjectItems.toString(),
+                        transactionID,
                         userID,
                         currentAddress.address,
                         "GooglePay",
@@ -178,9 +176,7 @@ public class OrderActivityNew extends AppCompatActivity {
                 Log.e(AlexTAG.error, "Method sendOrder() - failure: " + t.toString());
             }
         });
-        return true;
     }
-
 
     private boolean preparePayment(String payment) {
         String phone = binding.phone.getText().toString();
@@ -230,7 +226,6 @@ public class OrderActivityNew extends AppCompatActivity {
 //        Log.d("AlexDebug", "order:" + order);
         return true;
     }
-
 
     private void bindingChosePaymentType() {
         binding.cardPay.setOnClickListener(view -> {
@@ -295,6 +290,7 @@ public class OrderActivityNew extends AppCompatActivity {
         binding.finalPrice.setText(String.format("%s %s", finalCost, LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
         binding.back.setOnClickListener(v -> finish());
         binding.deliveryPrice.setText(String.format("%s %s", deliveryCost, LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
+        binding.userAddress.setText(currentAddress.address);
 
         //set amount of products
         BigInteger productsAmount = new BigInteger("0");
@@ -302,9 +298,6 @@ public class OrderActivityNew extends AppCompatActivity {
             productsAmount = productsAmount.add(new BigInteger(basketCart.count));
         }
         binding.amountOfProducts.setText(String.format("%s %s %s", getText(R.string.inYourOrderProductsCount), productsAmount, getText(R.string.inYourOrderProductsPC)));
-
-        //set chosen user address
-        //binding.userAddress.setText(currentAddress.address);
 
         binding.phone.addTextChangedListener(new PhoneTextFormatter(binding.phone, "+# (###) ###-##-##"));
 
@@ -324,8 +317,14 @@ public class OrderActivityNew extends AppCompatActivity {
                 intent.putExtra("discountPromo", discountPromo.toString());
                 intent.putExtra("deliveryCost", deliveryCost.toString());
                 intent.putExtra("deliveryTime", deliveryTime);
-                intent.putExtra("order", deliveryTime);
-                intent.putExtra("paymentType", "Card");
+                intent.putExtra("order", "");
+                intent.putExtra("floor", binding.floor.getText().toString());
+                intent.putExtra("entrance", binding.entrance.getText().toString());
+                intent.putExtra("phone", binding.phone.getText().toString());
+                intent.putExtra("flat", binding.flat.getText().toString());
+
+
+
                 intent.putExtra(UserAddress.class.getSimpleName(), currentAddress);
                 startActivity(intent);
             }
@@ -367,16 +366,15 @@ public class OrderActivityNew extends AppCompatActivity {
         binding.pwgButton.getRoot().setOnClickListener(v -> {
             if (preparePayment("GooglePay")) {
                 //testing
-                sendOrder();
-                Common.cartRepository.emptyCart();
-                Intent intentGP = new Intent();
-                intentGP.putExtra("success", "googlePay");
-                setResult(RESULT_OK, intentGP);
-                finish();
+//                sendOrder();
+//                Common.cartRepository.emptyCart();
+//                Intent intentGP = new Intent();
+//                intentGP.putExtra("success", "googlePay");
+//                setResult(RESULT_OK, intentGP);
+//                finish();
                 //testing
 
-
-                //requestPayment(paymentsClient);
+                requestPayment(paymentsClient);
             }
         });
     }
@@ -426,9 +424,9 @@ public class OrderActivityNew extends AppCompatActivity {
     }
 
     // Запрос на проведение одностадийного платежа
-    private void charge(String cardCryptogramPacket, String cardHolderName, BigDecimal bigTotal, String order) {
+    private void charge(String cardCryptogramPacket, String cardHolderName, BigDecimal finalCost, String order) {
         compositeDisposable.add(PayApi
-                .charge(cardCryptogramPacket, cardHolderName, bigTotal, order)
+                .charge(cardCryptogramPacket, cardHolderName, finalCost, order)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
 //                .doOnSubscribe(disposable -> showLoading())

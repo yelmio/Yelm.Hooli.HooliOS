@@ -53,8 +53,6 @@ public interface RestAPI {
             @Query("shop_id") String ShopID
     );
 
-
-
     @GET("all-news?")
     Call<ArrayList<NewNews>> getNews(
             @Query("version") String Version,
@@ -112,17 +110,17 @@ public interface RestAPI {
             @Query("discount") String discount,
             @Query("transaction_id") String transactionID,
             @Query("login") String login,
-            @Query("address") String address,
+            @Field("address") String address,
             @Query("payment") String payment,
             @Query("floor") String floor,
             @Query("entrance") String entrance,
             @Query("end_total") String endTotal,
-            @Query("phone") String phone,
+            @Field("phone") String phone,
             @Query("flat") String flat,
             @Query("delivery") String delivery,
             @Field("items") String items,
-            @Field("delivery_price") String deliveryPrice,
-            @Field("currency") String currency
+            @Query("delivery_price") String deliveryPrice,
+            @Query("currency") String currency
     );
 
     @FormUrlEncoded

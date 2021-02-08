@@ -39,7 +39,7 @@ public class BasketCart {
     public String imageUrl;
 
     @ColumnInfo(name = "quantity")
-    public String quantity = "9999";
+    public String quantity;
 
     @ColumnInfo(name = "modifier")
     public List<Modifier> modifier = new ArrayList<>();

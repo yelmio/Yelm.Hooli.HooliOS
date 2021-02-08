@@ -7,6 +7,8 @@ import com.google.android.gms.wallet.WalletConstants;
 import java.util.Arrays;
 import java.util.List;
 
+import yelm.io.yelm.payment.Constants;
+
 public class ConstantsGPay {
     // This file contains several constants you must edit before proceeding. Once you're done,
     // remove this static block and run the sample.
@@ -59,7 +61,7 @@ public class ConstantsGPay {
     // Please refer to your processor's documentation for more information. The number of parameters
     // required and their names vary depending on the processor.
     public static final List<Pair<String, String>> GATEWAY_TOKENIZATION_PARAMETERS = Arrays.asList(
-            Pair.create("gatewayMerchantId", "")
+            Pair.create("gatewayMerchantId", Constants.MERCHANT_PUBLIC_ID)
     );
 
     private ConstantsGPay() {

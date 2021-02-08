@@ -141,10 +141,6 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
     }
 
     private void updateBasketCartsQuantity(List<DeletedId> deletedIDList) {
-        for (BasketCart basketCart : Common.basketCartRepository.getBasketCartsList()) {
-            basketCart.quantity = "9999";
-            Common.basketCartRepository.updateBasketCart(basketCart);
-        }
         for (DeletedId deletedId : deletedIDList) {
             Log.d(AlexTAG.debug, "deletedId: " + deletedId.toString());
             BasketCart basketCart = Common.basketCartRepository.getBasketCartById(deletedId.getId());
