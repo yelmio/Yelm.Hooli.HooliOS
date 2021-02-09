@@ -104,6 +104,14 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         getCategoriesWithProducts("0", "0");
         initNews();
         getLocationPermission();
+
+        Bundle args = getIntent().getExtras();
+        String data = "";
+        if (args != null) {
+            Log.d(AlexTAG.debug, "MainActivity args: " + args.getString("test"));
+            data = args.getString("test");
+        }
+
     }
 
     private void binding() {

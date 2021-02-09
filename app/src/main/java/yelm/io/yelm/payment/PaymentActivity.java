@@ -261,7 +261,7 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
         Bundle args = getIntent().getExtras();
         if (args != null) {
             finalCost = new BigDecimal(args.getString("finalPrice"));
-            startCost = finalCost;
+            startCost = new BigDecimal(args.getString("startCost"));
             deliveryCost = new BigDecimal(args.getString("deliveryCost"));
             discountPromo = new BigDecimal(args.getString("discountPromo"));
             floor = args.getString("floor");

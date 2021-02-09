@@ -18,14 +18,19 @@ import androidx.core.app.NotificationCompat;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 import yelm.io.yelm.R;
 import yelm.io.yelm.loader.controller.LoaderActivity;
 import yelm.io.yelm.retrofit.API;
 import yelm.io.yelm.retrofit.RetrofitClient;
+import yelm.io.yelm.retrofit.new_api.RestAPI;
+import yelm.io.yelm.retrofit.new_api.RetrofitClientNew;
 
 public class FcmMessageService extends FirebaseMessagingService {
+
+    private static final int NOTIFY_ID = 101;
 
     @Override
     public void onNewToken(String s) {
@@ -41,13 +46,13 @@ public class FcmMessageService extends FirebaseMessagingService {
                 public void run() {
                     String user = LoaderActivity.settings.getString(LoaderActivity.USER_NAME, "");
                     Log.d("AlexDebug", "FCM user: " + user);
-                    RetrofitClient
-                            .getClient(API.URL_API_MAIN)
-                            .create(API.class)
-                            .postFCM(user, s)
-                            .enqueue(new retrofit2.Callback<String>() {
+                    RetrofitClientNew
+                            .getClient(RestAPI.URL_API_MAIN)
+                            .create(RestAPI.class)
+                            .putFCM(RestAPI.PLATFORM_NUMBER, user, s)
+                            .enqueue(new retrofit2.Callback<ResponseBody>() {
                                 @Override
-                                public void onResponse(Call<String> call, final Response<String> response) {
+                                public void onResponse(Call<ResponseBody> call, final Response<ResponseBody> response) {
                                     if (response.isSuccessful()) {
                                         Log.d("AlexDebug", "FCM Token registered");
                                         Log.d("AlexDebug", "FCM response: " + response);
@@ -55,8 +60,9 @@ public class FcmMessageService extends FirebaseMessagingService {
                                         Log.d("AlexDebug", "FCM Code: " + response.code() + "Message: " + response.message());
                                     }
                                 }
+
                                 @Override
-                                public void onFailure(Call<String> call, Throwable t) {
+                                public void onFailure(Call<ResponseBody> call, Throwable t) {
                                     Log.d("AlexDebug", "FCM Throwable: " + t.toString());
                                 }
                             });
@@ -64,7 +70,6 @@ public class FcmMessageService extends FirebaseMessagingService {
             }, 2000);
         }};
     }
-
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
@@ -101,6 +106,7 @@ public class FcmMessageService extends FirebaseMessagingService {
     private void showNotification(RemoteMessage remoteMessage) {
 
         Intent i = new Intent(this, LoaderActivity.class);
+        i.putExtra("test", remoteMessage.getFrom());
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -120,8 +126,7 @@ public class FcmMessageService extends FirebaseMessagingService {
                 .setSmallIcon(R.drawable.ic_notify)
                 .setColor(getResources().getColor(R.color.mainThemeColor))
                 .setContentIntent(pendingIntent)
-                //.setSound(defaultSoundUri)
-                ;
+                .setSound(defaultSoundUri);
 
         NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
@@ -131,6 +136,6 @@ public class FcmMessageService extends FirebaseMessagingService {
                     NotificationManager.IMPORTANCE_DEFAULT);
             manager.createNotificationChannel(channel);
         }
-        manager.notify(0, builder.build());
+        manager.notify(NOTIFY_ID, builder.build());
     }
 }

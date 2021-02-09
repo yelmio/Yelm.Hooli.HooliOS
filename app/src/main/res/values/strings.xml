@@ -83,6 +83,7 @@
     <string name="appartament">Квартира</string>
     <string name="recipient">Получатель</string>
     <string name="inYourOrder">В вашем заказе</string>
+    <string name="orderActivityEnterPromoCode">Введите промокод</string>
     <string name="inYourOrderProductsPC">шт.</string>
     <string name="inYourOrderProductsCount">Товаров:</string>
     <string name="orderDiscount">Скидка</string>

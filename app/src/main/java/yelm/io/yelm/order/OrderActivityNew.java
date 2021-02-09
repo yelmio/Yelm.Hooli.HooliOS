@@ -43,6 +43,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import ru.cloudpayments.sdk.three_ds.ThreeDSDialogListener;
 import ru.cloudpayments.sdk.three_ds.ThreeDsDialogFragment;
+import yelm.io.yelm.constants.Constants;
+import yelm.io.yelm.order.promocode.PromoCodeClass;
 import yelm.io.yelm.payment.PayApi;
 import yelm.io.yelm.payment.PaymentActivity;
 import yelm.io.yelm.payment.models.Transaction;
@@ -99,7 +101,7 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
         Bundle args = getIntent().getExtras();
         if (args != null) {
             finalCost = new BigDecimal(args.getString("finalPrice"));
-            startCost = finalCost; //plus discount
+            startCost = finalCost;
             convertedCost = finalCost;
             deliveryCost = new BigDecimal(args.getString("deliveryCost"));
             discountPromo = new BigDecimal(args.getString("discountPromo"));
@@ -119,6 +121,53 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
         checkIsReadyToPay();
 
         bindingChosePaymentType();
+
+        binding.applyPromocode.setOnClickListener(v -> getPromoCode());
+    }
+
+    private void getPromoCode() {
+        if (binding.promoCode.getText().toString().trim().isEmpty()) {
+            showToast((String) getText(R.string.orderActivityEnterPromoCode));
+        } else {
+            RetrofitClientNew.
+                    getClient(RestAPI.URL_API_MAIN)
+                    .create(RestAPI.class)
+                    .getPromoCode(binding.promoCode.getText().toString().trim(),
+                            RestAPI.PLATFORM_NUMBER,
+                            LoaderActivity.settings.getString(LoaderActivity.USER_NAME, "")
+                    ).enqueue(new Callback<PromoCodeClass>() {
+                @Override
+                public void onResponse(@NotNull Call<PromoCodeClass> call, @NotNull Response<PromoCodeClass> response) {
+                    if (response.isSuccessful()) {
+                        if (response.body() != null) {
+                            Log.d(AlexTAG.debug, " " + Constants.ShopID);
+                            if (response.body().getStatus().equals("200")) {
+                                discountPromo = new BigDecimal(response.body().getPromocode().getAmount());
+                                BigDecimal discount = discountPromo.divide(new BigDecimal("100"), 2, BigDecimal.ROUND_HALF_UP);
+                                Log.d(AlexTAG.debug, "discount percent: " + discount);
+                                discount = discount.multiply(finalCost).setScale(2, BigDecimal.ROUND_HALF_UP);
+                                Log.d(AlexTAG.debug, "discount value: " + discount);
+                                finalCost = finalCost.subtract(discount);
+                                binding.finalPrice.setText(String.format("%s %s", finalCost, LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
+                            }
+                            showToast(response.body().getMessage());
+                        } else {
+                            Log.e(AlexTAG.error, "Method getPromoCode() - by some reason response is null!");
+                        }
+
+                    } else {
+                        Log.e(AlexTAG.error, "Method getPromoCode() - response is not successful. " +
+                                "Code: " + response.code() + "Message: " + response.message());
+                    }
+                }
+
+                @Override
+                public void onFailure(@NotNull Call<PromoCodeClass> call, @NotNull Throwable t) {
+                    Log.e(AlexTAG.error, "Method getPromoCode() - failure: " + t.toString());
+                }
+            });
+
+        }
     }
 
 
@@ -466,7 +515,7 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
             String billingName = paymentData.getCardInfo().getBillingAddress().getName();
             Toast.makeText(this, getString(R.string.payments_show_name, billingName), Toast.LENGTH_LONG).show();
             // Use token.getToken() to get the token string.
-            Log.d(AlexTAG.debug,"token.getToken()"+ token.getToken());
+            Log.d(AlexTAG.debug, "token.getToken()" + token.getToken());
             charge(token.getToken(), "Google Pay", convertedCost, order);
         }
     }
@@ -480,7 +529,8 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
     }
 
     // Запрос на проведение одностадийного платежа
-    private void charge(String cardCryptogramPacket, String cardHolderName, BigDecimal convertedCost, String order) {
+    private void charge(String cardCryptogramPacket, String cardHolderName, BigDecimal
+            convertedCost, String order) {
         compositeDisposable.add(PayApi
                 .charge(cardCryptogramPacket, cardHolderName, convertedCost, order)
                 .subscribeOn(Schedulers.io())

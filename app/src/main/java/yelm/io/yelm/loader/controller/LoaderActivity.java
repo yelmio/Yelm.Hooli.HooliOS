@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
 import java.util.Locale;
 
 import retrofit2.Call;
@@ -73,9 +74,10 @@ public class LoaderActivity extends AppCompatActivity {
         setContentView(R.layout.activity_loader);
         settings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
 
-        Log.d("AlexDebug", "Locale.getDefault().getDisplayLanguage(): " + Locale.getDefault().getDisplayLanguage());
-        Log.d("AlexDebug", "Locale.getDefault().getLanguage(): " + Locale.getDefault().getLanguage());
-        Log.d("AlexDebug", "Locale.locale: " + getResources().getConfiguration().locale);
+        Log.d(AlexTAG.debug, "Locale.getDefault().getDisplayLanguage(): " + Locale.getDefault().getDisplayLanguage());
+        Log.d(AlexTAG.debug, "Locale.getDefault().getLanguage(): " + Locale.getDefault().getLanguage());
+        Log.d(AlexTAG.debug, "Locale.locale: " + getResources().getConfiguration().locale);
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             String channelId = getString(R.string.default_notification_channel_id);
@@ -85,6 +87,7 @@ public class LoaderActivity extends AppCompatActivity {
             notificationManager.createNotificationChannel(new NotificationChannel(channelId,
                     channelName, NotificationManager.IMPORTANCE_LOW));
         }
+
         initRoom();
         init();
     }
@@ -178,7 +181,16 @@ public class LoaderActivity extends AppCompatActivity {
                                 editor.putString(PRICE_IN, response.body().getSymbol());
                                 editor.putString(COUNTRY_CODE, response.body().getSettings().getRegionCode());
                                 editor.apply();
-                                startActivity(new Intent(LoaderActivity.this, MainActivity.class));
+
+                                Intent intent = new Intent(LoaderActivity.this, MainActivity.class);
+                                Bundle args = getIntent().getExtras();
+                                String data = "";
+                                if (args != null) {
+                                    Log.d(AlexTAG.debug, "LoaderActivity args: " + args.getString("test"));
+                                    data = args.getString("test");
+                                }
+                                intent.putExtra("test", data);
+                                startActivity(intent);
                                 finish();
                                 //check user if we got the main settings
                             } else {

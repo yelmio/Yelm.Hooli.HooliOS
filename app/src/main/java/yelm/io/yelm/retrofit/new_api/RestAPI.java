@@ -8,6 +8,7 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Query;
 import yelm.io.yelm.basket.model.BasketCheckPOJO;
 import yelm.io.yelm.by_category.ProductsByCategoryClass;
@@ -18,6 +19,7 @@ import yelm.io.yelm.main.model.CatalogsWithProductsClass;
 import yelm.io.yelm.main.model.Item;
 import yelm.io.yelm.main.news.NewNews;
 import yelm.io.yelm.order.PriceConverterResponseClass;
+import yelm.io.yelm.order.promocode.PromoCodeClass;
 
 public interface RestAPI {
 
@@ -37,6 +39,21 @@ public interface RestAPI {
                                              @Query("language_code") String LanguageCode,
                                              @Query("region_code") String RegionCode
     );
+
+    @FormUrlEncoded
+    @PUT("user?")
+    Call<ResponseBody> putFCM(
+            @Field("platform") String Platform,
+            @Field("login") String Login,
+            @Field("push") String Push);
+
+    @FormUrlEncoded
+    @POST("promocode?")
+    Call<PromoCodeClass> getPromoCode(
+            @Field("promocode") String promoCode,
+            @Field("platform") String platform,
+            @Field("login") String login);
+
 
     @GET("items?")
     Call<ArrayList<CatalogsWithProductsClass>> getCategoriesWithProducts(
