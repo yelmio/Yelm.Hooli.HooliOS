@@ -7,7 +7,7 @@ public class Post3dsRequestArgs {
     @SerializedName("transaction_id")
     private String transactionId;
 
-    @SerializedName("pa_res")
+    @SerializedName("pares")
     private String paRes;
 
     public String getTransactionId() {

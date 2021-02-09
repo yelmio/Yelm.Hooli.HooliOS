@@ -26,8 +26,11 @@ public interface RestAPI {
 
     @FormUrlEncoded
     @POST("user?")
-    Call<UserLoginResponse> createUser(@Field("platform") String Platform,
-                                       @Field("user_info") String userInfo);
+    Call<UserLoginResponse> createUser(
+            @Query("language_code") String LanguageCode,
+            @Query("region_code") String RegionCode,
+            @Field("platform") String Platform,
+            @Field("user_info") String userInfo);
 
     @GET("application?")
     Call<ApplicationSettings> getAppSettings(@Query("platform") String Platform,
@@ -90,7 +93,7 @@ public interface RestAPI {
             @Query("lat") String LAT,
             @Query("lon") String LON,
             @Field("items") String Items
-            );
+    );
 
     @GET("subcategories?")
     Call<ArrayList<ProductsByCategoryClass>> getProductsByCategory(
@@ -118,12 +121,12 @@ public interface RestAPI {
             @Query("discount") String discount,
             @Query("transaction_id") String transactionID,
             @Query("login") String login,
-            @Field("address") String address,
+            @Query("address") String address,
             @Query("payment") String payment,
             @Query("floor") String floor,
             @Query("entrance") String entrance,
             @Query("end_total") String endTotal,
-            @Field("phone") String phone,
+            @Query("phone") String phone,
             @Query("flat") String flat,
             @Query("delivery") String delivery,
             @Field("items") String items,

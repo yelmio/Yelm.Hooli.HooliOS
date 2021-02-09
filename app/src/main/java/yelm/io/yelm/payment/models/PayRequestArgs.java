@@ -22,7 +22,7 @@ public class PayRequestArgs {
     @SerializedName("description")
     private String description; // Описание оплаты в свободной форме (необязательный)
 
-    @SerializedName("account_id")
+    @SerializedName("login")
     private String accountId; // Идентификатор пользователя в вашей системе (необязательный)
 
     @SerializedName("json_data")

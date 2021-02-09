@@ -41,6 +41,7 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import ru.cloudpayments.sdk.three_ds.ThreeDSDialogListener;
 import ru.cloudpayments.sdk.three_ds.ThreeDsDialogFragment;
 import yelm.io.yelm.payment.PayApi;
 import yelm.io.yelm.payment.PaymentActivity;
@@ -58,7 +59,7 @@ import yelm.io.yelm.loader.controller.LoaderActivity;
 import yelm.io.yelm.payment.googleplay.PaymentsUtil;
 import yelm.io.yelm.support_stuff.PhoneTextFormatter;
 
-public class OrderActivityNew extends AppCompatActivity {
+public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialogListener {
 
     ActivityOrderNewBinding binding;
 
@@ -75,7 +76,7 @@ public class OrderActivityNew extends AppCompatActivity {
 
     private static final int LOAD_PAYMENT_DATA_REQUEST_CODE = 991;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
-    private String transactionID = "";
+    private String transactionID = "0";
     private String order = "";
     //payment = ['Card', 'GooglePay', 'ApplePay]
     private String userID = LoaderActivity.settings.getString(LoaderActivity.USER_NAME, "");
@@ -98,7 +99,7 @@ public class OrderActivityNew extends AppCompatActivity {
         Bundle args = getIntent().getExtras();
         if (args != null) {
             finalCost = new BigDecimal(args.getString("finalPrice"));
-            startCost = finalCost; //minus discount
+            startCost = finalCost; //plus discount
             convertedCost = finalCost;
             deliveryCost = new BigDecimal(args.getString("deliveryCost"));
             discountPromo = new BigDecimal(args.getString("discountPromo"));
@@ -167,6 +168,11 @@ public class OrderActivityNew extends AppCompatActivity {
             public void onResponse(@NotNull Call<ResponseBody> call, @NotNull Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
                     Log.d(AlexTAG.debug, "Method sendOrder() - response.code(): " + response.code());
+                    Common.basketCartRepository.emptyBasketCart();
+                    Intent intentGP = new Intent();
+                    intentGP.putExtra("success", "googlePay");
+                    setResult(RESULT_OK, intentGP);
+                    finish();
                 } else {
                     Log.e(AlexTAG.error, "Method sendOrder() - response is not successful. " +
                             "Code: " + response.code() + "Message: " + response.message());
@@ -180,7 +186,7 @@ public class OrderActivityNew extends AppCompatActivity {
         });
     }
 
-    private boolean preparePayment(String payment) {
+    private boolean preparePayment() {
         String phone = binding.phone.getText().toString();
         Log.d("AlexDebug", "phone: " + phone);
         phone = phone.replaceAll("\\D", "");
@@ -189,6 +195,25 @@ public class OrderActivityNew extends AppCompatActivity {
             showToast(getText(R.string.orderActivityEnterCorrectPhone).toString());
             return false;
         }
+
+        String floor = binding.floor.getText().toString();
+        if (floor.trim().equals("")) {
+            showToast(getText(R.string.orderActivityEnterFloor).toString());
+            return false;
+        }
+
+        String entrance = binding.entrance.getText().toString();
+        if (entrance.trim().equals("")) {
+            showToast(getText(R.string.orderActivityEnterEntrance).toString());
+            return false;
+        }
+
+        String flat = binding.flat.getText().toString();
+        if (flat.trim().equals("")) {
+            showToast(getText(R.string.orderActivityEnterFlat).toString());
+            return false;
+        }
+
 //
 //        JSONObject jsonData = new JSONObject();
 //        try {
@@ -277,9 +302,9 @@ public class OrderActivityNew extends AppCompatActivity {
                         Status status = AutoResolveHelper.getStatusFromIntent(data);
                         if (status != null) {
                             handlePaymentError(status.getStatusCode());
-                            Log.e(AlexTAG.error, "Method - status.getStatusMessage(): " + status.getStatusMessage());
+                            Log.d(AlexTAG.debug, "Method - status.getStatusMessage(): " + status.getStatusMessage());
                         } else {
-                            Log.e(AlexTAG.error, "Method - status.getStatusMessage(): status is null");
+                            Log.d(AlexTAG.debug, "Method - status.getStatusMessage(): status is null");
                         }
                         break;
                 }
@@ -312,7 +337,7 @@ public class OrderActivityNew extends AppCompatActivity {
 //        }
 
         binding.paymentCard.setOnClickListener(v -> {
-            if (preparePayment("Card")) {
+            if (preparePayment()) {
                 Intent intent = new Intent(OrderActivityNew.this, PaymentActivity.class);
                 intent.putExtra("startCost", startCost.toString());
                 intent.putExtra("finalPrice", finalCost.toString());
@@ -341,7 +366,7 @@ public class OrderActivityNew extends AppCompatActivity {
                         setPwgAvailable(result);
                     } catch (ApiException exception) {
                         // Process error
-                        Log.e(AlexTAG.error, exception.toString());
+                        Log.d(AlexTAG.debug, exception.toString());
                     }
                 });
     }
@@ -363,17 +388,13 @@ public class OrderActivityNew extends AppCompatActivity {
         binding.pwgStatus.setVisibility(View.GONE);
         binding.pwgButton.getRoot().setVisibility(View.VISIBLE);
         binding.pwgButton.getRoot().setOnClickListener(v -> {
-            if (preparePayment("GooglePay")) {
+            if (preparePayment()) {
 //                //testing
 //                sendOrder();
-//                Intent intentGP = new Intent();
-//                intentGP.putExtra("success", "googlePay");
-//                setResult(RESULT_OK, intentGP);
-//                finish();
 //                //testing
-                if (Objects.equals(LoaderActivity.settings.getString(LoaderActivity.CURRENCY, ""), "RUB")){
-                    //requestPayment(paymentsClient);
-                }else {
+                if (Objects.equals(LoaderActivity.settings.getString(LoaderActivity.CURRENCY, "RUB"), "RUB")) {
+                    requestPayment(paymentsClient);
+                } else {
                     convertPrice();
                 }
             }
@@ -384,6 +405,7 @@ public class OrderActivityNew extends AppCompatActivity {
     public void requestPayment(PaymentsClient paymentsClient) {
         // Disables the button to prevent multiple clicks.
         //pwg_button.setClickable(false);
+        Log.d(AlexTAG.debug, "requestPayment");
 
         // The price provided to the API should include taxes and shipping.
         // This price is not displayed to the user.
@@ -436,7 +458,7 @@ public class OrderActivityNew extends AppCompatActivity {
         // requested information, such as billing and shipping address.
         // Refer to your processor's documentation on how to proceed from here.
         PaymentMethodToken token = paymentData.getPaymentMethodToken();
-        Log.d("AlexDebug", token.toString());
+        Log.d(AlexTAG.debug, "token.toString()" + token.toString());
 
         // getPaymentMethodToken will only return null if Payment Method Tokenization Parameters was
         // not set in the PaymentRequest.
@@ -444,7 +466,7 @@ public class OrderActivityNew extends AppCompatActivity {
             String billingName = paymentData.getCardInfo().getBillingAddress().getName();
             Toast.makeText(this, getString(R.string.payments_show_name, billingName), Toast.LENGTH_LONG).show();
             // Use token.getToken() to get the token string.
-            Log.d("AlexDebug", token.getToken());
+            Log.d(AlexTAG.debug,"token.getToken()"+ token.getToken());
             charge(token.getToken(), "Google Pay", convertedCost, order);
         }
     }
@@ -454,7 +476,7 @@ public class OrderActivityNew extends AppCompatActivity {
         // Normally, only logging is required.
         // statusCode will hold the value of any constant from CommonStatusCode or one of the
         // WalletConstants.ERROR_CODE_* constants.
-        Log.d("AlexDebug", String.format("Error code: %d", statusCode));
+        Log.d(AlexTAG.debug, String.format("Error code: %d", statusCode));
     }
 
     // Запрос на проведение одностадийного платежа
@@ -474,22 +496,31 @@ public class OrderActivityNew extends AppCompatActivity {
     private void checkResponse(Transaction transaction) {
         if (transaction.getPaReq() != null && transaction.getAcsUrl() != null) {
             // Показываем 3DS форму
+            Log.d(AlexTAG.debug, "show3DS");
+
             show3DS(transaction);
         } else {
             // Показываем результат
-            Log.d("AlexDebug", "transaction result: " + transaction.getCardHolderMessage());
-            Log.d("AlexDebug", "transaction.getReasonCode(): " + transaction.getReasonCode());
+            Log.d(AlexTAG.debug, "transaction result: " + transaction.getCardHolderMessage());
+            Log.d(AlexTAG.debug, "transaction.getReasonCode(): " + transaction.getReasonCode());
             showToast(transaction.getCardHolderMessage());
             if (transaction.getReasonCode() == 0) {
                 transactionID = transaction.getId();
-                Log.d("AlexDebug", "transaction.getId(): " + transaction.getId());
+                Log.d(AlexTAG.debug, "transaction.getId(): " + transaction.getId());
                 sendOrder();
-                Intent intentGP = new Intent();
-                intentGP.putExtra("success", "googlePay payment");
-                setResult(RESULT_OK, intentGP);
-                finish();
             }
         }
+    }
+
+    @Override
+    public void onAuthorizationCompleted(String md, String paRes) {
+        post3ds(md, paRes);
+    }
+
+    @Override
+    public void onAuthorizationFailed(String html) {
+        Toast.makeText(this, "AuthorizationFailed: " + html, Toast.LENGTH_SHORT).show();
+        Log.d(AlexTAG.debug, "onAuthorizationFailed: " + html);
     }
 
     private void show3DS(Transaction transaction) {
@@ -498,6 +529,19 @@ public class OrderActivityNew extends AppCompatActivity {
                 transaction.getId(),
                 transaction.getPaReq())
                 .show(this.getSupportFragmentManager(), "3DS");
+    }
+
+    // Завершаем транзакцию после прохождения 3DS формы
+    private void post3ds(String md, String paRes) {
+        compositeDisposable.add(PayApi
+                .post3ds(md, paRes)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+//                .doOnSubscribe(disposable -> showLoading())
+//                .doOnEach(notification -> hideLoading())
+                .subscribe(transaction -> {
+                    checkResponse(transaction);
+                }, this::handleError));
     }
 
     public void handleError(Throwable throwable, Class... ignoreClasses) {
@@ -510,15 +554,18 @@ public class OrderActivityNew extends AppCompatActivity {
         if (throwable instanceof PayApiError) {
             PayApiError apiError = (PayApiError) throwable;
             String message = apiError.getMessage();
+            Log.d(AlexTAG.debug, "apiError.getMessage(): " + apiError.getMessage());
             showToast(message);
         } else if (throwable instanceof UnknownHostException) {
             showToast(getString(R.string.common_no_internet_connection));
         } else {
+            Log.d(AlexTAG.debug, "handleError: " + throwable.getMessage());
             showToast(throwable.getMessage());
         }
     }
 
     public void showToast(String message) {
+        Log.d(AlexTAG.debug, "message: " + message);
         Toast.makeText(OrderActivityNew.this, message, Toast.LENGTH_SHORT).show();
     }
 

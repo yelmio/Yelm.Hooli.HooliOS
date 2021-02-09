@@ -121,7 +121,8 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
                                 Log.d(AlexTAG.debug, "Method checkBasket() - BasketCheckPOJO: " + response.body().toString());
                                 deliveryTime = response.body().getDelivery().getTime();
                                 binding.time.setText(String.format("%s %s", deliveryTime, getText(R.string.delivery_time)));
-                                deliveryCost = new BigDecimal(response.body().getDelivery().getPrice());
+                                deliveryCost = new BigDecimal("0");
+                                //deliveryCost = new BigDecimal(response.body().getDelivery().getPrice());
                                 binding.deliveryCost.setText(String.format("%s %s", deliveryCost, LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
                                 new Thread(() -> updateBasketCartsQuantity(response.body().getDeletedId())).start();
                             } else {

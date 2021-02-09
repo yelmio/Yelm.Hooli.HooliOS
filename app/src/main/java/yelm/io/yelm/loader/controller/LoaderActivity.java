@@ -120,13 +120,13 @@ public class LoaderActivity extends AppCompatActivity {
             getApplicationSettings();
             getChatSettings(settings.getString(USER_NAME, ""));
         } else {
-//            User user = new User(0, "", "", "", "", "", "", "", "", "");
-            //Common.userRepository.insertToUser(user);
-            //Log.d("AlexDebug", "user:" + user.toString());
             RetrofitClientNew.
                     getClient(RestAPI.URL_API_MAIN)
                     .create(RestAPI.class)
-                    .createUser(RestAPI.PLATFORM_NUMBER, getDeviceInfo())
+                    .createUser(getResources().getConfiguration().locale.getLanguage(),
+                            getResources().getConfiguration().locale.getCountry(),
+                            RestAPI.PLATFORM_NUMBER,
+                            getDeviceInfo())
                     .enqueue(new Callback<UserLoginResponse>() {
                         @Override
                         public void onResponse(@NotNull Call<UserLoginResponse> call, @NotNull Response<UserLoginResponse> response) {

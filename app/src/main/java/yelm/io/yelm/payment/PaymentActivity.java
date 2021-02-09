@@ -82,7 +82,7 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
     private BigDecimal discountPromo = new BigDecimal("0");
     private String order = "";
     private String userID = LoaderActivity.settings.getString(LoaderActivity.USER_NAME, "");
-    private String transactionID;
+    private String transactionID = "0";
     private String currency = LoaderActivity.settings.getString(LoaderActivity.CURRENCY, "");
     UserAddress currentAddress;
     //private String deliveryTime = "";
@@ -147,12 +147,8 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
         String cardHolderName = editTextCardHolderName.getText().toString();
 
         //testing
-        sendOrder();
-        Intent intentGP = new Intent();
-        setResult(RESULT_OK, intentGP);
-        finish();
+        //sendOrder();
         //testing
-
 
         CPCardApi api = new CPCardApi(this);
 
@@ -212,16 +208,16 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
         Log.d("AlexDebug", "cardCryptogram: " + cardCryptogram);
 
         if (cardCryptogram != null) {
-            if (Objects.equals(LoaderActivity.settings.getString(LoaderActivity.CURRENCY, ""), "RUB")){
+            if (Objects.equals(LoaderActivity.settings.getString(LoaderActivity.CURRENCY, "RUB"), "RUB")) {
                 auth(cardCryptogram, cardHolderName, finalCost, order);
-            }else {
-                convertPrice(cardCryptogram,cardHolderName );
+            } else {
+                convertPrice(cardCryptogram, cardHolderName);
             }
         }
-
     }
 
     private void convertPrice(String cardCryptogram, String cardHolderName) {
+        showLoading();
         Log.d(AlexTAG.debug, "Method convertPrice()");
         RetrofitClientNew.
                 getClient(RestAPI.URL_API_MAIN)
@@ -234,12 +230,15 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
             public void onResponse(@NotNull Call<PriceConverterResponseClass> call, @NotNull Response<PriceConverterResponseClass> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
+                        hideLoading();
                         Log.d(AlexTAG.debug, "Method convertPrice() - response.code(): " + response.code());
                         auth(cardCryptogram, cardHolderName, new BigDecimal(response.body().getPrice()), order);
                     } else {
+                        hideLoading();
                         Log.e(AlexTAG.error, "Method convertPrice() - by some reason response is null!");
                     }
                 } else {
+                    hideLoading();
                     Log.e(AlexTAG.error, "Method convertPrice() - response is not successful. " +
                             "Code: " + response.code() + "Message: " + response.message());
                 }
@@ -247,12 +246,11 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
 
             @Override
             public void onFailure(@NotNull Call<PriceConverterResponseClass> call, @NotNull Throwable t) {
+                hideLoading();
                 Log.e(AlexTAG.error, "Method convertPrice() - failure: " + t.toString());
             }
         });
     }
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -322,12 +320,8 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
             // showToast(transaction.getCardHolderMessage());
             if (transaction.getReasonCode() == 0) {
                 transactionID = transaction.getId();
-                Common.basketCartRepository.emptyBasketCart();
                 Log.d(AlexTAG.debug, "transaction.getId(): " + transaction.getId());
                 sendOrder();
-                Intent intent = new Intent();
-                setResult(RESULT_OK, intent);
-                finish();
             }
         }
     }
@@ -408,6 +402,8 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
     }
 
     private void sendOrder() {
+        Log.d(AlexTAG.debug, "sendOrder()");
+        showLoading();
         List<BasketCart> basketCarts = Common.basketCartRepository.getBasketCartsList();
         JSONArray jsonObjectItems = new JSONArray();
         try {
@@ -451,8 +447,14 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
             @Override
             public void onResponse(@NotNull Call<ResponseBody> call, @NotNull Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
+                    hideLoading();
                     Log.d(AlexTAG.debug, "Method sendOrder() - response.code(): " + response.code());
+                    Common.basketCartRepository.emptyBasketCart();
+                    Intent intent = new Intent();
+                    setResult(RESULT_OK, intent);
+                    finish();
                 } else {
+                    hideLoading();
                     Log.e(AlexTAG.error, "Method sendOrder() - response is not successful. " +
                             "Code: " + response.code() + "Message: " + response.message());
                 }
@@ -460,6 +462,7 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
 
             @Override
             public void onFailure(@NotNull Call<ResponseBody> call, @NotNull Throwable t) {
+                hideLoading();
                 Log.e(AlexTAG.error, "Method sendOrder() - failure: " + t.toString());
             }
         });

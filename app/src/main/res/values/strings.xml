@@ -88,6 +88,9 @@
     <string name="orderDiscount">Скидка</string>
     <string name="cardPayment">Оплата картой</string>
     <string name="paymentType">Способ оплаты</string>
+    <string name="orderActivityEnterFloor">Укажите этаж</string>
+    <string name="orderActivityEnterEntrance">Укажите подъезд</string>
+    <string name="orderActivityEnterFlat">Укажите квартиру</string>
     <string name="orderActivityEnterCorrectPhone">Укажите корректный телефон</string>
 
     <!-- profile fragment -->

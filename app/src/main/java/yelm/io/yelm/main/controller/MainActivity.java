@@ -122,7 +122,6 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         //java.lang.IllegalStateException: Fragment already added
         if (!addressesBottomSheet.isAdded()) {
             addressesBottomSheet.show(getSupportFragmentManager(), "addressBottomSheet");
-            allowUpdateUI = false;
         }
     }
 
