@@ -1,5 +1,7 @@
 package yelm.io.yelm.retrofit.new_api;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 import okhttp3.ResponseBody;
@@ -29,23 +31,23 @@ public interface RestAPI {
     @FormUrlEncoded
     @POST("user?")
     Call<UserLoginResponse> createUser(
-            @Query("language_code") String LanguageCode,
-            @Query("region_code") String RegionCode,
-            @Field("platform") String Platform,
-            @Field("user_info") String userInfo);
+            @Query("language_code") String languageCode,
+            @Query("region_code") String regionCode,
+            @Field("platform") String platform,
+            @Field("user_info") JSONObject userInfo);
 
     @GET("application?")
-    Call<ApplicationSettings> getAppSettings(@Query("platform") String Platform,
-                                             @Query("language_code") String LanguageCode,
-                                             @Query("region_code") String RegionCode
+    Call<ApplicationSettings> getAppSettings(@Query("platform") String platform,
+                                             @Query("language_code") String languageCode,
+                                             @Query("region_code") String regionCode
     );
 
     @FormUrlEncoded
     @PUT("user?")
     Call<ResponseBody> putFCM(
-            @Field("platform") String Platform,
-            @Field("login") String Login,
-            @Field("push") String Push);
+            @Field("platform") String platform,
+            @Field("login") String login,
+            @Field("push") String push);
 
     @FormUrlEncoded
     @POST("promocode?")
@@ -57,12 +59,21 @@ public interface RestAPI {
 
     @GET("items?")
     Call<ArrayList<CatalogsWithProductsClass>> getCategoriesWithProducts(
-            @Query("version") String Version,
-            @Query("language_code") String LanguageCode,
-            @Query("region_code") String RegionCode,
-            @Query("platform") String Platform,
-            @Query("lat") String LAT,
-            @Query("lon") String LON
+            @Query("version") String version,
+            @Query("language_code") String languageCode,
+            @Query("region_code") String regionCode,
+            @Query("platform") String platform,
+            @Query("lat") String lat,
+            @Query("lon") String lon
+    );
+
+    @GET("news?")
+    Call<NewNews> getNewsByID(
+            @Query("version") String version,
+            @Query("platform") String platform,
+            @Query("language_code") String languageCode,
+            @Query("region_code") String regionCode,
+            @Query("id") String id
     );
 
     @FormUrlEncoded
@@ -74,54 +85,53 @@ public interface RestAPI {
 
     @GET("search?")
     Call<ArrayList<Item>> getAllItems(
-            @Query("version") String Version,
-            @Query("language_code") String LanguageCode,
-            @Query("region_code") String RegionCode,
-            @Query("platform") String Platform,
-            @Query("shop_id") String ShopID
+            @Query("version") String version,
+            @Query("language_code") String languageCode,
+            @Query("region_code") String regionCode,
+            @Query("platform") String platform,
+            @Query("shop_id") String shopID
     );
 
     @GET("all-news?")
     Call<ArrayList<NewNews>> getNews(
-            @Query("version") String Version,
-            @Query("language_code") String LanguageCode,
-            @Query("region_code") String RegionCode,
-            @Query("platform") String Platform
+            @Query("version") String version,
+            @Query("language_code") String languageCode,
+            @Query("region_code") String regionCode,
+            @Query("platform") String platform
     );
 
     @GET("news-item?")
     Call<ArrayList<NewNews>> getItemByNewsID(
-            @Query("id") String ID,
-            @Query("version") String Version,
-            @Query("language_code") String LanguageCode,
-            @Query("region_code") String RegionCode,
-            @Query("platform") String Platform
+            @Query("id") String id,
+            @Query("version") String version,
+            @Query("language_code") String languageCode,
+            @Query("region_code") String regionCode,
+            @Query("platform") String platform
     );
-
 
     //not accessible items!!
     @FormUrlEncoded
     @POST("basket?")
     Call<BasketCheckPOJO> checkBasket(
-            @Query("platform") String Platform,
-            @Query("shop_id") String ShopID,
-            @Query("language_code") String LanguageCode,
-            @Query("region_code") String RegionCode,
-            @Query("lat") String LAT,
-            @Query("lon") String LON,
-            @Field("items") String Items
+            @Query("platform") String platform,
+            @Query("shop_id") String shopID,
+            @Query("language_code") String languageCode,
+            @Query("region_code") String regionCode,
+            @Query("lat") String lat,
+            @Query("lon") String lon,
+            @Field("items") String items
     );
 
     @GET("subcategories?")
     Call<ArrayList<ProductsByCategoryClass>> getProductsByCategory(
-            @Query("version") String Version,
-            @Query("language_code") String LanguageCode,
-            @Query("region_code") String RegionCode,
-            @Query("platform") String Platform,
-            @Query("shop_id") String ShopID,
-            @Query("id") String CategoryID,
-            @Query("lat") String LAT,
-            @Query("lon") String LON
+            @Query("version") String version,
+            @Query("language_code") String languageCode,
+            @Query("region_code") String regionCode,
+            @Query("platform") String platform,
+            @Query("shop_id") String shopID,
+            @Query("id") String categoryID,
+            @Query("lat") String lat,
+            @Query("lon") String lon
     );
 
     @FormUrlEncoded
@@ -154,7 +164,7 @@ public interface RestAPI {
     @FormUrlEncoded
     @POST("chat?")
     Call<ChatSettingsClass> getChatSettings(
-            @Field("login") String Login
+            @Field("login") String login
     );
 
 }

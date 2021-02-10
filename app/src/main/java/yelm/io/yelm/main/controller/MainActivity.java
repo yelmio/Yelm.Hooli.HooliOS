@@ -33,6 +33,8 @@ import com.google.android.material.badge.BadgeDrawable;
 import com.google.zxing.Result;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -49,6 +51,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import yelm.io.yelm.basket.controller.BasketActivityOnlyDelivery;
 import yelm.io.yelm.main.news.NewNews;
+import yelm.io.yelm.main.news.NewsFromNotificationActivity;
 import yelm.io.yelm.support_stuff.AlexTAG;
 import yelm.io.yelm.search.SearchActivity;
 import yelm.io.yelm.database_new.basket_new.BasketCart;
@@ -105,13 +108,30 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         initNews();
         getLocationPermission();
 
-        Bundle args = getIntent().getExtras();
-        String data = "";
+        Bundle args = null;
+        //Bundle args = getIntent().getExtras();
         if (args != null) {
-            Log.d(AlexTAG.debug, "MainActivity args: " + args.getString("test"));
-            data = args.getString("test");
+            Log.d(AlexTAG.debug, "MainActivity - Notification data: " + args.getString("data"));
+            String data = args.getString("data");
+            if (data != null && !data.isEmpty()) {
+                try {
+                    JSONObject jsonObj = new JSONObject(data);
+                    Log.d(AlexTAG.debug, "jsonObj: " + jsonObj.getString("id"));
+                    Log.d(AlexTAG.debug, "jsonObj: " + jsonObj.getString("name"));
+                    if (jsonObj.getString("name").equals("news")) {
+                        Intent intent = new Intent(MainActivity.this, NewsFromNotificationActivity.class);
+                        intent.putExtra("id", jsonObj.getString("id"));
+                        startActivity(intent);
+                    } else if (jsonObj.getString("name").equals("items")) {
+                        //Intent intent = new Intent(MainActivity.this, NewsFromNotificationActivity.class);
+                        //intent.putExtra("id", jsonObj.getString("id"));
+                        //startActivity(intent);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
         }
-
     }
 
     private void binding() {
@@ -430,7 +450,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     synchronized private void redrawProducts() {
         Log.d(AlexTAG.debug, "Method redrawProducts()");
         for (Fragment fragment : getSupportFragmentManager().getFragments()) {
-            if (!fragment.getTag().equals("addressBottomSheet")){
+            if (!fragment.getTag().equals("addressBottomSheet")) {
                 getSupportFragmentManager().beginTransaction().remove(fragment).commitAllowingStateLoss();
             }
         }

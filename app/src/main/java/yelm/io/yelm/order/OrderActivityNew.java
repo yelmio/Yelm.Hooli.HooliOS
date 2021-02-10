@@ -72,7 +72,7 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
     private BigDecimal convertedCost = new BigDecimal("0");
     private BigDecimal deliveryCost = new BigDecimal("0");
     private BigDecimal startCost = new BigDecimal("0");
-    private BigDecimal discountPromo = new BigDecimal("0");
+    private BigDecimal discountPromoPercent = new BigDecimal("0");
     private String deliveryTime = "";
     UserAddress currentAddress;
 
@@ -104,12 +104,12 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
             startCost = finalCost;
             convertedCost = finalCost;
             deliveryCost = new BigDecimal(args.getString("deliveryCost"));
-            discountPromo = new BigDecimal(args.getString("discountPromo"));
+            discountPromoPercent = new BigDecimal(args.getString("discountPromo"));
             deliveryTime = args.getString("deliveryTime");
             currentAddress = (UserAddress) args.getSerializable(UserAddress.class.getSimpleName());
             Log.d(AlexTAG.debug, "finalCost: " + finalCost);
             Log.d(AlexTAG.debug, "startCost: " + startCost);
-            Log.d(AlexTAG.debug, "deliveryCost: " + discountPromo);
+            Log.d(AlexTAG.debug, "deliveryCost: " + discountPromoPercent);
             Log.d(AlexTAG.debug, "deliveryPrice: " + deliveryCost);
             Log.d(AlexTAG.debug, "deliveryTime: " + deliveryTime);
             Log.d(AlexTAG.debug, "currentAddress: " + currentAddress.toString());
@@ -142,11 +142,15 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
                         if (response.body() != null) {
                             Log.d(AlexTAG.debug, " " + Constants.ShopID);
                             if (response.body().getStatus().equals("200")) {
-                                discountPromo = new BigDecimal(response.body().getPromocode().getAmount());
-                                BigDecimal discount = discountPromo.divide(new BigDecimal("100"), 2, BigDecimal.ROUND_HALF_UP);
-                                Log.d(AlexTAG.debug, "discount percent: " + discount);
+                                binding.layoutDiscount.setVisibility(View.VISIBLE);
+                                discountPromoPercent = new BigDecimal(response.body().getPromocode().getAmount());
+                                binding.discountPercent.setText(String.format("%s %s%%", getText(R.string.orderDiscount), discountPromoPercent));
+                                Log.d(AlexTAG.debug, "discount percent: " + discountPromoPercent);
+                                BigDecimal discount = discountPromoPercent.divide(new BigDecimal("100"), 2, BigDecimal.ROUND_HALF_UP);
                                 discount = discount.multiply(finalCost).setScale(2, BigDecimal.ROUND_HALF_UP);
                                 Log.d(AlexTAG.debug, "discount value: " + discount);
+                                binding.discountPrice.setText(discount.toString());
+                                finalCost = startCost;
                                 finalCost = finalCost.subtract(discount);
                                 binding.finalPrice.setText(String.format("%s %s", finalCost, LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
                             }
@@ -198,7 +202,7 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
                         currentAddress.longitude,
                         "test",
                         startCost.toString(),
-                        discountPromo.toString(),
+                        discountPromoPercent.toString(),
                         transactionID,
                         userID,
                         currentAddress.address,
@@ -362,7 +366,7 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
     }
 
     private void binding() {
-        binding.startPrice.setText(String.format("%s %s", finalCost.subtract(deliveryCost), LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
+        binding.startPrice.setText(String.format("%s %s", startCost.subtract(deliveryCost), LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
         binding.finalPrice.setText(String.format("%s %s", finalCost, LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
         binding.back.setOnClickListener(v -> finish());
         binding.deliveryPrice.setText(String.format("%s %s", deliveryCost, LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
@@ -390,7 +394,7 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
                 Intent intent = new Intent(OrderActivityNew.this, PaymentActivity.class);
                 intent.putExtra("startCost", startCost.toString());
                 intent.putExtra("finalPrice", finalCost.toString());
-                intent.putExtra("discountPromo", discountPromo.toString());
+                intent.putExtra("discountPromo", discountPromoPercent.toString());
                 intent.putExtra("deliveryCost", deliveryCost.toString());
                 intent.putExtra("deliveryTime", deliveryTime);
                 intent.putExtra("order", "");
@@ -547,7 +551,6 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
         if (transaction.getPaReq() != null && transaction.getAcsUrl() != null) {
             // Показываем 3DS форму
             Log.d(AlexTAG.debug, "show3DS");
-
             show3DS(transaction);
         } else {
             // Показываем результат
@@ -607,6 +610,7 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
             Log.d(AlexTAG.debug, "apiError.getMessage(): " + apiError.getMessage());
             showToast(message);
         } else if (throwable instanceof UnknownHostException) {
+            Log.d(AlexTAG.debug, "UnknownHostException: " + getString(R.string.common_no_internet_connection));
             showToast(getString(R.string.common_no_internet_connection));
         } else {
             Log.d(AlexTAG.debug, "handleError: " + throwable.getMessage());

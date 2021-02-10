@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -22,15 +23,21 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 import yelm.io.yelm.R;
+import yelm.io.yelm.constants.Constants;
 import yelm.io.yelm.loader.controller.LoaderActivity;
+import yelm.io.yelm.main.controller.MainActivity;
 import yelm.io.yelm.retrofit.API;
 import yelm.io.yelm.retrofit.RetrofitClient;
 import yelm.io.yelm.retrofit.new_api.RestAPI;
 import yelm.io.yelm.retrofit.new_api.RetrofitClientNew;
+import yelm.io.yelm.support_stuff.AlexTAG;
 
 public class FcmMessageService extends FirebaseMessagingService {
 
     private static final int NOTIFY_ID = 101;
+    public static final String ACTION_GET_DATA = "notification.RESPONSE";
+    public static final String DATA_KEY = "data";
+    public String data = "dslfsls";
 
     @Override
     public void onNewToken(String s) {
@@ -71,17 +78,40 @@ public class FcmMessageService extends FirebaseMessagingService {
         }};
     }
 
+//    public void sendBroadcastNotification(String data) {
+//        Log.d(AlexTAG.debug, "Sending broadcast notification: " + data);
+//        Intent intentBroadcast = new Intent(ACTION_GET_DATA);
+//        intentBroadcast.putExtra(DATA_KEY, data);
+//        sendBroadcast(intentBroadcast);
+//    }
+
+    @Override
+    public void handleIntent(Intent intent) {
+        super.handleIntent(intent);
+        Log.d(AlexTAG.debug, "handleIntent");
+        Log.d(AlexTAG.debug, "data: " + data);
+        Log.d(AlexTAG.debug, "intent: " + intent.getStringExtra("data"));
+
+        Intent responseIntent = new Intent();
+        responseIntent.setAction(ACTION_GET_DATA);
+        responseIntent.addCategory(Intent.CATEGORY_DEFAULT);
+        responseIntent.putExtra(DATA_KEY, "test");
+        sendBroadcast(responseIntent);
+    }
+
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         //showNotification(remoteMessage.getData().get("message"));
         //showNotification(remoteMessage.getNotification().getBody());
         // TODO(developer): Handle FCM messages here.
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
-        Log.d("AlexDebug", "From: " + remoteMessage.getFrom());
+        Log.d(AlexTAG.debug, "From: " + remoteMessage.getFrom());
+        data = remoteMessage.getData().toString();
+        Log.d(AlexTAG.debug, "remoteMessage.getData(): " + remoteMessage.getData().toString());
 
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
-            Log.d("AlexDebug", "Message data payload: " + remoteMessage.getData());
+            // Log.d(AlexTAG.debug, "Message data payload: " + remoteMessage.getData());
 
             if (/* Check if data needs to be processed by long running job */ true) {
                 // For long-running tasks (10 seconds or more) use Firebase Job Dispatcher.
@@ -104,11 +134,13 @@ public class FcmMessageService extends FirebaseMessagingService {
     }
 
     private void showNotification(RemoteMessage remoteMessage) {
+        //sendBroadcastNotification(remoteMessage.getData().toString());
 
         Intent i = new Intent(this, LoaderActivity.class);
-        i.putExtra("test", remoteMessage.getFrom());
+        //Intent i = new Intent(this, NotificationReceiver.class);
+        i.putExtra("data", "test");
+        //i.putExtra("data", remoteMessage.getData().toString());
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
 
         String channelId = getString(R.string.default_notification_channel_id);
@@ -119,13 +151,13 @@ public class FcmMessageService extends FirebaseMessagingService {
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId)
                 .setAutoCancel(true)
-                .setContentTitle(remoteMessage.getNotification().getTitle())
-                .setContentText(remoteMessage.getNotification().getBody())
+                .setContentTitle(remoteMessage.getData().get("title"))
+                .setContentText(remoteMessage.getData().get("body"))
                 .setLargeIcon(bitmap)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setSmallIcon(R.drawable.ic_notify)
                 .setColor(getResources().getColor(R.color.mainThemeColor))
-                .setContentIntent(pendingIntent)
+                //.setContentIntent(pendingIntent)
                 .setSound(defaultSoundUri);
 
         NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);

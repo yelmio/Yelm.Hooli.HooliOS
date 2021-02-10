@@ -10,7 +10,7 @@ import yelm.io.yelm.payment.models.Transaction;
 import yelm.io.yelm.payment.response.PayApiResponse;
 
 public interface PayMethods {
-    @POST("cp_charge.php?platform=5fd33466e17963.29052139")
+    @POST("charge?platform=5fd33466e17963.29052139")
     Observable<PayApiResponse<Transaction>> charge(@Header("Content-Type") String contentType, @Body PayRequestArgs args);
 
     @POST("cryptogram?platform=5fd33466e17963.29052139")

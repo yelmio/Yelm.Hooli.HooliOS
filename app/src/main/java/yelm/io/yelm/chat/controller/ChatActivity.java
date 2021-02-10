@@ -119,7 +119,7 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
     private void tuneSocketConnection() {
         try {
             IO.Options options = new IO.Options();
-            String token = "token=" + LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, "")
+            String token = "token=" + LoaderActivity.settings.getString(LoaderActivity.API_TOKEN, "")
                     + "&room_id=" + LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, "")
                     + "&user=Client";
             options.query = token;

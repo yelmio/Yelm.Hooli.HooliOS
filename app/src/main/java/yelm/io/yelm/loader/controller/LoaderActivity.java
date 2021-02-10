@@ -4,8 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.BatteryManager;
@@ -19,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.math.BigDecimal;
 import java.util.Locale;
 
 import retrofit2.Call;
@@ -28,6 +29,8 @@ import retrofit2.Response;
 import yelm.io.yelm.R;
 import yelm.io.yelm.loader.model.ApplicationSettings;
 import yelm.io.yelm.loader.model.ChatSettingsClass;
+import yelm.io.yelm.notification.FcmMessageService;
+import yelm.io.yelm.notification.NotificationReceiver;
 import yelm.io.yelm.support_stuff.AlexTAG;
 import yelm.io.yelm.database_new.basket_new.BasketCartDataSource;
 import yelm.io.yelm.database_new.basket_new.BasketCartRepository;
@@ -67,17 +70,26 @@ public class LoaderActivity extends AppCompatActivity {
 
     public static SharedPreferences settings;
     private static final String APP_PREFERENCES = "settings";
+    NotificationReceiver notificationReceiver = new NotificationReceiver();
+
+//    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            Log.d(AlexTAG.debug, "LoaderActivity - onReceive: " + intent.getStringExtra(FcmMessageService.DATA_KEY));
+//
+//        }
+//    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loader);
         settings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+        registerReceiver(notificationReceiver, new IntentFilter(FcmMessageService.ACTION_GET_DATA));
 
-        Log.d(AlexTAG.debug, "Locale.getDefault().getDisplayLanguage(): " + Locale.getDefault().getDisplayLanguage());
-        Log.d(AlexTAG.debug, "Locale.getDefault().getLanguage(): " + Locale.getDefault().getLanguage());
-        Log.d(AlexTAG.debug, "Locale.locale: " + getResources().getConfiguration().locale);
-
+//        Log.d(AlexTAG.debug, "Locale.getDefault().getDisplayLanguage(): " + Locale.getDefault().getDisplayLanguage());
+//        Log.d(AlexTAG.debug, "Locale.getDefault().getLanguage(): " + Locale.getDefault().getLanguage());
+//        Log.d(AlexTAG.debug, "Locale.locale: " + getResources().getConfiguration().locale);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             String channelId = getString(R.string.default_notification_channel_id);
@@ -92,7 +104,7 @@ public class LoaderActivity extends AppCompatActivity {
         init();
     }
 
-    private String getDeviceInfo() {
+    private JSONObject getDeviceInfo() {
         BatteryManager bm = (BatteryManager) getSystemService(BATTERY_SERVICE);
         int percentage = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
         JSONObject jsonData = new JSONObject();
@@ -107,14 +119,13 @@ public class LoaderActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return jsonData.toString();
+        return jsonData;
     }
 
     private boolean isNetworkConnected() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected();
     }
-
 
     //if user does not exist then we pull request to create it
     private void checkUser() {
@@ -186,13 +197,12 @@ public class LoaderActivity extends AppCompatActivity {
                                 Bundle args = getIntent().getExtras();
                                 String data = "";
                                 if (args != null) {
-                                    Log.d(AlexTAG.debug, "LoaderActivity args: " + args.getString("test"));
-                                    data = args.getString("test");
+                                    Log.d(AlexTAG.debug, "LoaderActivity - Notification data: " + args.getString("data"));
+                                    data = args.getString("data");
                                 }
-                                intent.putExtra("test", data);
+                                intent.putExtra("data", data);
                                 startActivity(intent);
                                 finish();
-                                //check user if we got the main settings
                             } else {
                                 Log.e(AlexTAG.error, "Method getApplicationSettings(): by some reason response is null!");
                             }
@@ -222,6 +232,18 @@ public class LoaderActivity extends AppCompatActivity {
 
     }
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Log.d(AlexTAG.debug, "LoaderActivity - intent: " + intent.getStringExtra("data"));
+    }
+
     private void init() {
         if (isNetworkConnected()) {
             Log.d(AlexTAG.debug, "Method init() - NetworkConnected successfully");
@@ -242,6 +264,20 @@ public class LoaderActivity extends AppCompatActivity {
             snackbar.show();
 
         }
+    }
+
+
+    @Override
+    protected void onStop() {
+
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        unregisterReceiver(notificationReceiver);
+
+        super.onDestroy();
     }
 
     private void getChatSettings(String login) {

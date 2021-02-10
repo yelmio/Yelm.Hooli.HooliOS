@@ -41,6 +41,7 @@ public class NewsActivity extends AppCompatActivity implements AppBarLayout.OnOf
         super.onCreate(savedInstanceState);
         binding = ActivityNewsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
         NewNews news = getIntent().getParcelableExtra("news");
         if (news != null) {
             binding(news);
@@ -49,15 +50,6 @@ public class NewsActivity extends AppCompatActivity implements AppBarLayout.OnOf
         productsSquareAdapter = new ProductsNewMenuSquareImageAdapter(this, products);
         binding.recycler.setLayoutManager(new StaggeredGridLayoutManager(2, 1));
         binding.recycler.setAdapter(productsSquareAdapter);
-
-
-//        binding.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                onBackPressed();
-//            }
-//        });
-
     }
 
     private void binding(NewNews news) {
@@ -76,7 +68,6 @@ public class NewsActivity extends AppCompatActivity implements AppBarLayout.OnOf
 
         //clickable links
         binding.description.setMovementMethod(LinkMovementMethod.getInstance());
-
     }
 
     @Override
