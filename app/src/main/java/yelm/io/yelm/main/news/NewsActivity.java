@@ -45,11 +45,11 @@ public class NewsActivity extends AppCompatActivity implements AppBarLayout.OnOf
         NewNews news = getIntent().getParcelableExtra("news");
         if (news != null) {
             binding(news);
+            List<Item> products = news.getItems();
+            productsSquareAdapter = new ProductsNewMenuSquareImageAdapter(this, products);
+            binding.recycler.setLayoutManager(new StaggeredGridLayoutManager(2, 1));
+            binding.recycler.setAdapter(productsSquareAdapter);
         }
-        List<Item> products = getIntent().getParcelableArrayListExtra("items");
-        productsSquareAdapter = new ProductsNewMenuSquareImageAdapter(this, products);
-        binding.recycler.setLayoutManager(new StaggeredGridLayoutManager(2, 1));
-        binding.recycler.setAdapter(productsSquareAdapter);
     }
 
     private void binding(NewNews news) {
