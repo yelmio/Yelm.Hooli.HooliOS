@@ -71,15 +71,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     ScreenDimensions screenDimensions;
     int widthFixedPortrait = 1;
     int widthFixedLandscape = 1;
-    private Listener listener;
 
-    public interface Listener {
-        void onComplete();
-    }
-
-    public void setListener(Listener listener) {
-        this.listener = listener;
-    }
 
     public ChatAdapter(Context context, ArrayList<ChatContent> chatContentList) {
         this.chatContentList = chatContentList;
@@ -141,8 +133,6 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             ((OrderHolder) holder).nameSender.setText(context.getResources().getText(R.string.app_name));
             ((OrderHolder) holder).message.setText(chatContent.getMessage());
         }
-
-
     }
 
     private void setItem(@NonNull ItemHolder holder, ChatContent chatContent) {
@@ -336,6 +326,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 Log.d(AlexTAG.debug, "ratio " + ratio);
                 Log.d(AlexTAG.debug, "newHeight " + newHeight);
                 Log.d(AlexTAG.debug, "newWight " + newWight);
+                //   java.lang.IllegalArgumentException: x + width must be <= bitmap.width()
                 //holder.image.setImageBitmap(Bitmap.createBitmap(bitmap, 0, 0, newWight, newHeight));
                 Picasso.get().load(chatContent.getImage())
                         .resize(newWight, newHeight)
@@ -355,7 +346,6 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             public void onPrepareLoad(Drawable placeHolderDrawable) {
             }
         });
-
 //                Bitmap bitmap = getBitmapFromURL(image);
 //                int newWight = 0;
 //                int newHeight = 0;
@@ -390,10 +380,14 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 //                    popupMenu(context, imageCornerRadius, finalBitmap);
 //                    return true;
 //                });
-
     }
 
+
+
+
     private void popupMenu(Context context, View view, String image, boolean inner) {
+        Log.d(AlexTAG.debug, "image: " + image);
+
         PopupMenu popupMenu = new PopupMenu(context, view);
         popupMenu.inflate(R.menu.popup_menu);
         if (inner) {

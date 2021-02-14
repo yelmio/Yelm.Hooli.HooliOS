@@ -56,8 +56,8 @@
 
         <ImageButton
             android:id="@+id/back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:background="@drawable/circle_button_selector"
             android:padding="6dp"
 
@@ -92,10 +92,9 @@
         android:layout_height="120dp"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="-20dp"
-        android:elevation="16dp"
         app:cardBackgroundColor="@color/whiteColor"
         app:cardCornerRadius="16dp"
-        app:cardElevation="12dp">
+        app:cardElevation="16dp">
 
 
         <LinearLayout

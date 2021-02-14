@@ -108,8 +108,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         initNews();
         getLocationPermission();
 
-        Bundle args = null;
-        //Bundle args = getIntent().getExtras();
+        Bundle args = getIntent().getExtras();
         if (args != null) {
             Log.d(AlexTAG.debug, "MainActivity - Notification data: " + args.getString("data"));
             String data = args.getString("data");
@@ -190,6 +189,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     }
 
     private void performIfNoLocationPermission() {
+        Log.d(AlexTAG.debug, "Method performIfNoLocationPermission()");
         binding.progress.setVisibility(View.GONE);
         if (Common.userAddressesRepository.getUserAddressesList() != null && Common.userAddressesRepository.getUserAddressesList().size() != 0) {
             for (UserAddress userAddress : Common.userAddressesRepository.getUserAddressesList()) {
@@ -244,6 +244,11 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
                 String userStreet = getUserStreet(locationResult.getLastLocation());
                 Log.d(AlexTAG.debug, "Method getUserCurrentLocation() - userStreet: " + userStreet);
 
+                if (userStreet.trim().isEmpty()){
+                    performIfNoLocationPermission();
+                    return;
+                }
+
                 for (UserAddress userAddress : Common.userAddressesRepository.getUserAddressesList()) {
                     if (userAddress.isChecked) {
                         userAddress.isChecked = false;
@@ -296,9 +301,6 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     }
 
     private void getCategoriesWithProducts(String Lat, String Lon) {
-        Log.d("AlexDebug", "getResources().getConfiguration().locale.getLanguage(): " + getResources().getConfiguration().locale.getLanguage());
-        Log.d("AlexDebug", "getResources().getConfiguration().locale.getCountry() " + getResources().getConfiguration().locale.getCountry());
-
         RetrofitClientNew.
                 getClient(RestAPI.URL_API_MAIN).
                 create(RestAPI.class).
@@ -465,7 +467,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         }
         View footer = new View(MainActivity.this);
         footer.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                (int) getResources().getDimension(R.dimen.dimen_60dp)));
+                (int) getResources().getDimension(R.dimen.dimen_70dp)));
         binding.storeFragments.addView(footer);
     }
 

@@ -7,7 +7,7 @@
     <item>
         <bitmap
             android:gravity="center"
-            android:src="@drawable/yelm_128" />
+            android:src="@drawable/yelm_media" />
     </item>
 
 </layer-list>

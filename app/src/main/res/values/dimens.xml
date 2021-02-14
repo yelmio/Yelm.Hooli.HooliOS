@@ -20,5 +20,6 @@
 
     <dimen name="imageview_custom_height">220dp</dimen>
     <dimen name="dimen_60dp">60dp</dimen>
+    <dimen name="dimen_70dp">70dp</dimen>
 
 </resources>

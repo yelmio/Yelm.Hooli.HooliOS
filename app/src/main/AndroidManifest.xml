@@ -17,6 +17,8 @@
 
     <uses-feature android:name="android.hardware.camera.any" />
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+
     <uses-permission android:name="android.permission.CAMERA" />
 
     <application
@@ -29,10 +31,15 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
 
+        <service
+            android:name=".notification.ForegroundService"
+            android:enabled="true"
+            android:exported="true"></service>
+
         <receiver
             android:name=".notification.NotificationReceiver"
             android:enabled="true"
-            android:exported="true"></receiver>
+            android:exported="true" />
 
         <activity
             android:name=".main.news.NewsFromNotificationActivity"

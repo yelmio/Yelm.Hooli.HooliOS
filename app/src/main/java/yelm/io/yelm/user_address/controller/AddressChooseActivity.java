@@ -253,7 +253,6 @@ public class AddressChooseActivity extends AppCompatActivity {
         }
     };
 
-
     private void getAddress() {
         try {
             Geocoder geocoder = new Geocoder(AddressChooseActivity.this, Locale.getDefault());

@@ -13,7 +13,6 @@ import yelm.io.yelm.main.model.Specification;
 
 public class ItemSearch implements Parcelable {
 
-
     @SerializedName("id")
     @Expose
     private String id;

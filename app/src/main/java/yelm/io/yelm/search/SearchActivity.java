@@ -50,7 +50,7 @@ public class SearchActivity extends AppCompatActivity {
 
         binding.recyclerProducts.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         binding.recyclerProducts.setHasFixedSize(false);
-        binding.recyclerProducts.addItemDecoration(new ItemOffsetDecorationBottom((int) getResources().getDimension(R.dimen.dimen_60dp)));
+        binding.recyclerProducts.addItemDecoration(new ItemOffsetDecorationBottom((int) getResources().getDimension(R.dimen.dimen_70dp)));
 
         getAllProducts();
 

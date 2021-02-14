@@ -94,6 +94,10 @@
     <string name="orderActivityEnterFlat">Укажите квартиру</string>
     <string name="orderActivityEnterCorrectPhone">Укажите корректный телефон</string>
 
+    <!-- PaymentCardActivity -->
+    <string name="paymentCardActivityOffer">Нажимая кнопку "Оплатить", Вы\n соглашаетесь с офертой</string>
+
+
     <!-- profile fragment -->
     <string name="profile_subscription_action">Действие подписки:</string>
     <string name="profile_control">Управление</string>

@@ -170,8 +170,8 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
                         String message = data.getString("message");
                         Calendar current = GregorianCalendar.getInstance();
                         ChatContent chatMessage = new ChatContent(
-                                LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, ""),
                                 LoaderActivity.settings.getString(LoaderActivity.SHOP_ID, ""),
+                                LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, ""),
                                 message,
                                 printedFormatterDate.format(current.getTime()),
                                 "message",
@@ -266,8 +266,6 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
                 create(RestApiChat.class).
                 getChatHistory(RestApiChat.PLATFORM_NUMBER,
                         LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, "")).
-//        getChatHistory("5fd33466e17963.29052139",
-//        "13").
                 enqueue(new Callback<ArrayList<ChatHistoryClass>>() {
                     @Override
                     public void onResponse(@NotNull Call<ArrayList<ChatHistoryClass>> call, @NotNull final Response<ArrayList<ChatHistoryClass>> response) {
@@ -315,7 +313,7 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
                                                 chat.getItems(),
                                                 false,
                                                 chat.getOrderID()));
-                                    }else {
+                                    } else {
                                         chatContentList.add(new ChatContent(chat.getFromWhom(),
                                                 chat.getToWhom(),
                                                 chat.getMessage(),
@@ -329,15 +327,6 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
                                 }
                                 chatAdapter = new ChatAdapter(ChatActivity.this, chatContentList);
                                 binding.chatRecycler.setAdapter(chatAdapter);
-//                                chatAdapter.setListener(new ChatAdapter.Listener() {
-//                                    @Override
-//                                    public void onComplete() {
-//                                        Log.d(AlexTAG.debug, "onComplete");
-//                                        new Handler().postDelayed(() -> binding.chatRecycler.smoothScrollToPosition(chatContentList.size() - 1), 100);
-//                                    }
-//                                });
-                                //connect
-
                             } else {
                                 Log.e(AlexTAG.error, "Method getChatHistory(): by some reason response is null!");
                             }
@@ -515,6 +504,8 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
                 Bitmap bitmap = (Bitmap) data.getExtras().get("data");
                 Log.d(AlexTAG.debug, "Bitmap: " + bitmap.getByteCount());
 
+                new Thread(()->socketSendPhoto(bitmap)).start();
+
                 File dir = new File(Environment.getExternalStorageDirectory() + "/" + getText(R.string.app_name));
                 if (!dir.exists()) {
                     dir.mkdirs();
@@ -609,7 +600,7 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
                 jsonObjectItem.put("to_whom", LoaderActivity.settings.getString(LoaderActivity.SHOP_ID, ""));
                 jsonObjectItem.put("message", "");
                 jsonObjectItem.put("items", "{}");
-                jsonObjectItem.put("type", "images");//"type"-"images/message"
+                jsonObjectItem.put("type", "images");
                 jsonObjectItem.put("platform", RestAPI.PLATFORM_NUMBER);
                 jsonObjectItem.put("images", picturesArray.toString());
                 socket.emit("room." + LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, ""), jsonObjectItem);
@@ -618,6 +609,29 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
             }
         }
     }
+
+    private void socketSendPhoto(Bitmap bitmap) {
+        JSONObject jsonObjectItem = new JSONObject();
+        JSONArray picturesArray = new JSONArray();
+        try {
+            String base64 = ConvertingImageToBase64(bitmap);
+            JSONObject pictureObject = new JSONObject();
+            pictureObject.put("image", base64);
+            picturesArray.put(pictureObject);
+            jsonObjectItem.put("room_id", LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, ""));
+            jsonObjectItem.put("from_whom", LoaderActivity.settings.getString(LoaderActivity.CLIENT_ID, ""));
+            jsonObjectItem.put("to_whom", LoaderActivity.settings.getString(LoaderActivity.SHOP_ID, ""));
+            jsonObjectItem.put("message", "");
+            jsonObjectItem.put("items", "{}");
+            jsonObjectItem.put("type", "images");//"type"-"images/message"
+            jsonObjectItem.put("platform", RestAPI.PLATFORM_NUMBER);
+            jsonObjectItem.put("images", picturesArray.toString());
+            socket.emit("room." + LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, ""), jsonObjectItem);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private void socketSendMessage(String message) {
         JSONObject jsonObjectItem = new JSONObject();

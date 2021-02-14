@@ -37,7 +37,6 @@ public class FcmMessageService extends FirebaseMessagingService {
     private static final int NOTIFY_ID = 101;
     public static final String ACTION_GET_DATA = "notification.RESPONSE";
     public static final String DATA_KEY = "data";
-    public String data = "dslfsls";
 
     @Override
     public void onNewToken(String s) {
@@ -89,7 +88,6 @@ public class FcmMessageService extends FirebaseMessagingService {
     public void handleIntent(Intent intent) {
         super.handleIntent(intent);
         Log.d(AlexTAG.debug, "handleIntent");
-        Log.d(AlexTAG.debug, "data: " + data);
         Log.d(AlexTAG.debug, "intent: " + intent.getStringExtra("data"));
 
         Intent responseIntent = new Intent();
@@ -106,7 +104,6 @@ public class FcmMessageService extends FirebaseMessagingService {
         // TODO(developer): Handle FCM messages here.
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
         Log.d(AlexTAG.debug, "From: " + remoteMessage.getFrom());
-        data = remoteMessage.getData().toString();
         Log.d(AlexTAG.debug, "remoteMessage.getData(): " + remoteMessage.getData().toString());
 
         // Check if message contains a data payload.
@@ -138,15 +135,14 @@ public class FcmMessageService extends FirebaseMessagingService {
 
         Intent i = new Intent(this, LoaderActivity.class);
         //Intent i = new Intent(this, NotificationReceiver.class);
-        i.putExtra("data", "test");
-        //i.putExtra("data", remoteMessage.getData().toString());
+        i.putExtra("data", remoteMessage.getData().toString());
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
 
         String channelId = getString(R.string.default_notification_channel_id);
         String channelName = getString(R.string.default_notification_channel_name);
 
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.yelm_128);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.yelm_media);
 
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId)
@@ -157,7 +153,7 @@ public class FcmMessageService extends FirebaseMessagingService {
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setSmallIcon(R.drawable.ic_notify)
                 .setColor(getResources().getColor(R.color.mainThemeColor))
-                //.setContentIntent(pendingIntent)
+                .setContentIntent(pendingIntent)
                 .setSound(defaultSoundUri);
 
         NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);

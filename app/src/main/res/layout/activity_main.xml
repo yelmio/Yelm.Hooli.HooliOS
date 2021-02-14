@@ -18,13 +18,14 @@
 
         <ImageButton
             android:id="@+id/search"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="12dp"
-            android:layout_marginEnd="12dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="2dp"
             android:adjustViewBounds="true"
             android:background="@android:color/transparent"
+            android:padding="10dp"
             android:scaleType="fitCenter"
             app:srcCompat="@drawable/ic_search" />
 
@@ -60,6 +61,7 @@
                     android:duplicateParentState="true"
                     android:focusable="false"
                     android:gravity="center"
+                    android:includeFontPadding="false"
                     android:singleLine="true"
                     android:textColor="@color/whiteColor"
                     android:textSize="16sp"
@@ -86,12 +88,14 @@
 
         <ImageButton
             android:id="@+id/chat"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="12dp"
-            android:layout_marginEnd="12dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="2dp"
+            android:adjustViewBounds="true"
             android:background="@android:color/transparent"
+            android:padding="10dp"
             android:scaleType="fitCenter"
             app:srcCompat="@drawable/ic_chat" />
 

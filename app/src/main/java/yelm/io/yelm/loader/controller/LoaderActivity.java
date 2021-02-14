@@ -30,6 +30,7 @@ import yelm.io.yelm.R;
 import yelm.io.yelm.loader.model.ApplicationSettings;
 import yelm.io.yelm.loader.model.ChatSettingsClass;
 import yelm.io.yelm.notification.FcmMessageService;
+import yelm.io.yelm.notification.ForegroundService;
 import yelm.io.yelm.notification.NotificationReceiver;
 import yelm.io.yelm.support_stuff.AlexTAG;
 import yelm.io.yelm.database_new.basket_new.BasketCartDataSource;
@@ -90,6 +91,8 @@ public class LoaderActivity extends AppCompatActivity {
 //        Log.d(AlexTAG.debug, "Locale.getDefault().getDisplayLanguage(): " + Locale.getDefault().getDisplayLanguage());
 //        Log.d(AlexTAG.debug, "Locale.getDefault().getLanguage(): " + Locale.getDefault().getLanguage());
 //        Log.d(AlexTAG.debug, "Locale.locale: " + getResources().getConfiguration().locale);
+        //Log.d("AlexDebug", "getResources().getConfiguration().locale.getLanguage(): " + getResources().getConfiguration().locale.getLanguage());
+        // Log.d("AlexDebug", "getResources().getConfiguration().locale.getCountry() " + getResources().getConfiguration().locale.getCountry());
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             String channelId = getString(R.string.default_notification_channel_id);
@@ -232,7 +235,6 @@ public class LoaderActivity extends AppCompatActivity {
 
     }
 
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -296,7 +298,6 @@ public class LoaderActivity extends AppCompatActivity {
                                 editor.putString(SHOP_ID, response.body().getShop());
                                 editor.putString(ROOM_ID, response.body().getRoomId());
                                 editor.putString(CLIENT_ID, response.body().getClient());
-
                                 editor.apply();
                             } else {
                                 Log.e(AlexTAG.error, "Method getChatSettings(): by some reason response is null!");
