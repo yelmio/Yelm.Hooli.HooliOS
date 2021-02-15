@@ -92,7 +92,6 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
     private String phone = "";
 
     protected CompositeDisposable compositeDisposable = new CompositeDisposable();
-    private String deliveryPrice = LoaderActivity.settings.getString(LoaderActivity.MIN_DELIVERY_PRICE, "");
 
 
     @BindView(R.id.text_total)

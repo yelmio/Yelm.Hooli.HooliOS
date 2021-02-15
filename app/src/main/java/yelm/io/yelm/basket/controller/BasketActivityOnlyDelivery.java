@@ -168,7 +168,7 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
         basketAdapter = new BasketAdapter(this, carts);
         binding.recyclerCart.setAdapter(basketAdapter);
 
-        finalCost = new BigDecimal("0").add(deliveryCost);
+        finalCost = new BigDecimal("0");
 
         boolean allowOrdering = true;
         for (BasketCart cart : carts) {
@@ -183,6 +183,19 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
                 allowOrdering = false;
             }
         }
+
+        if (finalCost.compareTo(new BigDecimal(LoaderActivity.settings.getString(LoaderActivity.MIN_ORDER_PRICE, "0"))) < 0) {
+            binding.layoutMinOrderPrice.setVisibility(View.VISIBLE);
+            allowOrdering = false;
+            binding.orderMinPrice.setText(String.format("%s %s %s",
+                    getString(R.string.basketActivityOrderMinPrice),
+                    LoaderActivity.settings.getString(LoaderActivity.MIN_ORDER_PRICE, "0"),
+                    LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "0")));
+        } else {
+            binding.layoutMinOrderPrice.setVisibility(View.GONE);
+        }
+        finalCost = finalCost.add(deliveryCost);
+
         binding.finalPrice.setText(String.format("%s %s", finalCost, LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
         Log.d(Logging.debug, "Method updateBasket() - finalCost: " + finalCost.toString());
         if (carts.size() != 0 && allowOrdering && currentAddress != null && !Constants.ShopID.equals("0")) {

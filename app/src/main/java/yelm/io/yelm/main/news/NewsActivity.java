@@ -50,7 +50,6 @@ public class NewsActivity extends AppCompatActivity implements AppBarLayout.OnOf
             productsSquareAdapter = new ProductsNewMenuSquareImageAdapter(this, products);
             binding.recycler.setLayoutManager(new StaggeredGridLayoutManager(2, 1));
             binding.recycler.setAdapter(productsSquareAdapter);
-
             binding.share.setOnClickListener(v -> {
                 String sharingLink = "https://yelm.io/news/" + news.getId();
                 Intent intent = new Intent(Intent.ACTION_SEND);

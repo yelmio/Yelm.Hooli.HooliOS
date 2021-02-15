@@ -80,6 +80,7 @@
     <string name="basket_yelm_delivery">Yelm\nДоставка</string>
     <string name="basketActivityPC">шт.</string>
     <string name="basketActivityDeliveryNotAvailable">Доставка по этому адресу недоступна</string>
+    <string name="basketActivityOrderMinPrice">Минимальная сумма заказа, исключая доставку, не менее -  </string>
 
     <!-- OrderActivity -->
     <string name="ordering">Оформление</string>

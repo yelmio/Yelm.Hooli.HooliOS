@@ -54,7 +54,6 @@ public class LoaderActivity extends AppCompatActivity {
     public static final String USER_NAME = "USER_NAME";
     public static final String ALLOW_PAYMENTS = "ALLOW_PAYMENTS";
     public static final String CATALOG_STYLE = "CATALOG_STYLE";
-    public static final String USER_TYPE = "USER_TYPE";
     public static final String MIN_DELIVERY_PRICE = "MIN_DELIVERY_PRICE";
     public static final String MIN_ORDER_PRICE = "MIN_ORDER_PRICE";
     public static final String PRICE_IN = "PRICE_IN";
@@ -64,6 +63,8 @@ public class LoaderActivity extends AppCompatActivity {
     public static final String ROOM_ID = "ROOM_ID";
     public static final String SHOP_ID = "SHOP_ID";
     public static final String CLIENT_ID = "CLIENT_ID";
+
+    //public static final String CLIENT_ID = "CLIENT_ID";
 
     public static SharedPreferences settings;
     private static final String APP_PREFERENCES = "settings";
