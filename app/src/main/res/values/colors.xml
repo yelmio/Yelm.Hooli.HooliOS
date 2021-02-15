@@ -50,6 +50,7 @@
     <color name="discountColor">#34C85A</color>
     <color name="modifierSelectedColor">#34C85A</color>
     <color name="modifierUnSelectedColor">#818080</color>
+    <color name="greenColor">#34C85A</color>
 
     <color name="colorArticlesCardDescription">#F0F0F2</color>
 
@@ -64,6 +65,7 @@
     <color name="colorShadowProduct">#4D000000</color>
     <color name="colorRedDiscount">#EB5757</color>
     <color name="colorBackCard">#F9F9F9</color>
+    <color name="redColor">#EB5757</color>
 
 
     <color name="colorBottomSheetTopDecorator">#BCBABA</color>
