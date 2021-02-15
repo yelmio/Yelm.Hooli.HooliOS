@@ -14,17 +14,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
 import yelm.io.yelm.R;
 import yelm.io.yelm.database_new.Common;
 import yelm.io.yelm.database_new.user_addresses.UserAddress;
-import yelm.io.yelm.database_old.user.User;
 import yelm.io.yelm.databinding.AdressesBottomSheepDialogBinding;
-import yelm.io.yelm.old_version.maps.MapShopActivity;
-import yelm.io.yelm.order.OrderActivity;
-import yelm.io.yelm.support_stuff.AlexTAG;
+
+import yelm.io.yelm.support_stuff.Logging;
 import yelm.io.yelm.user_address.adapter.UserAddressesAdapter;
 
 public class AddressesBottomSheet extends BottomSheetDialogFragment {
@@ -62,7 +57,7 @@ public class AddressesBottomSheet extends BottomSheetDialogFragment {
         binding.recyclerUserAddresses.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         userAddressesAdapter = new UserAddressesAdapter(getContext(), Common.userAddressesRepository.getUserAddressesList());
         userAddressesAdapter.setListener(() -> {
-            Log.d(AlexTAG.debug, "addressChangeListener.onAddressChange()");
+            Log.d(Logging.debug, "addressChangeListener.onAddressChange()");
             for (UserAddress current : Common.userAddressesRepository.getUserAddressesList()) {
                 if (current.isChecked) {
                     listener.selectedAddress(current);
@@ -93,7 +88,7 @@ public class AddressesBottomSheet extends BottomSheetDialogFragment {
         }
         switch (requestCode) {
             case USER_ADDRESS_CHOOSE_REQUEST_CODE:
-                Log.d(AlexTAG.debug, "USER_ADDRESS_CHOOSE_REQUEST_CODE");
+                Log.d(Logging.debug, "USER_ADDRESS_CHOOSE_REQUEST_CODE");
                 for (UserAddress current : Common.userAddressesRepository.getUserAddressesList()) {
                     if (current.isChecked) {
                         listener.selectedAddress(current);

@@ -144,6 +144,4 @@ public class NewsActivity extends AppCompatActivity implements AppBarLayout.OnOf
             }
         }
     }
-
-
 }

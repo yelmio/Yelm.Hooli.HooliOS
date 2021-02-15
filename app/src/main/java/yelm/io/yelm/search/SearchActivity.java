@@ -16,15 +16,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import yelm.io.yelm.basket.controller.BasketActivity;
 import yelm.io.yelm.basket.controller.BasketActivityOnlyDelivery;
-import yelm.io.yelm.support_stuff.AlexTAG;
+import yelm.io.yelm.support_stuff.Logging;
 import yelm.io.yelm.R;
 import yelm.io.yelm.database_new.basket_new.BasketCart;
 import yelm.io.yelm.database_new.Common;
@@ -89,14 +85,14 @@ public class SearchActivity extends AppCompatActivity {
                             searchProductAdapter = new SearchProductAdapter(SearchActivity.this, response.body());
                             binding.recyclerProducts.setAdapter(searchProductAdapter);
                         } else {
-                            Log.e(AlexTAG.error, "Method getAllProducts() - response is not successful." +
+                            Log.e(Logging.error, "Method getAllProducts() - response is not successful." +
                                     "Code: " + response.code() + "Message: " + response.message());
                         }
                     }
 
                     @Override
                     public void onFailure(@NotNull Call<ArrayList<Item>> call, @NotNull Throwable t) {
-                        Log.e(AlexTAG.error, "Method getAllProducts() - failure: " + t.toString());
+                        Log.e(Logging.error, "Method getAllProducts() - failure: " + t.toString());
                     }
                 });
     }
@@ -131,7 +127,7 @@ public class SearchActivity extends AppCompatActivity {
             }
 
             binding.basket.setText(String.format("%s %s", basketPrice.toString(), LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
-            Log.d(AlexTAG.debug, "Method updateCost() - carts.size(): " + carts.size() + "\n" +
+            Log.d(Logging.debug, "Method updateCost() - carts.size(): " + carts.size() + "\n" +
                     "basketPrice.toString(): " + basketPrice.toString());
         }
     }

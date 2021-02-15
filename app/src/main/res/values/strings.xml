@@ -97,6 +97,11 @@
     <!-- PaymentCardActivity -->
     <string name="paymentCardActivityOffer">Нажимая кнопку "Оплатить", Вы\n соглашаетесь с офертой</string>
 
+    <!-- OrderByIDActivity -->
+    <string name="orderByIDActivityOrderPrice">Сумма заказа:</string>
+    <string name="orderByIDActivityOrderData">Дата создания:</string>
+    <string name="orderByIDActivityOrderAddress">Адрес:</string>
+
 
     <!-- profile fragment -->
     <string name="profile_subscription_action">Действие подписки:</string>

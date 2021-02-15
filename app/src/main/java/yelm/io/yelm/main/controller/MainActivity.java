@@ -52,7 +52,7 @@ import retrofit2.Response;
 import yelm.io.yelm.basket.controller.BasketActivityOnlyDelivery;
 import yelm.io.yelm.main.news.NewNews;
 import yelm.io.yelm.main.news.NewsFromNotificationActivity;
-import yelm.io.yelm.support_stuff.AlexTAG;
+import yelm.io.yelm.support_stuff.Logging;
 import yelm.io.yelm.search.SearchActivity;
 import yelm.io.yelm.database_new.basket_new.BasketCart;
 import yelm.io.yelm.database_new.user_addresses.UserAddress;
@@ -96,7 +96,6 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
     private boolean allowUpdateUI = false;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,13 +109,13 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
         Bundle args = getIntent().getExtras();
         if (args != null) {
-            Log.d(AlexTAG.debug, "MainActivity - Notification data: " + args.getString("data"));
+            Log.d(Logging.debug, "MainActivity - Notification data: " + args.getString("data"));
             String data = args.getString("data");
             if (data != null && !data.isEmpty()) {
                 try {
                     JSONObject jsonObj = new JSONObject(data);
-                    Log.d(AlexTAG.debug, "jsonObj: " + jsonObj.getString("id"));
-                    Log.d(AlexTAG.debug, "jsonObj: " + jsonObj.getString("name"));
+                    Log.d(Logging.debug, "jsonObj: " + jsonObj.getString("id"));
+                    Log.d(Logging.debug, "jsonObj: " + jsonObj.getString("name"));
                     if (jsonObj.getString("name").equals("news")) {
                         Intent intent = new Intent(MainActivity.this, NewsFromNotificationActivity.class);
                         intent.putExtra("id", jsonObj.getString("id"));
@@ -154,10 +153,10 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
     private void getLocationPermission() {
         if (hasLocationPermission()) {
-            Log.d(AlexTAG.debug, "Method getLocationPermission() - Location permission granted");
+            Log.d(Logging.debug, "Method getLocationPermission() - Location permission granted");
             getUserCurrentLocation();
         } else {
-            Log.d(AlexTAG.debug, "Method getLocationPermission() - Location permission not granted");
+            Log.d(Logging.debug, "Method getLocationPermission() - Location permission not granted");
             ActivityCompat.requestPermissions(this, LOCATION_PERMISSIONS, LOCATION_PERMISSION_REQUEST_CODE);
         }
     }
@@ -173,12 +172,12 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         switch (requestCode) {
             case LOCATION_PERMISSION_REQUEST_CODE:
                 if (hasLocationPermission()) {
-                    Log.d(AlexTAG.debug, "Method onRequestPermissionsResult() - Request Permissions Result: Success!");
+                    Log.d(Logging.debug, "Method onRequestPermissionsResult() - Request Permissions Result: Success!");
                     getUserCurrentLocation();
                 } else if (shouldShowRequestPermissionRationale(permissions[0])) {
                     showDialogExplanationAboutRequestLocationPermission(getText(R.string.mainActivityRequestPermission).toString());
                 } else {
-                    Log.d(AlexTAG.debug, "Method onRequestPermissionsResult() - Request Permissions Result: Failed!");
+                    Log.d(Logging.debug, "Method onRequestPermissionsResult() - Request Permissions Result: Failed!");
                     performIfNoLocationPermission();
                 }
                 break;
@@ -189,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     }
 
     private void performIfNoLocationPermission() {
-        Log.d(AlexTAG.debug, "Method performIfNoLocationPermission()");
+        Log.d(Logging.debug, "Method performIfNoLocationPermission()");
         binding.progress.setVisibility(View.GONE);
         if (Common.userAddressesRepository.getUserAddressesList() != null && Common.userAddressesRepository.getUserAddressesList().size() != 0) {
             for (UserAddress userAddress : Common.userAddressesRepository.getUserAddressesList()) {
@@ -220,7 +219,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     }
 
     private void getUserCurrentLocation() {
-        Log.d(AlexTAG.debug, "Method getUserCurrentLocation()");
+        Log.d(Logging.debug, "Method getUserCurrentLocation()");
         LocationRequest locationRequest = new LocationRequest();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationRequest.setNumUpdates(1);
@@ -242,7 +241,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
                 double longitude = locationResult.getLastLocation().getLongitude();
                 Log.d("AlexDebug", "location updated:" + "\nlatitude: " + latitude + "\nlongitude: " + longitude);
                 String userStreet = getUserStreet(locationResult.getLastLocation());
-                Log.d(AlexTAG.debug, "Method getUserCurrentLocation() - userStreet: " + userStreet);
+                Log.d(Logging.debug, "Method getUserCurrentLocation() - userStreet: " + userStreet);
 
                 if (userStreet.trim().isEmpty()){
                     performIfNoLocationPermission();
@@ -272,7 +271,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
                 getCategoriesWithProducts(String.valueOf(latitude),
                         String.valueOf(longitude));
             } else {
-                Log.d(AlexTAG.debug, "Method getUserCurrentLocation() - location null - unexpected error");
+                Log.d(Logging.debug, "Method getUserCurrentLocation() - location null - unexpected error");
                 performIfNoLocationPermission();
             }
         }
@@ -318,27 +317,27 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
                             if (response.body() != null) {
                                 catalogsWithProductsList = response.body();
                                 Constants.ShopID = catalogsWithProductsList.get(0).getShopID();
-                                Log.d(AlexTAG.debug, "Method getCategoriesWithProducts() - Constants.ShopID: " + Constants.ShopID);
+                                Log.d(Logging.debug, "Method getCategoriesWithProducts() - Constants.ShopID: " + Constants.ShopID);
                                 redrawProducts();
                             } else {
-                                Log.e(AlexTAG.error, "Method getCategoriesWithProducts() - by some reason response is null!");
+                                Log.e(Logging.error, "Method getCategoriesWithProducts() - by some reason response is null!");
                             }
                         } else {
-                            Log.e(AlexTAG.error, "Method getCategoriesWithProducts() - response is not successful." +
+                            Log.e(Logging.error, "Method getCategoriesWithProducts() - response is not successful." +
                                     "Code: " + response.code() + "Message: " + response.message());
                         }
                     }
 
                     @Override
                     public void onFailure(@NotNull Call<ArrayList<CatalogsWithProductsClass>> call, @NotNull Throwable t) {
-                        Log.e(AlexTAG.error, "Method getCategoriesWithProducts() - failure: " + t.toString());
+                        Log.e(Logging.error, "Method getCategoriesWithProducts() - failure: " + t.toString());
                     }
                 });
     }
 
     @Override
     public void selectedAddress(UserAddress selectedUserAddress) {
-        Log.d(AlexTAG.debug, "Method selectedAddress() - address: " + selectedUserAddress.address);
+        Log.d(Logging.debug, "Method selectedAddress() - address: " + selectedUserAddress.address);
         binding.userCurrentAddress.setText(selectedUserAddress.address);
         getCategoriesWithProducts(selectedUserAddress.latitude, selectedUserAddress.longitude);
     }
@@ -382,17 +381,17 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
                                 binding.recyclerCards.setAdapter(newsAdapter);
                                 //}
                             } else {
-                                Log.e(AlexTAG.error, "Method initNews() - by some reason response is null!");
+                                Log.e(Logging.error, "Method initNews() - by some reason response is null!");
                             }
                         } else {
-                            Log.e(AlexTAG.error, "Method initNews() - response is not successful." +
+                            Log.e(Logging.error, "Method initNews() - response is not successful." +
                                     "Code: " + response.code() + "Message: " + response.message());
                         }
                     }
 
                     @Override
                     public void onFailure(@NotNull Call<ArrayList<NewNews>> call, @NotNull Throwable t) {
-                        Log.e(AlexTAG.error, "Method initNews() - failure: " + t.toString());
+                        Log.e(Logging.error, "Method initNews() - failure: " + t.toString());
                     }
                 });
 
@@ -436,7 +435,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
                         }
 
                         binding.basket.setText(String.format("%s %s", basketPrice.toString(), LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
-                        Log.d(AlexTAG.debug, "Method updateCost() - carts.size(): " + carts.size() + "\n" +
+                        Log.d(Logging.debug, "Method updateCost() - carts.size(): " + carts.size() + "\n" +
                                 "basketPrice.toString(): " + basketPrice.toString());
                     }
                 }));
@@ -450,7 +449,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     }
 
     synchronized private void redrawProducts() {
-        Log.d(AlexTAG.debug, "Method redrawProducts()");
+        Log.d(Logging.debug, "Method redrawProducts()");
         for (Fragment fragment : getSupportFragmentManager().getFragments()) {
             if (!fragment.getTag().equals("addressBottomSheet")) {
                 getSupportFragmentManager().beginTransaction().remove(fragment).commitAllowingStateLoss();

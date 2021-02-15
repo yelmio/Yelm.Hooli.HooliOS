@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
-import yelm.io.yelm.support_stuff.AlexTAG;
+import yelm.io.yelm.support_stuff.Logging;
 import yelm.io.yelm.databinding.ModifierProductItemBinding;
 import yelm.io.yelm.loader.controller.LoaderActivity;
 import yelm.io.yelm.main.model.Modifier;
@@ -48,10 +48,10 @@ public class ProductModifierAdapter extends RecyclerView.Adapter<ProductModifier
 
         holder.binding.selector.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (holder.binding.selector.isChecked()) {
-                Log.d(AlexTAG.debug, "isChecked: "+ current.getName());
+                Log.d(Logging.debug, "isChecked: "+ current.getName());
                 listener.onChecked(current, true);
             } else {
-                Log.d(AlexTAG.debug, "isNotChecked: "+ current.getName());
+                Log.d(Logging.debug, "isNotChecked: "+ current.getName());
                 listener.onChecked(current, false);
             }
         });

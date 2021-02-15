@@ -21,7 +21,7 @@ import yelm.io.yelm.databinding.ActivityItemsFromNewsBinding;
 import yelm.io.yelm.loader.controller.LoaderActivity;
 import yelm.io.yelm.main.adapter.ProductsNewMenuSquareImageAdapter;
 import yelm.io.yelm.main.model.Item;
-import yelm.io.yelm.support_stuff.AlexTAG;
+import yelm.io.yelm.support_stuff.Logging;
 
 public class ItemsOfOneCategoryActivity extends AppCompatActivity {
     ActivityItemsFromNewsBinding binding;
@@ -53,7 +53,7 @@ public class ItemsOfOneCategoryActivity extends AppCompatActivity {
     public void onStop() {
         compositeDisposableBasket.clear();
         super.onStop();
-        Log.d(AlexTAG.debug, "onStop");
+        Log.d(Logging.debug, "onStop");
     }
 
     @Override
@@ -61,7 +61,7 @@ public class ItemsOfOneCategoryActivity extends AppCompatActivity {
         super.onStart();
         updateCost();
         rewriteView();
-        Log.d(AlexTAG.debug, "onStart");
+        Log.d(Logging.debug, "onStart");
     }
 
     private void updateCost() {
@@ -79,7 +79,7 @@ public class ItemsOfOneCategoryActivity extends AppCompatActivity {
                             basketPrice = basketPrice.add(new BigDecimal(cart.finalPrice).multiply(new BigDecimal(cart.count)));
                         }
                         binding.basket.setText(String.format("%s %s", basketPrice.toString(), LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
-                        Log.d(AlexTAG.debug, "Method updateCost() - carts.size(): " + carts.size() + "\n" +
+                        Log.d(Logging.debug, "Method updateCost() - carts.size(): " + carts.size() + "\n" +
                                 "basketPrice.toString(): " + basketPrice.toString());
                     }
                 }));

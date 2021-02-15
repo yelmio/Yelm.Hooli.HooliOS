@@ -9,26 +9,20 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.Manifest;
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.provider.MediaStore;
-import android.text.TextUtils;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
-import android.webkit.MimeTypeMap;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
@@ -52,7 +46,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -71,7 +64,7 @@ import yelm.io.yelm.main.model.Item;
 import yelm.io.yelm.retrofit.new_api.RestAPI;
 import yelm.io.yelm.retrofit.new_api.RestApiChat;
 import yelm.io.yelm.retrofit.new_api.RetrofitClientChat;
-import yelm.io.yelm.support_stuff.AlexTAG;
+import yelm.io.yelm.support_stuff.Logging;
 
 
 public class ChatActivity extends AppCompatActivity implements PickImageBottomSheet.BottomSheetShopListener, PickImageBottomSheet.CameraListener {
@@ -248,7 +241,7 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
         Log.d("AlexDebug", "imageString.length " + imageString.length());
         //Log.d("AlexDebug", "builder " + builder);
         //byte[] byteArray = Base64.decode(imageString, Base64.DEFAULT);
-        //Log.d(AlexTAG.debug, "Arrays.toString(byteArray) " + Arrays.toString(byteArray));
+        //Log.d(Logging.debug, "Arrays.toString(byteArray) " + Arrays.toString(byteArray));
 
 
         //byte[] decodedString = Base64.decode(imageString, Base64.DEFAULT);
@@ -270,9 +263,9 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
                     @Override
                     public void onResponse(@NotNull Call<ArrayList<ChatHistoryClass>> call, @NotNull final Response<ArrayList<ChatHistoryClass>> response) {
                         if (response.isSuccessful()) {
-                            Log.d(AlexTAG.debug, "isSuccessful");
+                            Log.d(Logging.debug, "isSuccessful");
                             if (response.body() != null) {
-                                Log.d(AlexTAG.debug, "ChatSettingsClass: " + response.body().toString());
+                                Log.d(Logging.debug, "ChatSettingsClass: " + response.body().toString());
                                 for (ChatHistoryClass chat : response.body()) {
                                     String value = chat.getCreatedAt();
                                     Calendar current = GregorianCalendar.getInstance();
@@ -328,17 +321,17 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
                                 chatAdapter = new ChatAdapter(ChatActivity.this, chatContentList);
                                 binding.chatRecycler.setAdapter(chatAdapter);
                             } else {
-                                Log.e(AlexTAG.error, "Method getChatHistory(): by some reason response is null!");
+                                Log.e(Logging.error, "Method getChatHistory(): by some reason response is null!");
                             }
                         } else {
-                            Log.e(AlexTAG.error, "Method getChatHistory() response is not successful." +
+                            Log.e(Logging.error, "Method getChatHistory() response is not successful." +
                                     " Code: " + response.code() + "Message: " + response.message());
                         }
                     }
 
                     @Override
                     public void onFailure(@NotNull Call<ArrayList<ChatHistoryClass>> call, @NotNull Throwable t) {
-                        Log.e(AlexTAG.error, "Method getChatHistory() failure: " + t.toString());
+                        Log.e(Logging.error, "Method getChatHistory() failure: " + t.toString());
                     }
                 });
     }
@@ -385,12 +378,12 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
             binding.rootLayout.getWindowVisibleDisplayFrame(r);
             int heightDiff = binding.rootLayout.getRootView().getHeight() - r.height();
             if (heightDiff > 0.25 * binding.rootLayout.getRootView().getHeight()) {
-                Log.d(AlexTAG.debug, "keyboard opened");
+                Log.d(Logging.debug, "keyboard opened");
                 if (chatContentList.size() != 0) {
                     binding.chatRecycler.smoothScrollToPosition(chatContentList.size() - 1);
                 }
             } else {
-                Log.d(AlexTAG.debug, "keyboard closed");
+                Log.d(Logging.debug, "keyboard closed");
             }
         });
         binding.choosePicture.setOnClickListener(v -> requestPermissions());
@@ -434,22 +427,22 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
         switch (requestCode) {
             case REQUEST_PERMISSIONS_READ_WRITE_STORAGE:
                 if (hasReadExternalStoragePermission()) {
-                    Log.d(AlexTAG.debug, "Method onRequestPermissionsResult() - Request STORAGE Permissions Result: Success!");
+                    Log.d(Logging.debug, "Method onRequestPermissionsResult() - Request STORAGE Permissions Result: Success!");
                     requestPermissions();
                 } else if (shouldShowRequestPermissionRationale(permissions[0])) {
                     showDialogExplanationAboutRequestReadWriteStoragePermission(getText(R.string.chatActivityRequestStoragePermission).toString());
                 } else {
-                    Log.d(AlexTAG.debug, "Method onRequestPermissionsResult() - Request STORAGE Permissions Result: Failed!");
+                    Log.d(Logging.debug, "Method onRequestPermissionsResult() - Request STORAGE Permissions Result: Failed!");
                 }
                 break;
             case REQUEST_PERMISSIONS_CAMERA:
                 if (hasCameraPermission()) {
-                    Log.d(AlexTAG.debug, "Method onRequestPermissionsResult() - Request Camera Permissions Result: Success!");
+                    Log.d(Logging.debug, "Method onRequestPermissionsResult() - Request Camera Permissions Result: Success!");
                     callPickImageBottomSheet();
                 } else if (shouldShowRequestPermissionRationale(permissions[0])) {
                     showDialogExplanationAboutRequestCameraPermission(getText(R.string.chatActivityRequestCameraPermission).toString());
                 } else {
-                    Log.d(AlexTAG.debug, "Method onRequestPermissionsResult() - Request Camera Permissions Result: Failed!");
+                    Log.d(Logging.debug, "Method onRequestPermissionsResult() - Request Camera Permissions Result: Failed!");
                 }
             default:
                 super.onRequestPermissionsResult(requestCode, permissions,
@@ -493,16 +486,16 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
 //                try {
 //                    Bitmap thumbnail = MediaStore.Images.Media.getBitmap(
 //                            getContentResolver(), imageUri);
-//                    Log.d(AlexTAG.debug, "Bitmap: " + bitmap.getByteCount());
+//                    Log.d(Logging.debug, "Bitmap: " + bitmap.getByteCount());
 //
 //                } catch (IOException e) {
 //                    e.printStackTrace();
-//                    Log.d(AlexTAG.debug, "Bitmap error: " + e.getMessage());
+//                    Log.d(Logging.debug, "Bitmap error: " + e.getMessage());
 //
 //                }
 
                 Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-                Log.d(AlexTAG.debug, "Bitmap: " + bitmap.getByteCount());
+                Log.d(Logging.debug, "Bitmap: " + bitmap.getByteCount());
 
                 new Thread(()->socketSendPhoto(bitmap)).start();
 
@@ -524,9 +517,9 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Log.d(AlexTAG.debug, " " + e.toString());
+                    Log.d(Logging.debug, " " + e.toString());
                 }
-                Log.d(AlexTAG.debug, "outFile.getAbsolutePath()" + outFile.getAbsolutePath());
+                Log.d(Logging.debug, "outFile.getAbsolutePath()" + outFile.getAbsolutePath());
 
                 Calendar current = GregorianCalendar.getInstance();
                 ChatContent temp = new ChatContent(
@@ -547,8 +540,8 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
                         new String[]{outFile.toString()}, null,
                         new MediaScannerConnection.OnScanCompletedListener() {
                             public void onScanCompleted(String path, Uri uri) {
-                                Log.d(AlexTAG.debug, "Scanned " + path + ":");
-                                Log.d(AlexTAG.debug, "-> uri=" + uri);
+                                Log.d(Logging.debug, "Scanned " + path + ":");
+                                Log.d(Logging.debug, "-> uri=" + uri);
                             }
                         });
             }

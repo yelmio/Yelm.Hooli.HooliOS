@@ -22,6 +22,7 @@ import yelm.io.yelm.main.model.Item;
 import yelm.io.yelm.main.news.NewNews;
 import yelm.io.yelm.order.PriceConverterResponseClass;
 import yelm.io.yelm.order.promocode.PromoCodeClass;
+import yelm.io.yelm.order.user_order.model.UserOrderPOJO;
 
 public interface RestAPI {
 
@@ -40,6 +41,14 @@ public interface RestAPI {
     Call<ApplicationSettings> getAppSettings(@Query("platform") String platform,
                                              @Query("language_code") String languageCode,
                                              @Query("region_code") String regionCode
+    );
+
+    @GET("order?")
+    Call<UserOrderPOJO> getOrderByID(@Query("platform") String platform,
+                                     @Query("version") String version,
+                                     @Query("language_code") String languageCode,
+                                     @Query("region_code") String regionCode,
+                                     @Query("id") String id
     );
 
     @FormUrlEncoded

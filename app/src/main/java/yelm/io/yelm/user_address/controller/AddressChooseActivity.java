@@ -41,7 +41,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-import yelm.io.yelm.support_stuff.AlexTAG;
+import yelm.io.yelm.support_stuff.Logging;
 import yelm.io.yelm.R;
 import yelm.io.yelm.database_new.Common;
 import yelm.io.yelm.database_new.user_addresses.UserAddress;
@@ -121,7 +121,7 @@ public class AddressChooseActivity extends AppCompatActivity {
                             String.valueOf(cameraPositionCurrent.getTarget().getLongitude()),
                             userStreet, true);
                     Common.userAddressesRepository.insertToUserAddresses(userAddress);
-                    Log.d(AlexTAG.debug, "userAddress: " + userAddress.toString());
+                    Log.d(Logging.debug, "userAddress: " + userAddress.toString());
                 } else {
                     UserAddress userAddress = Common.userAddressesRepository.getUserAddressByName(userStreet);
                     userAddress.isChecked = true;
@@ -147,15 +147,15 @@ public class AddressChooseActivity extends AppCompatActivity {
 
 
     private void getLocationPermission() {
-        Log.d(AlexTAG.debug, " Method getLocationPermission() - Getting location permission");
+        Log.d(Logging.debug, " Method getLocationPermission() - Getting location permission");
         if (hasLocationPermission()) {
-            Log.d(AlexTAG.debug, "Method getLocationPermission() - Location permission granted");
+            Log.d(Logging.debug, "Method getLocationPermission() - Location permission granted");
             getCurrentLocation();
             if (snackbar != null) {
                 snackbar.dismiss();
             }
         } else {
-            Log.d(AlexTAG.debug, "Method getLocationPermission() - Location permission not granted");
+            Log.d(Logging.debug, "Method getLocationPermission() - Location permission not granted");
             ActivityCompat.requestPermissions(this, LOCATION_PERMISSIONS, LOCATION_PERMISSION_REQUEST_CODE);
         }
     }
@@ -187,12 +187,12 @@ public class AddressChooseActivity extends AppCompatActivity {
                     if (snackbar != null) {
                         snackbar.dismiss();
                     }
-                    Log.d(AlexTAG.debug, "Method onRequestPermissionsResult() - Request Permissions Result: Success!");
+                    Log.d(Logging.debug, "Method onRequestPermissionsResult() - Request Permissions Result: Success!");
                     getCurrentLocation();
                 } else if (shouldShowRequestPermissionRationale(permissions[0])) {
                     showDialogExplanationAboutRequestLocationPermission(getText(R.string.addressChooseActivityRequestPermission).toString());
                 } else {
-                    Log.d(AlexTAG.debug, "Method onRequestPermissionsResult() - Request Permissions Result: Failed!");
+                    Log.d(Logging.debug, "Method onRequestPermissionsResult() - Request Permissions Result: Failed!");
                     showSnackBar();
                 }
             default:

@@ -9,7 +9,6 @@ import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -23,14 +22,10 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 import yelm.io.yelm.R;
-import yelm.io.yelm.constants.Constants;
 import yelm.io.yelm.loader.controller.LoaderActivity;
-import yelm.io.yelm.main.controller.MainActivity;
-import yelm.io.yelm.retrofit.API;
-import yelm.io.yelm.retrofit.RetrofitClient;
 import yelm.io.yelm.retrofit.new_api.RestAPI;
 import yelm.io.yelm.retrofit.new_api.RetrofitClientNew;
-import yelm.io.yelm.support_stuff.AlexTAG;
+import yelm.io.yelm.support_stuff.Logging;
 
 public class FcmMessageService extends FirebaseMessagingService {
 
@@ -78,7 +73,7 @@ public class FcmMessageService extends FirebaseMessagingService {
     }
 
 //    public void sendBroadcastNotification(String data) {
-//        Log.d(AlexTAG.debug, "Sending broadcast notification: " + data);
+//        Log.d(Logging.debug, "Sending broadcast notification: " + data);
 //        Intent intentBroadcast = new Intent(ACTION_GET_DATA);
 //        intentBroadcast.putExtra(DATA_KEY, data);
 //        sendBroadcast(intentBroadcast);
@@ -87,8 +82,8 @@ public class FcmMessageService extends FirebaseMessagingService {
     @Override
     public void handleIntent(Intent intent) {
         super.handleIntent(intent);
-        Log.d(AlexTAG.debug, "handleIntent");
-        Log.d(AlexTAG.debug, "intent: " + intent.getStringExtra("data"));
+        Log.d(Logging.debug, "handleIntent");
+        Log.d(Logging.debug, "intent: " + intent.getStringExtra("data"));
 
         Intent responseIntent = new Intent();
         responseIntent.setAction(ACTION_GET_DATA);
@@ -103,12 +98,12 @@ public class FcmMessageService extends FirebaseMessagingService {
         //showNotification(remoteMessage.getNotification().getBody());
         // TODO(developer): Handle FCM messages here.
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
-        Log.d(AlexTAG.debug, "From: " + remoteMessage.getFrom());
-        Log.d(AlexTAG.debug, "remoteMessage.getData(): " + remoteMessage.getData().toString());
+        Log.d(Logging.debug, "From: " + remoteMessage.getFrom());
+        Log.d(Logging.debug, "remoteMessage.getData(): " + remoteMessage.getData().toString());
 
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
-            // Log.d(AlexTAG.debug, "Message data payload: " + remoteMessage.getData());
+            // Log.d(Logging.debug, "Message data payload: " + remoteMessage.getData());
 
             if (/* Check if data needs to be processed by long running job */ true) {
                 // For long-running tasks (10 seconds or more) use Firebase Job Dispatcher.

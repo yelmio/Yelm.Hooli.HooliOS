@@ -7,6 +7,14 @@
     tools:context=".order.OrderActivityNew">
 
 
+    <ProgressBar
+        android:id="@+id/progress"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layoutPaymentType"
+        android:visibility="gone" />
+
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="120dp"
@@ -441,6 +449,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/layoutPaymentType"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/layoutOrderPrice"

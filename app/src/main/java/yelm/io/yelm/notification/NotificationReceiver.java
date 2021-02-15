@@ -5,14 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import yelm.io.yelm.support_stuff.AlexTAG;
+import yelm.io.yelm.support_stuff.Logging;
 
 public class NotificationReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d(AlexTAG.debug, "NotificationReceiver");
-        Log.d(AlexTAG.debug, "intent: " + intent.getStringExtra("data"));
+        Log.d(Logging.debug, "NotificationReceiver");
+        Log.d(Logging.debug, "intent: " + intent.getStringExtra("data"));
 
     }
 }

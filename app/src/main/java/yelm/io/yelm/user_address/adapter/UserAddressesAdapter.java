@@ -11,11 +11,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import yelm.io.yelm.R;
-import yelm.io.yelm.chat.adapter.ChatAdapter;
 import yelm.io.yelm.database_new.Common;
 import yelm.io.yelm.database_new.user_addresses.UserAddress;
 import yelm.io.yelm.databinding.UserAddressItemBinding;
-import yelm.io.yelm.support_stuff.AlexTAG;
+import yelm.io.yelm.support_stuff.Logging;
 
 public class UserAddressesAdapter extends RecyclerView.Adapter<UserAddressesAdapter.ViewHolder> {
 
@@ -68,7 +67,7 @@ public class UserAddressesAdapter extends RecyclerView.Adapter<UserAddressesAdap
             }
             if (addressChangeListener != null) {
                 addressChangeListener.onAddressChange();
-                Log.d(AlexTAG.debug, "removeAddress()");
+                Log.d(Logging.debug, "removeAddress()");
             }
         });
 
@@ -90,7 +89,7 @@ public class UserAddressesAdapter extends RecyclerView.Adapter<UserAddressesAdap
             Common.userAddressesRepository.updateUserAddresses(allocated);
             if (addressChangeListener != null) {
                 addressChangeListener.onAddressChange();
-                Log.d(AlexTAG.debug, "changeAddress");
+                Log.d(Logging.debug, "changeAddress");
             }
         });
     }

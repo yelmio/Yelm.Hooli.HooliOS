@@ -51,7 +51,7 @@ import yelm.io.yelm.payment.models.Transaction;
 import yelm.io.yelm.payment.response.PayApiError;
 import yelm.io.yelm.retrofit.new_api.RestAPI;
 import yelm.io.yelm.retrofit.new_api.RetrofitClientNew;
-import yelm.io.yelm.support_stuff.AlexTAG;
+import yelm.io.yelm.support_stuff.Logging;
 import yelm.io.yelm.R;
 import yelm.io.yelm.database_new.basket_new.BasketCart;
 import yelm.io.yelm.database_new.Common;
@@ -80,7 +80,6 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private String transactionID = "0";
     private String order = "";
-    //payment = ['Card', 'GooglePay', 'ApplePay]
     private String userID = LoaderActivity.settings.getString(LoaderActivity.USER_NAME, "");
     private String currency = LoaderActivity.settings.getString(LoaderActivity.CURRENCY, "");
 
@@ -104,15 +103,14 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
             startCost = finalCost;
             convertedCost = finalCost;
             deliveryCost = new BigDecimal(args.getString("deliveryCost"));
-            discountPromoPercent = new BigDecimal(args.getString("discountPromo"));
             deliveryTime = args.getString("deliveryTime");
             currentAddress = (UserAddress) args.getSerializable(UserAddress.class.getSimpleName());
-            Log.d(AlexTAG.debug, "finalCost: " + finalCost);
-            Log.d(AlexTAG.debug, "startCost: " + startCost);
-            Log.d(AlexTAG.debug, "deliveryCost: " + discountPromoPercent);
-            Log.d(AlexTAG.debug, "deliveryPrice: " + deliveryCost);
-            Log.d(AlexTAG.debug, "deliveryTime: " + deliveryTime);
-            Log.d(AlexTAG.debug, "currentAddress: " + currentAddress.toString());
+            Log.d(Logging.debug, "finalCost: " + finalCost);
+            Log.d(Logging.debug, "startCost: " + startCost);
+            Log.d(Logging.debug, "deliveryCost: " + discountPromoPercent);
+            Log.d(Logging.debug, "deliveryPrice: " + deliveryCost);
+            Log.d(Logging.debug, "deliveryTime: " + deliveryTime);
+            Log.d(Logging.debug, "currentAddress: " + currentAddress.toString());
         }
 
         binding();
@@ -140,15 +138,15 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
                 public void onResponse(@NotNull Call<PromoCodeClass> call, @NotNull Response<PromoCodeClass> response) {
                     if (response.isSuccessful()) {
                         if (response.body() != null) {
-                            Log.d(AlexTAG.debug, " " + Constants.ShopID);
+                            Log.d(Logging.debug, " " + Constants.ShopID);
                             if (response.body().getStatus().equals("200")) {
                                 binding.layoutDiscount.setVisibility(View.VISIBLE);
                                 discountPromoPercent = new BigDecimal(response.body().getPromocode().getAmount());
                                 binding.discountPercent.setText(String.format("%s %s%%", getText(R.string.orderDiscount), discountPromoPercent));
-                                Log.d(AlexTAG.debug, "discount percent: " + discountPromoPercent);
+                                Log.d(Logging.debug, "discount percent: " + discountPromoPercent);
                                 BigDecimal discount = discountPromoPercent.divide(new BigDecimal("100"), 2, BigDecimal.ROUND_HALF_UP);
                                 discount = discount.multiply(finalCost).setScale(2, BigDecimal.ROUND_HALF_UP);
-                                Log.d(AlexTAG.debug, "discount value: " + discount);
+                                Log.d(Logging.debug, "discount value: " + discount);
                                 binding.discountPrice.setText(discount.toString());
                                 finalCost = startCost;
                                 finalCost = finalCost.subtract(discount);
@@ -156,24 +154,22 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
                             }
                             showToast(response.body().getMessage());
                         } else {
-                            Log.e(AlexTAG.error, "Method getPromoCode() - by some reason response is null!");
+                            Log.e(Logging.error, "Method getPromoCode() - by some reason response is null!");
                         }
 
                     } else {
-                        Log.e(AlexTAG.error, "Method getPromoCode() - response is not successful. " +
+                        Log.e(Logging.error, "Method getPromoCode() - response is not successful. " +
                                 "Code: " + response.code() + "Message: " + response.message());
                     }
                 }
 
                 @Override
                 public void onFailure(@NotNull Call<PromoCodeClass> call, @NotNull Throwable t) {
-                    Log.e(AlexTAG.error, "Method getPromoCode() - failure: " + t.toString());
+                    Log.e(Logging.error, "Method getPromoCode() - failure: " + t.toString());
                 }
             });
-
         }
     }
-
 
     private void sendOrder() {
         List<BasketCart> basketCarts = Common.basketCartRepository.getBasketCartsList();
@@ -190,7 +186,7 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        Log.d(AlexTAG.debug, "jsonObjectItems: " + jsonObjectItems.toString());
+        Log.d(Logging.debug, "jsonObjectItems: " + jsonObjectItems.toString());
         RetrofitClientNew.
                 getClient(RestAPI.URL_API_MAIN)
                 .create(RestAPI.class)
@@ -206,7 +202,7 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
                         transactionID,
                         userID,
                         currentAddress.address,
-                        "GooglePay",
+                        "googlepay",
                         binding.floor.getText().toString(),
                         binding.entrance.getText().toString(),
                         finalCost.toString(),
@@ -220,21 +216,21 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
             @Override
             public void onResponse(@NotNull Call<ResponseBody> call, @NotNull Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
-                    Log.d(AlexTAG.debug, "Method sendOrder() - response.code(): " + response.code());
+                    Log.d(Logging.debug, "Method sendOrder() - response.code(): " + response.code());
                     Common.basketCartRepository.emptyBasketCart();
                     Intent intentGP = new Intent();
                     intentGP.putExtra("success", "googlePay");
                     setResult(RESULT_OK, intentGP);
                     finish();
                 } else {
-                    Log.e(AlexTAG.error, "Method sendOrder() - response is not successful. " +
+                    Log.e(Logging.error, "Method sendOrder() - response is not successful. " +
                             "Code: " + response.code() + "Message: " + response.message());
                 }
             }
 
             @Override
             public void onFailure(@NotNull Call<ResponseBody> call, @NotNull Throwable t) {
-                Log.e(AlexTAG.error, "Method sendOrder() - failure: " + t.toString());
+                Log.e(Logging.error, "Method sendOrder() - failure: " + t.toString());
             }
         });
     }
@@ -266,44 +262,6 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
             showToast(getText(R.string.orderActivityEnterFlat).toString());
             return false;
         }
-
-//
-//        JSONObject jsonData = new JSONObject();
-//        try {
-//            jsonData.put("phone", phone);
-//            jsonData.put("payment", payment);
-//            jsonData.put("delivery", "delivery");
-//            jsonData.put("flat", binding.flat.getText().toString());
-//            jsonData.put("floor", binding.floor.getText().toString());
-//            jsonData.put("entrance", binding.entrance.getText().toString());
-//            jsonData.put("total", getIntent().getStringExtra("finalPrice"));
-//            List<BasketCart> basketCarts = Common.basketCartRepository.getBasketCartsList();
-//            JSONArray jsonObjectItems = new JSONArray();
-//            for (int i = 0; i < basketCarts.size(); i++) {
-//                BigDecimal fullPrice = new BigDecimal(basketCarts.get(i).finalPrice).multiply(new BigDecimal(basketCarts.get(i).count));
-//                JSONObject jsonObjectItem = new JSONObject();
-//                jsonObjectItem
-//                        .put("item_id", basketCarts.get(i).itemID)
-//                        //.put("name", basketCarts.get(i).name)
-//                        //.put("Quantity", basketCarts.get(i).quantity)
-//                        //.put("startPrice", basketCarts.get(i).startPrice)
-//                        .put("price_item", basketCarts.get(i).finalPrice)
-//                        //.put("type", basketCarts.get(i).type)
-//                        .put("quantity_item", basketCarts.get(i).count)
-//                        //.put("imageUrl", basketCarts.get(i).imageUrl)
-//                        //.put("quantityType", basketCarts.get(i).quantityType)
-//                        .put("discount_item", basketCarts.get(i).discount
-//                                //.put("fullPrice", fullPrice
-//                        );
-//                jsonObjectItems.put(jsonObjectItem);
-//            }
-//            jsonData.put("items", jsonObjectItems);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//
-//        order = jsonData.toString();
-//        Log.d("AlexDebug", "order:" + order);
         return true;
     }
 
@@ -342,22 +300,22 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
             case LOAD_PAYMENT_DATA_REQUEST_CODE:
                 switch (resultCode) {
                     case Activity.RESULT_OK:
-                        Log.d(AlexTAG.debug, "Method payment with GooglePay(): RESULT_OK");
+                        Log.d(Logging.debug, "Method payment with GooglePay(): RESULT_OK");
                         PaymentData paymentData = PaymentData.getFromIntent(data);
                         handlePaymentSuccess(paymentData);
                         break;
                     case Activity.RESULT_CANCELED:
-                        Log.d(AlexTAG.debug, "Method payment with GooglePay(): RESULT_CANCELED");
+                        Log.d(Logging.debug, "Method payment with GooglePay(): RESULT_CANCELED");
                         // Nothing to here normally - the user simply cancelled without selecting a payment method.
                         break;
                     case AutoResolveHelper.RESULT_ERROR:
-                        Log.d(AlexTAG.debug, "Method payment with GooglePay(): RESULT_ERROR");
+                        Log.d(Logging.debug, "Method payment with GooglePay(): RESULT_ERROR");
                         Status status = AutoResolveHelper.getStatusFromIntent(data);
                         if (status != null) {
                             handlePaymentError(status.getStatusCode());
-                            Log.d(AlexTAG.debug, "Method - status.getStatusMessage(): " + status.getStatusMessage());
+                            Log.d(Logging.debug, "Method - status.getStatusMessage(): " + status.getStatusMessage());
                         } else {
-                            Log.d(AlexTAG.debug, "Method - status.getStatusMessage(): status is null");
+                            Log.d(Logging.debug, "Method - status.getStatusMessage(): status is null");
                         }
                         break;
                 }
@@ -414,12 +372,12 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
         PaymentsUtil.isReadyToPay(paymentsClient).addOnCompleteListener(
                 task -> {
                     try {
-                        Log.d(AlexTAG.debug, "isReadyToPay");
+                        Log.d(Logging.debug, "isReadyToPay");
                         boolean result = task.getResult(ApiException.class);
                         setPwgAvailable(result);
                     } catch (ApiException exception) {
                         // Process error
-                        Log.d(AlexTAG.debug, exception.toString());
+                        Log.d(Logging.debug, exception.toString());
                     }
                 });
     }
@@ -458,7 +416,7 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
     public void requestPayment(PaymentsClient paymentsClient) {
         // Disables the button to prevent multiple clicks.
         //pwg_button.setClickable(false);
-        Log.d(AlexTAG.debug, "requestPayment");
+        Log.d(Logging.debug, "requestPayment");
 
         // The price provided to the API should include taxes and shipping.
         // This price is not displayed to the user.
@@ -473,8 +431,22 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
         AutoResolveHelper.resolveTask(futurePaymentData, Objects.requireNonNull(this), LOAD_PAYMENT_DATA_REQUEST_CODE);
     }
 
+    public void showLoading() {
+        if (binding.progress.getVisibility() == View.VISIBLE) {
+            return;
+        }
+        binding.progress.setVisibility(View.VISIBLE);
+    }
+
+    public void hideLoading() {
+        if (binding.progress.getVisibility() == View.GONE) {
+            return;
+        }
+        binding.progress.setVisibility(View.GONE);
+    }
+
     private void convertPrice() {
-        Log.d(AlexTAG.debug, "Method convertPrice()");
+        Log.d(Logging.debug, "Method convertPrice()");
         RetrofitClientNew.
                 getClient(RestAPI.URL_API_MAIN)
                 .create(RestAPI.class)
@@ -486,32 +458,30 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
             public void onResponse(@NotNull Call<PriceConverterResponseClass> call, @NotNull Response<PriceConverterResponseClass> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
-                        Log.d(AlexTAG.debug, "Method convertPrice() - response.code(): " + response.code());
+                        Log.d(Logging.debug, "Method convertPrice() - response.code(): " + response.code());
                         convertedCost = new BigDecimal(response.body().getPrice());
                         requestPayment(paymentsClient);
                     } else {
-                        Log.e(AlexTAG.error, "Method convertPrice() - by some reason response is null!");
+                        Log.e(Logging.error, "Method convertPrice() - by some reason response is null!");
                     }
                 } else {
-                    Log.e(AlexTAG.error, "Method convertPrice() - response is not successful. " +
+                    Log.e(Logging.error, "Method convertPrice() - response is not successful. " +
                             "Code: " + response.code() + "Message: " + response.message());
                 }
             }
-
             @Override
             public void onFailure(@NotNull Call<PriceConverterResponseClass> call, @NotNull Throwable t) {
-                Log.e(AlexTAG.error, "Method convertPrice() - failure: " + t.toString());
+                Log.e(Logging.error, "Method convertPrice() - failure: " + t.toString());
             }
         });
     }
-
 
     private void handlePaymentSuccess(PaymentData paymentData) {
         // PaymentMethodToken contains the payment information, as well as any additional
         // requested information, such as billing and shipping address.
         // Refer to your processor's documentation on how to proceed from here.
         PaymentMethodToken token = paymentData.getPaymentMethodToken();
-        Log.d(AlexTAG.debug, "token.toString()" + token.toString());
+        Log.d(Logging.debug, "token.toString()" + token.toString());
 
         // getPaymentMethodToken will only return null if Payment Method Tokenization Parameters was
         // not set in the PaymentRequest.
@@ -519,7 +489,7 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
             String billingName = paymentData.getCardInfo().getBillingAddress().getName();
             Toast.makeText(this, getString(R.string.payments_show_name, billingName), Toast.LENGTH_LONG).show();
             // Use token.getToken() to get the token string.
-            Log.d(AlexTAG.debug, "token.getToken()" + token.getToken());
+            Log.d(Logging.debug, "token.getToken()" + token.getToken());
             charge(token.getToken(), "Google Pay", convertedCost, order);
         }
     }
@@ -529,7 +499,7 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
         // Normally, only logging is required.
         // statusCode will hold the value of any constant from CommonStatusCode or one of the
         // WalletConstants.ERROR_CODE_* constants.
-        Log.d(AlexTAG.debug, String.format("Error code: %d", statusCode));
+        Log.d(Logging.debug, String.format("Error code: %d", statusCode));
     }
 
     // Запрос на проведение одностадийного платежа
@@ -539,8 +509,8 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
                 .charge(cardCryptogramPacket, cardHolderName, convertedCost, order)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-//                .doOnSubscribe(disposable -> showLoading())
-//                .doOnEach(notification -> hideLoading())
+                .doOnSubscribe(disposable -> showLoading())
+                .doOnEach(notification -> hideLoading())
                 .subscribe(transaction -> {
                     checkResponse(transaction);
                 }, this::handleError));
@@ -550,16 +520,16 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
     private void checkResponse(Transaction transaction) {
         if (transaction.getPaReq() != null && transaction.getAcsUrl() != null) {
             // Показываем 3DS форму
-            Log.d(AlexTAG.debug, "show3DS");
+            Log.d(Logging.debug, "show3DS");
             show3DS(transaction);
         } else {
             // Показываем результат
-            Log.d(AlexTAG.debug, "transaction result: " + transaction.getCardHolderMessage());
-            Log.d(AlexTAG.debug, "transaction.getReasonCode(): " + transaction.getReasonCode());
+            Log.d(Logging.debug, "transaction result: " + transaction.getCardHolderMessage());
+            Log.d(Logging.debug, "transaction.getReasonCode(): " + transaction.getReasonCode());
             showToast(transaction.getCardHolderMessage());
             if (transaction.getReasonCode() == 0) {
                 transactionID = transaction.getId();
-                Log.d(AlexTAG.debug, "transaction.getId(): " + transaction.getId());
+                Log.d(Logging.debug, "transaction.getId(): " + transaction.getId());
                 sendOrder();
             }
         }
@@ -573,7 +543,7 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
     @Override
     public void onAuthorizationFailed(String html) {
         Toast.makeText(this, "AuthorizationFailed: " + html, Toast.LENGTH_SHORT).show();
-        Log.d(AlexTAG.debug, "onAuthorizationFailed: " + html);
+        Log.d(Logging.debug, "onAuthorizationFailed: " + html);
     }
 
     private void show3DS(Transaction transaction) {
@@ -590,8 +560,8 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
                 .post3ds(md, paRes)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-//                .doOnSubscribe(disposable -> showLoading())
-//                .doOnEach(notification -> hideLoading())
+                .doOnSubscribe(disposable -> showLoading())
+                .doOnEach(notification -> hideLoading())
                 .subscribe(transaction -> {
                     checkResponse(transaction);
                 }, this::handleError));
@@ -607,19 +577,19 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
         if (throwable instanceof PayApiError) {
             PayApiError apiError = (PayApiError) throwable;
             String message = apiError.getMessage();
-            Log.d(AlexTAG.debug, "apiError.getMessage(): " + apiError.getMessage());
+            Log.d(Logging.debug, "apiError.getMessage(): " + apiError.getMessage());
             showToast(message);
         } else if (throwable instanceof UnknownHostException) {
-            Log.d(AlexTAG.debug, "UnknownHostException: " + getString(R.string.common_no_internet_connection));
+            Log.d(Logging.debug, "UnknownHostException: " + getString(R.string.common_no_internet_connection));
             showToast(getString(R.string.common_no_internet_connection));
         } else {
-            Log.d(AlexTAG.debug, "handleError: " + throwable.getMessage());
+            Log.d(Logging.debug, "handleError: " + throwable.getMessage());
             showToast(throwable.getMessage());
         }
     }
 
     public void showToast(String message) {
-        Log.d(AlexTAG.debug, "message: " + message);
+        Log.d(Logging.debug, "message: " + message);
         Toast.makeText(OrderActivityNew.this, message, Toast.LENGTH_SHORT).show();
     }
 

@@ -1,33 +1,23 @@
 package yelm.io.yelm.chat.controller;
 
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.util.Rational;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.camera.core.CameraX;
-import androidx.camera.core.ImageCapture;
-import androidx.camera.core.ImageCaptureConfig;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -35,9 +25,7 @@ import yelm.io.yelm.R;
 import yelm.io.yelm.chat.adapter.PickImageAdapter;
 import yelm.io.yelm.databinding.PickImageBottomSheetBinding;
 import yelm.io.yelm.chat.model.ModelImages;
-import yelm.io.yelm.support_stuff.AlexTAG;
-
-import static android.app.Activity.RESULT_OK;
+import yelm.io.yelm.support_stuff.Logging;
 
 public class PickImageBottomSheet extends BottomSheetDialogFragment {
 
@@ -83,7 +71,7 @@ public class PickImageBottomSheet extends BottomSheetDialogFragment {
 
 
     private void getImagesFromStorage(RecyclerView recyclerPickImages) {
-        Log.d(AlexTAG.debug, "getImages()");
+        Log.d(Logging.debug, "getImages()");
 
         int positionIndex = 0;
         Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
@@ -106,8 +94,8 @@ public class PickImageBottomSheet extends BottomSheetDialogFragment {
         while (cursor.moveToNext()) {
 
             absolutePathOfImage = cursor.getString(columnIndexData);
-            //Log.d(AlexTAG.debug, "Column: " + absolutePathOfImage);
-            //Log.d(AlexTAG.debug, "Folder: " + cursor.getString(column_index_folder_name));
+            //Log.d(Logging.debug, "Column: " + absolutePathOfImage);
+            //Log.d(Logging.debug, "Folder: " + cursor.getString(column_index_folder_name));
 
             for (int i = 0; i < allImages.size(); i++) {
                 if (allImages.get(i).getFolder().equals(cursor.getString(columnIndexFolderName))) {
@@ -136,9 +124,9 @@ public class PickImageBottomSheet extends BottomSheetDialogFragment {
         ArrayList<String> imagesList = new ArrayList<>();
 
         for (int i = 0; i < allImages.size(); i++) {
-            Log.d(AlexTAG.debug, allImages.get(i).getFolder());
+            Log.d(Logging.debug, allImages.get(i).getFolder());
             for (int j = 0; j < allImages.get(i).getAllImagesPath().size(); j++) {
-                //Log.d(AlexTAG.debug, allImages.get(i).getAllImagesPath().get(j));
+                //Log.d(Logging.debug, allImages.get(i).getAllImagesPath().get(j));
                 imagesList.add(allImages.get(i).getAllImagesPath().get(j));
             }
         }
@@ -146,7 +134,7 @@ public class PickImageBottomSheet extends BottomSheetDialogFragment {
         //obj_adapter = new Adapter_PhotosFolder(getApplicationContext(),al_images);
         //gv_folder.setAdapter(obj_adapter);
         //return al_images;
-        Log.d(AlexTAG.debug, "imagesList.size: " + imagesList.size());
+        Log.d(Logging.debug, "imagesList.size: " + imagesList.size());
 
         pickImageAdapter = new PickImageAdapter(getContext(), imagesList);
         pickImageAdapter.setListener((position, path, check) -> {
@@ -160,7 +148,7 @@ public class PickImageBottomSheet extends BottomSheetDialogFragment {
 
         pickImageAdapter.setCameraListener(() -> {
 
-            Log.d(AlexTAG.debug, "onClicked");
+            Log.d(Logging.debug, "onClicked");
             if (cameraListener != null) {
                 cameraListener.onCameraClick();
             }
@@ -179,7 +167,7 @@ public class PickImageBottomSheet extends BottomSheetDialogFragment {
 //                                    @Nullable Throwable exc) {
 //                    String msg = "Photo capture failed: " + message;
 //                    Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
-//                    Log.e(AlexTAG.error, msg);
+//                    Log.e(Logging.error, msg);
 //                    if (exc != null) {
 //                        exc.printStackTrace();
 //                    }
@@ -189,7 +177,7 @@ public class PickImageBottomSheet extends BottomSheetDialogFragment {
 //                public void onImageSaved(File file) {
 //                    String msg = "Photo capture succeeded: " + file.getAbsolutePath();
 //                    Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
-//                    Log.d(AlexTAG.debug, msg);
+//                    Log.d(Logging.debug, msg);
 //                }
 //            });
 
@@ -201,13 +189,13 @@ public class PickImageBottomSheet extends BottomSheetDialogFragment {
 //    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
 //       super.onActivityResult(requestCode, resultCode, data);
 //        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-//            Log.d(AlexTAG.debug, "onActivityResult");
+//            Log.d(Logging.debug, "onActivityResult");
 //            // Фотка сделана, извлекаем миниатюру картинки
 ////            if (data != null) {
 ////                Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-////                Log.d(AlexTAG.debug, "Bitmap: " + bitmap.getByteCount());
+////                Log.d(Logging.debug, "Bitmap: " + bitmap.getByteCount());
 ////                File file = new File(getContext().getExternalMediaDirs()[0], System.currentTimeMillis() + ".jpg");
-////                Log.d(AlexTAG.debug, "file.getAbsolutePath(): " + file.getAbsolutePath());
+////                Log.d(Logging.debug, "file.getAbsolutePath(): " + file.getAbsolutePath());
 ////
 ////                FileOutputStream fileOutputStream = null;
 ////                try {
@@ -226,7 +214,7 @@ public class PickImageBottomSheet extends BottomSheetDialogFragment {
 //
 //            if (data != null) {
 //                Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-//                Log.d(AlexTAG.debug, "Bitmap: " + bitmap.getByteCount());
+//                Log.d(Logging.debug, "Bitmap: " + bitmap.getByteCount());
 //
 //                File dir = new File(Environment.getExternalStorageDirectory() + "/" + getText(R.string.app_name));
 //                if (!dir.exists()) {
@@ -246,9 +234,9 @@ public class PickImageBottomSheet extends BottomSheetDialogFragment {
 //                    }
 //                } catch (Exception e) {
 //                    e.printStackTrace();
-//                    Log.d(AlexTAG.debug, " " + e.toString());
+//                    Log.d(Logging.debug, " " + e.toString());
 //                }
-//                Log.d(AlexTAG.debug, "outFile.getAbsolutePath()" + outFile.getAbsolutePath());
+//                Log.d(Logging.debug, "outFile.getAbsolutePath()" + outFile.getAbsolutePath());
 //            }
 //
 //

@@ -23,7 +23,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,7 +32,6 @@ import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -54,8 +52,8 @@ import yelm.io.yelm.database_new.Common;
 import yelm.io.yelm.database_new.basket_new.BasketCart;
 import yelm.io.yelm.item.ItemActivity;
 import yelm.io.yelm.loader.controller.LoaderActivity;
-import yelm.io.yelm.support_stuff.AlexTAG;
-import yelm.io.yelm.support_stuff.ImageCornerRadius;
+import yelm.io.yelm.order.user_order.OrderByIDActivity;
+import yelm.io.yelm.support_stuff.Logging;
 import yelm.io.yelm.support_stuff.ScreenDimensions;
 
 public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -84,7 +82,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        Log.d(AlexTAG.debug, "viewType: "+viewType);
+        Log.d(Logging.debug, "viewType: " + viewType);
         switch (viewType) {
             case MSG_TYPE_ITEM:
                 return new ItemHolder(LayoutInflater.from(context).inflate(R.layout.chat_type_item, parent, false));
@@ -105,33 +103,38 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ChatContent chatContent = chatContentList.get(position);
         if (holder instanceof MessageHolder) {
-            Log.d(AlexTAG.debug, "MessageHolder");
+            Log.d(Logging.debug, "MessageHolder");
             ((MessageHolder) holder).date.setText(chatContent.getCreated_at());
             ((MessageHolder) holder).nameSender.setText(context.getResources().getText(R.string.app_name));
             ((MessageHolder) holder).message.setText(chatContent.getMessage());
         }
         if (holder instanceof PictureHolder) {
-            Log.d(AlexTAG.debug, "PictureHolder");
+            Log.d(Logging.debug, "PictureHolder");
             ((PictureHolder) holder).date.setText(chatContent.getCreated_at());
             ((PictureHolder) holder).nameSender.setText(context.getResources().getText(R.string.app_name));
             if (chatContent.isInner()) {
-                Log.d(AlexTAG.debug, "Inner");
+                Log.d(Logging.debug, "Inner");
                 setImageInner((PictureHolder) holder, chatContent);
             } else {
-                Log.d(AlexTAG.debug, "Outer");
+                Log.d(Logging.debug, "Outer");
                 setImageOuter((PictureHolder) holder, chatContent);
             }
         }
         if (holder instanceof ItemHolder) {
-            Log.d(AlexTAG.debug, "ItemHolder");
+            Log.d(Logging.debug, "ItemHolder");
             setItem((ItemHolder) holder, chatContent);
         }
 
         if (holder instanceof OrderHolder) {
-            Log.d(AlexTAG.debug, "OrderHolder");
+            Log.d(Logging.debug, "OrderHolder");
             ((OrderHolder) holder).date.setText(chatContent.getCreated_at());
             ((OrderHolder) holder).nameSender.setText(context.getResources().getText(R.string.app_name));
             ((OrderHolder) holder).message.setText(chatContent.getMessage());
+            ((OrderHolder) holder).details.setOnClickListener(v -> {
+                Intent intent = new Intent(context, OrderByIDActivity.class);
+                intent.putExtra("id", chatContent.getOrderID());
+                context.startActivity(intent);
+            });
         }
     }
 
@@ -199,7 +202,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                             basketCart.count = new BigDecimal(basketCart.count).add(new BigDecimal("1")).toString();
                             holder.countItemInCart.setText(String.format("%s", countOfAllProducts.add(new BigInteger("1"))));
                             Common.basketCartRepository.updateBasketCart(basketCart);
-                            Log.d(AlexTAG.debug, "Method add BasketCart to Basket. No modifiers - listCartsByID !=null:  " + basketCart.toString());
+                            Log.d(Logging.debug, "Method add BasketCart to Basket. No modifiers - listCartsByID !=null:  " + basketCart.toString());
                             return;
                         }
                     }
@@ -222,7 +225,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 cartItem.isExist = true;
                 cartItem.quantityType = chatContent.getItem().getUnitType();
                 Common.basketCartRepository.insertToBasketCart(cartItem);
-                Log.d(AlexTAG.debug, "Method add BasketCart to Basket. No modifiers - listCartsByID == null:  " + cartItem.toString());
+                Log.d(Logging.debug, "Method add BasketCart to Basket. No modifiers - listCartsByID == null:  " + cartItem.toString());
             }
         });
 
@@ -264,12 +267,12 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     private void setImageInner(@NonNull PictureHolder holder, ChatContent chatContent) {
-        Log.d(AlexTAG.debug, "image: " + chatContent.getImage());
+        Log.d(Logging.debug, "image: " + chatContent.getImage());
         try {
             Uri uri = Uri.fromFile(new File(chatContent.getImage()));
             Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
-            Log.d(AlexTAG.debug, "bitmap.getWidth() " + bitmap.getWidth());
-            Log.d(AlexTAG.debug, "bitmap.getHeight() " + bitmap.getHeight());
+            Log.d(Logging.debug, "bitmap.getWidth() " + bitmap.getWidth());
+            Log.d(Logging.debug, "bitmap.getHeight() " + bitmap.getHeight());
             int newWight;
             int newHeight;
             double ratio = (double) bitmap.getWidth() / bitmap.getHeight();
@@ -285,9 +288,9 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 //                if (newWight > (screenDimensions.getWidthDP() - 64) * screenDimensions.getScreenDensity()) {
 //                    newWight = (int) ((screenDimensions.getWidthDP() - 64) * screenDimensions.getScreenDensity());
 //                }
-            Log.d(AlexTAG.debug, "ratio " + ratio);
-            Log.d(AlexTAG.debug, "newHeight " + newHeight);
-            Log.d(AlexTAG.debug, "newWight " + newWight);
+            Log.d(Logging.debug, "ratio " + ratio);
+            Log.d(Logging.debug, "newHeight " + newHeight);
+            Log.d(Logging.debug, "newWight " + newWight);
 
             Picasso.get().load(uri)
                     .resize(newWight, newHeight)
@@ -304,13 +307,13 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     private void setImageOuter(@NonNull PictureHolder holder, ChatContent chatContent) {
-        Log.d(AlexTAG.debug, "image: " + chatContent.getImage());
+        Log.d(Logging.debug, "image: " + chatContent.getImage());
         Picasso.get().load(chatContent.getImage()).into(new Target() {
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                Log.d(AlexTAG.debug, "onBitmapLoaded - bitmap.getByteCount(): " + bitmap.getByteCount());
-                Log.d(AlexTAG.debug, "bitmap.getWidth() " + bitmap.getWidth());
-                Log.d(AlexTAG.debug, "bitmap.getHeight() " + bitmap.getHeight());
+                Log.d(Logging.debug, "onBitmapLoaded - bitmap.getByteCount(): " + bitmap.getByteCount());
+                Log.d(Logging.debug, "bitmap.getWidth() " + bitmap.getWidth());
+                Log.d(Logging.debug, "bitmap.getHeight() " + bitmap.getHeight());
                 double ratio = (double) bitmap.getWidth() / bitmap.getHeight();
                 int newWight;
                 int newHeight;
@@ -323,9 +326,9 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     newWight = widthFixedLandscape;
                 }
                 newHeight = (int) (newWight / ratio);
-                Log.d(AlexTAG.debug, "ratio " + ratio);
-                Log.d(AlexTAG.debug, "newHeight " + newHeight);
-                Log.d(AlexTAG.debug, "newWight " + newWight);
+                Log.d(Logging.debug, "ratio " + ratio);
+                Log.d(Logging.debug, "newHeight " + newHeight);
+                Log.d(Logging.debug, "newWight " + newWight);
                 //   java.lang.IllegalArgumentException: x + width must be <= bitmap.width()
                 //holder.image.setImageBitmap(Bitmap.createBitmap(bitmap, 0, 0, newWight, newHeight));
                 Picasso.get().load(chatContent.getImage())
@@ -339,7 +342,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             @Override
             public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-                Log.d(AlexTAG.debug, "onBitmapFailed " + e.toString());
+                Log.d(Logging.debug, "onBitmapFailed " + e.toString());
             }
 
             @Override
@@ -349,8 +352,8 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 //                Bitmap bitmap = getBitmapFromURL(image);
 //                int newWight = 0;
 //                int newHeight = 0;
-//                Log.d(AlexTAG.debug, "bitmap.getWidth() " + bitmap.getWidth());
-//                Log.d(AlexTAG.debug, "bitmap.getHeight() " + bitmap.getHeight());
+//                Log.d(Logging.debug, "bitmap.getWidth() " + bitmap.getWidth());
+//                Log.d(Logging.debug, "bitmap.getHeight() " + bitmap.getHeight());
 //                newWight = bitmap.getWidth();
 //                newHeight = bitmap.getHeight();
 //                double ratio = (double) bitmap.getWidth() / bitmap.getHeight();
@@ -367,9 +370,9 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 //                newHeight = (int) (newWight / ratio);
 //
 //
-//                Log.d(AlexTAG.debug, "ratio " + ratio);
-//                Log.d(AlexTAG.debug, "newHeight " + newHeight);
-//                Log.d(AlexTAG.debug, "newWight " + newWight);
+//                Log.d(Logging.debug, "ratio " + ratio);
+//                Log.d(Logging.debug, "newHeight " + newHeight);
+//                Log.d(Logging.debug, "newWight " + newWight);
 //
 //
 //                Picasso.get().load(image)
@@ -382,11 +385,8 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 //                });
     }
 
-
-
-
     private void popupMenu(Context context, View view, String image, boolean inner) {
-        Log.d(AlexTAG.debug, "image: " + image);
+        Log.d(Logging.debug, "image: " + image);
 
         PopupMenu popupMenu = new PopupMenu(context, view);
         popupMenu.inflate(R.menu.popup_menu);
@@ -395,14 +395,14 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 if (menuItem.getItemId() == R.id.save) {
                     new Thread(() -> {
                         Uri uri = Uri.fromFile(new File(image));
-                        Log.d(AlexTAG.debug, "uri: " + uri.getPath());
+                        Log.d(Logging.debug, "uri: " + uri.getPath());
                         Bitmap bitmap;
                         try {
                             bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
                             saveImage(bitmap);
                         } catch (IOException e) {
                             e.printStackTrace();
-                            Log.d(AlexTAG.debug, "IOException: " + e.getMessage());
+                            Log.d(Logging.debug, "IOException: " + e.getMessage());
                         }
                     }).start();
                     Toast.makeText(context, context.getText(R.string.chatActivitySavedImage), Toast.LENGTH_SHORT).show();
@@ -423,7 +423,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         @Override
                         public void onBitmapFailed(Exception e, Drawable errorDrawable) {
                             e.printStackTrace();
-                            Log.d(AlexTAG.debug, "IOException: " + e.getMessage());
+                            Log.d(Logging.debug, "IOException: " + e.getMessage());
                         }
 
                         @Override
@@ -449,8 +449,8 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             Bitmap myBitmap = BitmapFactory.decodeStream(input);
             return myBitmap;
         } catch (IOException e) {
-            Log.d(AlexTAG.debug, "IOException: " + e.getMessage());
-            Log.d(AlexTAG.debug, "IOException: " + e.toString());
+            Log.d(Logging.debug, "IOException: " + e.getMessage());
+            Log.d(Logging.debug, "IOException: " + e.toString());
             return null;
         }
     }
@@ -460,13 +460,13 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             FileOutputStream fileOutputStream = null;
 
             //File file = Environment.getExternalStorageDirectory();
-            //Log.d(AlexTAG.debug, "file.getAbsolutePath()" + file.getAbsolutePath());
+            //Log.d(Logging.debug, "file.getAbsolutePath()" + file.getAbsolutePath());
 
             File dir = new File(Environment.getExternalStorageDirectory() + "/" + context.getText(R.string.app_name));
             if (!dir.exists()) {
                 dir.mkdirs();
             }
-            Log.d(AlexTAG.debug, "dir.getAbsolutePath()" + dir.getAbsolutePath());
+            Log.d(Logging.debug, "dir.getAbsolutePath()" + dir.getAbsolutePath());
 
             String fileName = String.format("IMG_%d.jpg", System.currentTimeMillis());
             File outFile = new File(dir, fileName);
@@ -475,9 +475,9 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 fileOutputStream = new FileOutputStream(outFile);
             } catch (Exception e) {
                 e.printStackTrace();
-                Log.d(AlexTAG.debug, " " + e.toString());
+                Log.d(Logging.debug, " " + e.toString());
             }
-            Log.d(AlexTAG.debug, "outFile.getAbsolutePath()" + outFile.getAbsolutePath());
+            Log.d(Logging.debug, "outFile.getAbsolutePath()" + outFile.getAbsolutePath());
 
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
 
@@ -493,8 +493,8 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     new String[]{outFile.toString()}, null,
                     new MediaScannerConnection.OnScanCompletedListener() {
                         public void onScanCompleted(String path, Uri uri) {
-                            Log.d(AlexTAG.debug, "Scanned " + path + ":");
-                            Log.d(AlexTAG.debug, "-> uri=" + uri);
+                            Log.d(Logging.debug, "Scanned " + path + ":");
+                            Log.d(Logging.debug, "-> uri=" + uri);
                         }
                     });
         }).start();
@@ -556,13 +556,14 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     public static class OrderHolder extends RecyclerView.ViewHolder {
-        public TextView nameSender, date, message;
+        public TextView nameSender, date, message, details;
 
         public OrderHolder(@NonNull View itemView) {
             super(itemView);
             nameSender = itemView.findViewById(R.id.nameSender);
             date = itemView.findViewById(R.id.date);
             message = itemView.findViewById(R.id.message);
+            details = itemView.findViewById(R.id.details);
         }
     }
 
@@ -606,7 +607,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public int getItemViewType(int position) {
-        Log.d(AlexTAG.debug, "chatContentList.get(position).getType(): "+chatContentList.get(position).getType());
+        Log.d(Logging.debug, "chatContentList.get(position).getType(): " + chatContentList.get(position).getType());
 
         switch (chatContentList.get(position).getType()) {
             case "items":

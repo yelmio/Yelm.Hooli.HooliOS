@@ -145,7 +145,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="end"
-                android:text="sdfdsfsfsdf"
                 android:textColor="@color/colorYelmMediaDark"
                 android:textSize="16sp"
                 android:theme="@style/ProDisplayTextStyle" />
@@ -155,7 +154,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="TextView" />
+                android:textColor="@color/colorTextGray" />
 
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

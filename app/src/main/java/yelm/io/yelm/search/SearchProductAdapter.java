@@ -21,7 +21,7 @@ import java.util.List;
 
 import yelm.io.yelm.item.ItemActivity;
 import yelm.io.yelm.main.model.Item;
-import yelm.io.yelm.support_stuff.AlexTAG;
+import yelm.io.yelm.support_stuff.Logging;
 import yelm.io.yelm.databinding.ProductItemSearcheableBinding;
 import yelm.io.yelm.loader.controller.LoaderActivity;
 
@@ -52,7 +52,7 @@ public class SearchProductAdapter extends RecyclerView.Adapter<SearchProductAdap
             } else {
                 for (Item product : products) {
                     if (product.getName().toLowerCase().contains(charSequence.toString().toLowerCase())) {
-                        Log.d(AlexTAG.debug, "Filter - request string: " + product.getName().toLowerCase());
+                        Log.d(Logging.debug, "Filter - request string: " + product.getName().toLowerCase());
                         filtered.add(product);
                     }
                 }

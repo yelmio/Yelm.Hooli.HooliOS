@@ -95,7 +95,6 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsHolder> {
                         if (!isMoving) {
                             Intent intent = new Intent(context, NewsActivity.class);
                             intent.putExtra("news", currentNews);
-                            //intent.putParcelableArrayListExtra("items", (ArrayList<? extends Parcelable>) currentNews.getItems());
                             context.startActivity(intent);
                         }
                         AnimatorSet animationSet1 = new AnimatorSet();

@@ -23,7 +23,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import yelm.io.yelm.basket.model.BasketCheckPOJO;
 import yelm.io.yelm.pickup_address.controller.AddressPickupChooseActivity;
-import yelm.io.yelm.support_stuff.AlexTAG;
+import yelm.io.yelm.support_stuff.Logging;
 import yelm.io.yelm.R;
 import yelm.io.yelm.basket.adapter.BasketAdapter;
 import yelm.io.yelm.database_new.basket_new.BasketCart;
@@ -193,7 +193,7 @@ public class BasketActivity extends AppCompatActivity implements AddressesBottom
 
     private void checkBasket(String Lat, String Lon) {
         StringBuilder items = getItemsForCheckBasket(Common.basketCartRepository.getBasketCartsList());
-        Log.d(AlexTAG.debug, "Method checkBasket() - items: " + items);
+        Log.d(Logging.debug, "Method checkBasket() - items: " + items);
         RetrofitClientNew.
                 getClient(RestAPI.URL_API_MAIN).
                 create(RestAPI.class).
@@ -211,9 +211,9 @@ public class BasketActivity extends AppCompatActivity implements AddressesBottom
                     public void onResponse(@NotNull Call<BasketCheckPOJO> call, @NotNull final Response<BasketCheckPOJO> response) {
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
-                                Log.d(AlexTAG.debug, "Method checkBasket() - PriceDelivery(): " + response.body().getDelivery().getPrice());
-                                Log.d(AlexTAG.debug, "Method checkBasket() - TimeDelivery(): " + response.body().getDelivery().getTime());
-                                Log.d(AlexTAG.debug, "Method checkBasket() - response.getDeletedID(): " + response.body().getDeletedId().toString());
+                                Log.d(Logging.debug, "Method checkBasket() - PriceDelivery(): " + response.body().getDelivery().getPrice());
+                                Log.d(Logging.debug, "Method checkBasket() - TimeDelivery(): " + response.body().getDelivery().getTime());
+                                Log.d(Logging.debug, "Method checkBasket() - response.getDeletedID(): " + response.body().getDeletedId().toString());
                                 binding.deliveryCost.setText(String.format("%s %s", response.body().getDelivery().getPrice(), LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
                                 binding.time.setText(String.format("%s %s", response.body().getDelivery().getTime(), getText(R.string.delivery_time)));
                                 deliveryTime = response.body().getDelivery().getTime();
@@ -221,17 +221,17 @@ public class BasketActivity extends AppCompatActivity implements AddressesBottom
 
                                 //updateBasketCartsForExist(response.body().getDeletedID());
                             } else {
-                                Log.e(AlexTAG.error, "Method checkBasket() - by some reason response is null!");
+                                Log.e(Logging.error, "Method checkBasket() - by some reason response is null!");
                             }
                         } else {
-                            Log.e(AlexTAG.error, "Method checkBasket() - response is not successful." +
+                            Log.e(Logging.error, "Method checkBasket() - response is not successful." +
                                     "Code: " + response.code() + "Message: " + response.message());
                         }
                     }
 
                     @Override
                     public void onFailure(@NotNull Call<BasketCheckPOJO> call, @NotNull Throwable t) {
-                        Log.e(AlexTAG.error, "Method checkBasket() - failure: " + t.toString());
+                        Log.e(Logging.error, "Method checkBasket() - failure: " + t.toString());
                     }
                 });
     }
@@ -296,7 +296,7 @@ public class BasketActivity extends AppCompatActivity implements AddressesBottom
         }
         binding.finalPrice.setText(String.format("%s %s", finalCost, LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
         binding.recyclerCart.setAdapter(basketAdapter);
-        Log.d(AlexTAG.debug, "Method updateBasket() - carts.size(): " + carts.size() + "\n" +
+        Log.d(Logging.debug, "Method updateBasket() - carts.size(): " + carts.size() + "\n" +
                 "finalCost: " + finalCost.toString());
         binding.ordering.setEnabled(allCartsExist);
 
@@ -304,7 +304,7 @@ public class BasketActivity extends AppCompatActivity implements AddressesBottom
 
     @Override
     public void selectedAddress(UserAddress userAddress) {
-        Log.d(AlexTAG.debug, "Method selectedAddress() - address: " + userAddress.address);
+        Log.d(Logging.debug, "Method selectedAddress() - address: " + userAddress.address);
         binding.addressDelivery.setText(String.format("%s", userAddress.address));
         checkBasket(userAddress.latitude, userAddress.longitude);
     }

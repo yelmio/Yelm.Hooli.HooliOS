@@ -37,7 +37,7 @@ import yelm.io.yelm.loader.controller.LoaderActivity;
 import yelm.io.yelm.main.model.Item;
 import yelm.io.yelm.main.model.Modifier;
 import yelm.io.yelm.item.ProductModifierAdapter;
-import yelm.io.yelm.support_stuff.AlexTAG;
+import yelm.io.yelm.support_stuff.Logging;
 import yelm.io.yelm.support_stuff.ScreenDimensions;
 
 public class ProductsNewMenuSquareImageAdapter extends RecyclerView.Adapter<ProductsNewMenuSquareImageAdapter.ProductHolder> implements Filterable {
@@ -69,7 +69,7 @@ public class ProductsNewMenuSquareImageAdapter extends RecyclerView.Adapter<Prod
             } else {
                 for (Item product : products) {
                     if (product.getName().toLowerCase().contains(charSequence.toString().toLowerCase())) {
-                        Log.d(AlexTAG.debug, "Filter - request string: " + product.getName().toLowerCase());
+                        Log.d(Logging.debug, "Filter - request string: " + product.getName().toLowerCase());
                         filtered.add(product);
                     }
                 }
@@ -158,7 +158,7 @@ public class ProductsNewMenuSquareImageAdapter extends RecyclerView.Adapter<Prod
                             basketCart.count = new BigDecimal(basketCart.count).add(new BigDecimal("1")).toString();
                             holder.binding.countItemInCart.setText(String.format("%s", countOfAllProducts.add(new BigInteger("1"))));
                             Common.basketCartRepository.updateBasketCart(basketCart);
-                            Log.d(AlexTAG.debug, "Method add BasketCart to Basket. No modifiers - listCartsByID !=null:  " + basketCart.toString());
+                            Log.d(Logging.debug, "Method add BasketCart to Basket. No modifiers - listCartsByID !=null:  " + basketCart.toString());
                             return;
                         }
                     }
@@ -181,7 +181,7 @@ public class ProductsNewMenuSquareImageAdapter extends RecyclerView.Adapter<Prod
                 cartItem.isExist = true;
                 cartItem.quantityType = current.getUnitType();
                 Common.basketCartRepository.insertToBasketCart(cartItem);
-                Log.d(AlexTAG.debug, "Method add BasketCart to Basket. No modifiers - listCartsByID == null:  " + cartItem.toString());
+                Log.d(Logging.debug, "Method add BasketCart to Basket. No modifiers - listCartsByID == null:  " + cartItem.toString());
             }
         });
 
@@ -321,7 +321,7 @@ public class ProductsNewMenuSquareImageAdapter extends RecyclerView.Adapter<Prod
                         holder.binding.countItemInCart.setText(String.format("%s", countOfProductsToShow.toString()));
                         basketCart.count = new BigInteger(basketCart.count).add(new BigInteger(countProducts.getText().toString())).toString();
                         Common.basketCartRepository.updateBasketCart(basketCart);
-                        Log.d(AlexTAG.debug, "Method update Product in Basket - found similar!:  " + basketCart.toString());
+                        Log.d(Logging.debug, "Method update Product in Basket - found similar!:  " + basketCart.toString());
                         productModifierSelectionBottomSheet.dismiss();
                         return;
                     }
@@ -350,7 +350,7 @@ public class ProductsNewMenuSquareImageAdapter extends RecyclerView.Adapter<Prod
                 BigInteger countOfProductsToShow = new BigInteger(cartItem.count).add(countOfAllProducts);
                 holder.binding.countItemInCart.setText(String.format("%s", countOfProductsToShow.toString()));
             }
-            Log.d(AlexTAG.debug, "Method add Product to Basket - not found similar!:  " + cartItem.toString());
+            Log.d(Logging.debug, "Method add Product to Basket - not found similar!:  " + cartItem.toString());
             productModifierSelectionBottomSheet.dismiss();
         });
 

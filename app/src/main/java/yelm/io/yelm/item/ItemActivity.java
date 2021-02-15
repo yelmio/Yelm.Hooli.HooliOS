@@ -25,7 +25,7 @@ import yelm.io.yelm.databinding.ActivityItemBinding;
 import yelm.io.yelm.loader.controller.LoaderActivity;
 import yelm.io.yelm.main.model.Item;
 import yelm.io.yelm.main.model.Modifier;
-import yelm.io.yelm.support_stuff.AlexTAG;
+import yelm.io.yelm.support_stuff.Logging;
 
 public class ItemActivity extends AppCompatActivity implements AppBarLayout.OnOffsetChangedListener {
     ActivityItemBinding binding;
@@ -53,7 +53,7 @@ public class ItemActivity extends AppCompatActivity implements AppBarLayout.OnOf
             bindingAddSubtractProductCount();
             bindingAddProductToBasket(item);
         } else {
-            Log.e(AlexTAG.error, "Method onCreate() in ItemActivity: by some reason item==null");
+            Log.e(Logging.error, "Method onCreate() in ItemActivity: by some reason item==null");
         }
     }
 
@@ -170,7 +170,7 @@ public class ItemActivity extends AppCompatActivity implements AppBarLayout.OnOf
                     if (basketCart.modifier.equals(listModifiers)) {
                         basketCart.count = new BigInteger(basketCart.count).add(new BigInteger(binding.countProducts.getText().toString())).toString();
                         Common.basketCartRepository.updateBasketCart(basketCart);
-                        Log.d(AlexTAG.debug, "Method update Product in Basket. listCartsByID !=null:  " + basketCart.toString());
+                        Log.d(Logging.debug, "Method update Product in Basket. listCartsByID !=null:  " + basketCart.toString());
                         return;
                     }
                 }
@@ -191,7 +191,7 @@ public class ItemActivity extends AppCompatActivity implements AppBarLayout.OnOf
             cartItem.isExist = true;
             cartItem.quantityType = product.getUnitType();
             Common.basketCartRepository.insertToBasketCart(cartItem);
-            Log.d(AlexTAG.debug, "Method add Product to Basket. listCartsByID == null:  " + cartItem.toString());
+            Log.d(Logging.debug, "Method add Product to Basket. listCartsByID == null:  " + cartItem.toString());
         });
     }
 

@@ -11,7 +11,6 @@ import com.yandex.mapkit.geometry.Point;
 import com.yandex.mapkit.map.MapObjectCollection;
 import com.yandex.mapkit.map.MapObjectTapListener;
 import com.yandex.mapkit.map.PlacemarkMapObject;
-import com.yandex.mapkit.mapview.MapView;
 import com.yandex.runtime.image.ImageProvider;
 
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +26,7 @@ import yelm.io.yelm.old_version.maps.ShopClass;
 import yelm.io.yelm.retrofit.API;
 import yelm.io.yelm.retrofit.DynamicURL;
 import yelm.io.yelm.retrofit.RetrofitClient;
-import yelm.io.yelm.support_stuff.AlexTAG;
+import yelm.io.yelm.support_stuff.Logging;
 
 public class AddressPickupChooseActivity extends AppCompatActivity implements BottomSheetShop.BottomSheetShopListener {
 
@@ -62,7 +61,7 @@ public class AddressPickupChooseActivity extends AppCompatActivity implements Bo
     }
 
     private void initShops() {
-        Log.d(AlexTAG.debug, "Map: initShops");
+        Log.d(Logging.debug, "Map: initShops");
         RetrofitClient.
                 getClient(API.URL_API_MAIN).
                 create(API.class).

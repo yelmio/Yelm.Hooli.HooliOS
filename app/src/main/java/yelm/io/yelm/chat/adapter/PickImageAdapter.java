@@ -3,13 +3,11 @@ package yelm.io.yelm.chat.adapter;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.util.Rational;
 import android.util.Size;
@@ -17,10 +15,8 @@ import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.camera.core.CameraX;
 import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageAnalysisConfig;
@@ -33,7 +29,6 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -43,7 +38,7 @@ import java.util.concurrent.TimeUnit;
 
 import yelm.io.yelm.databinding.CameraPreviewLayoutBinding;
 import yelm.io.yelm.databinding.PickStorageImageBinding;
-import yelm.io.yelm.support_stuff.AlexTAG;
+import yelm.io.yelm.support_stuff.Logging;
 import yelm.io.yelm.support_stuff.ScreenDimensions;
 
 public class PickImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -249,7 +244,7 @@ public class PickImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 }
                 // Compute average luminance for the image
                 double luma = sum / ((double) data.length);
-                Log.d(AlexTAG.debug, "Average Luminosity " + luma);
+                Log.d(Logging.debug, "Average Luminosity " + luma);
                 // Update timestamp of last analyzed frame
                 lastAnalyzedTimestamp = currentTimestamp;
             }

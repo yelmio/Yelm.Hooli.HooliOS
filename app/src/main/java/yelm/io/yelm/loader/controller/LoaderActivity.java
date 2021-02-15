@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -21,8 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Locale;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -30,9 +27,8 @@ import yelm.io.yelm.R;
 import yelm.io.yelm.loader.model.ApplicationSettings;
 import yelm.io.yelm.loader.model.ChatSettingsClass;
 import yelm.io.yelm.notification.FcmMessageService;
-import yelm.io.yelm.notification.ForegroundService;
 import yelm.io.yelm.notification.NotificationReceiver;
-import yelm.io.yelm.support_stuff.AlexTAG;
+import yelm.io.yelm.support_stuff.Logging;
 import yelm.io.yelm.database_new.basket_new.BasketCartDataSource;
 import yelm.io.yelm.database_new.basket_new.BasketCartRepository;
 import yelm.io.yelm.database_new.Common;
@@ -76,7 +72,7 @@ public class LoaderActivity extends AppCompatActivity {
 //    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 //        @Override
 //        public void onReceive(Context context, Intent intent) {
-//            Log.d(AlexTAG.debug, "LoaderActivity - onReceive: " + intent.getStringExtra(FcmMessageService.DATA_KEY));
+//            Log.d(Logging.debug, "LoaderActivity - onReceive: " + intent.getStringExtra(FcmMessageService.DATA_KEY));
 //
 //        }
 //    };
@@ -88,9 +84,9 @@ public class LoaderActivity extends AppCompatActivity {
         settings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         registerReceiver(notificationReceiver, new IntentFilter(FcmMessageService.ACTION_GET_DATA));
 
-//        Log.d(AlexTAG.debug, "Locale.getDefault().getDisplayLanguage(): " + Locale.getDefault().getDisplayLanguage());
-//        Log.d(AlexTAG.debug, "Locale.getDefault().getLanguage(): " + Locale.getDefault().getLanguage());
-//        Log.d(AlexTAG.debug, "Locale.locale: " + getResources().getConfiguration().locale);
+//        Log.d(Logging.debug, "Locale.getDefault().getDisplayLanguage(): " + Locale.getDefault().getDisplayLanguage());
+//        Log.d(Logging.debug, "Locale.getDefault().getLanguage(): " + Locale.getDefault().getLanguage());
+//        Log.d(Logging.debug, "Locale.locale: " + getResources().getConfiguration().locale);
         //Log.d("AlexDebug", "getResources().getConfiguration().locale.getLanguage(): " + getResources().getConfiguration().locale.getLanguage());
         // Log.d("AlexDebug", "getResources().getConfiguration().locale.getCountry() " + getResources().getConfiguration().locale.getCountry());
 
@@ -133,7 +129,7 @@ public class LoaderActivity extends AppCompatActivity {
     //if user does not exist then we pull request to create it
     private void checkUser() {
         if (settings.contains(USER_NAME)) {
-            Log.d(AlexTAG.debug, "Method checkUser() - user exist: " + settings.getString(USER_NAME, ""));
+            Log.d(Logging.debug, "Method checkUser() - user exist: " + settings.getString(USER_NAME, ""));
             getApplicationSettings();
             getChatSettings(settings.getString(USER_NAME, ""));
         } else {
@@ -151,21 +147,21 @@ public class LoaderActivity extends AppCompatActivity {
                                 if (response.body() != null) {
                                     SharedPreferences.Editor editor = settings.edit();
                                     editor.putString(USER_NAME, response.body().getLogin()).apply();
-                                    Log.d(AlexTAG.debug, "Method checkUser() - created user: " + settings.getString(USER_NAME, ""));
+                                    Log.d(Logging.debug, "Method checkUser() - created user: " + settings.getString(USER_NAME, ""));
                                     getChatSettings(settings.getString(USER_NAME, ""));
                                     getApplicationSettings();
                                 } else {
-                                    Log.e(AlexTAG.error, "Method checkUser() - by some reason response is null!");
+                                    Log.e(Logging.error, "Method checkUser() - by some reason response is null!");
                                 }
                             } else {
-                                Log.e(AlexTAG.error, "Method checkUser() - response is not successful. " +
+                                Log.e(Logging.error, "Method checkUser() - response is not successful. " +
                                         "Code: " + response.code() + "Message: " + response.message());
                             }
                         }
 
                         @Override
                         public void onFailure(@NotNull Call<UserLoginResponse> call, @NotNull Throwable t) {
-                            Log.e(AlexTAG.error, "Method checkUser() - failure: " + t.toString());
+                            Log.e(Logging.error, "Method checkUser() - failure: " + t.toString());
                         }
                     });
         }
@@ -185,7 +181,7 @@ public class LoaderActivity extends AppCompatActivity {
                     public void onResponse(@NotNull Call<ApplicationSettings> call, @NotNull final Response<ApplicationSettings> response) {
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
-                                Log.d(AlexTAG.debug, "Method getApplicationSettings() - MERCHANT_PUBLIC_ID: " +
+                                Log.d(Logging.debug, "Method getApplicationSettings() - MERCHANT_PUBLIC_ID: " +
                                         " " + response.body().getSettings().getPublicId());
                                 Constants.MERCHANT_PUBLIC_ID = response.body().getSettings().getPublicId();
                                 SharedPreferences.Editor editor = settings.edit();
@@ -200,24 +196,24 @@ public class LoaderActivity extends AppCompatActivity {
                                 Bundle args = getIntent().getExtras();
                                 String data = "";
                                 if (args != null) {
-                                    Log.d(AlexTAG.debug, "LoaderActivity - Notification data: " + args.getString("data"));
+                                    Log.d(Logging.debug, "LoaderActivity - Notification data: " + args.getString("data"));
                                     data = args.getString("data");
                                 }
                                 intent.putExtra("data", data);
                                 startActivity(intent);
                                 finish();
                             } else {
-                                Log.e(AlexTAG.error, "Method getApplicationSettings(): by some reason response is null!");
+                                Log.e(Logging.error, "Method getApplicationSettings(): by some reason response is null!");
                             }
                         } else {
-                            Log.e(AlexTAG.error, "Method getApplicationSettings() response is not successful." +
+                            Log.e(Logging.error, "Method getApplicationSettings() response is not successful." +
                                     " Code: " + response.code() + "Message: " + response.message());
                         }
                     }
 
                     @Override
                     public void onFailure(@NotNull Call<ApplicationSettings> call, @NotNull Throwable t) {
-                        Log.e(AlexTAG.error, "Method getApplicationSettings() failure: " + t.toString());
+                        Log.e(Logging.error, "Method getApplicationSettings() failure: " + t.toString());
                     }
                 });
     }
@@ -243,12 +239,12 @@ public class LoaderActivity extends AppCompatActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        Log.d(AlexTAG.debug, "LoaderActivity - intent: " + intent.getStringExtra("data"));
+        Log.d(Logging.debug, "LoaderActivity - intent: " + intent.getStringExtra("data"));
     }
 
     private void init() {
         if (isNetworkConnected()) {
-            Log.d(AlexTAG.debug, "Method init() - NetworkConnected successfully");
+            Log.d(Logging.debug, "Method init() - NetworkConnected successfully");
 
             //clean all data before adding if there is network connection
             //Common.productRepository.emptyProduct();
@@ -257,7 +253,7 @@ public class LoaderActivity extends AppCompatActivity {
             //Common.newsRepository.emptyNews();
             checkUser();
         } else {
-            Log.d(AlexTAG.debug, "Method init() - NetworkConnected not successful");
+            Log.d(Logging.debug, "Method init() - NetworkConnected not successful");
             Snackbar snackbar = Snackbar.make(
                     findViewById(R.id.layout),
                     R.string.loaderActivityNoNetworkConnection,
@@ -292,7 +288,7 @@ public class LoaderActivity extends AppCompatActivity {
                     public void onResponse(@NotNull Call<ChatSettingsClass> call, @NotNull final Response<ChatSettingsClass> response) {
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
-                                Log.d(AlexTAG.debug, "ChatSettingsClass: " + response.body().toString());
+                                Log.d(Logging.debug, "ChatSettingsClass: " + response.body().toString());
                                 SharedPreferences.Editor editor = settings.edit();
                                 editor.putString(API_TOKEN, response.body().getApiToken());
                                 editor.putString(SHOP_ID, response.body().getShop());
@@ -300,17 +296,17 @@ public class LoaderActivity extends AppCompatActivity {
                                 editor.putString(CLIENT_ID, response.body().getClient());
                                 editor.apply();
                             } else {
-                                Log.e(AlexTAG.error, "Method getChatSettings(): by some reason response is null!");
+                                Log.e(Logging.error, "Method getChatSettings(): by some reason response is null!");
                             }
                         } else {
-                            Log.e(AlexTAG.error, "Method getChatSettings() response is not successful." +
+                            Log.e(Logging.error, "Method getChatSettings() response is not successful." +
                                     " Code: " + response.code() + "Message: " + response.message());
                         }
                     }
 
                     @Override
                     public void onFailure(@NotNull Call<ChatSettingsClass> call, @NotNull Throwable t) {
-                        Log.e(AlexTAG.error, "Method getChatSettings() failure: " + t.toString());
+                        Log.e(Logging.error, "Method getChatSettings() failure: " + t.toString());
                     }
                 });
     }

@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.os.Parcelable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +20,6 @@ import yelm.io.yelm.databinding.FragmentProductsByCategoryBinding;
 import yelm.io.yelm.item.ItemsOfOneCategoryActivity;
 import yelm.io.yelm.main.adapter.ProductsNewMenuAdapter;
 import yelm.io.yelm.main.adapter.ProductsNewMenuSquareImageAdapter;
-import yelm.io.yelm.support_stuff.AlexTAG;
 import yelm.io.yelm.support_stuff.ItemOffsetDecorationRight;
 
 public class ProductsByCategoryFragment extends Fragment {

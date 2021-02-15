@@ -39,7 +39,7 @@ import yelm.io.yelm.main.model.Modifier;
 import yelm.io.yelm.order.OrderActivityNew;
 import yelm.io.yelm.retrofit.new_api.RestAPI;
 import yelm.io.yelm.retrofit.new_api.RetrofitClientNew;
-import yelm.io.yelm.support_stuff.AlexTAG;
+import yelm.io.yelm.support_stuff.Logging;
 import yelm.io.yelm.user_address.controller.AddressesBottomSheet;
 
 public class BasketActivityOnlyDelivery extends AppCompatActivity implements AddressesBottomSheet.AddressesBottomSheetListener {
@@ -51,7 +51,6 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
     AddressesBottomSheet addressesBottomSheet = new AddressesBottomSheet();
     private BigDecimal deliveryCost = new BigDecimal("0");
     private BigDecimal finalCost = new BigDecimal("0");
-    private BigDecimal discountPromo = new BigDecimal("0");
     private String deliveryTime = "0";
     private static final int PAYMENT_SUCCESS = 777;
 
@@ -66,7 +65,7 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
         if (currentAddress != null && !Constants.ShopID.equals("0")) {
             checkBasket(currentAddress.latitude, currentAddress.longitude);
         } else {
-            Log.d(AlexTAG.debug, "Method onStart() - currentAddress is null");
+            Log.d(Logging.debug, "Method onCreate() - currentAddress is null or ShopID equals 0");
             //binding.addressDelivery.setText(getText(R.string.basketActivitySelectAddress));
             binding.time.setText(String.format("%s %s", deliveryTime, getText(R.string.delivery_time)));
             binding.layoutDeliveryNotAvailable.setVisibility(View.VISIBLE);
@@ -99,7 +98,7 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
                 e.printStackTrace();
             }
         }
-        Log.d(AlexTAG.debug, "Method checkBasket() - jsonObjectItems: " + jsonObjectItems.toString());
+        Log.d(Logging.debug, "Method checkBasket() - jsonObjectItems: " + jsonObjectItems.toString());
 
         RetrofitClientNew.
                 getClient(RestAPI.URL_API_MAIN).
@@ -118,32 +117,31 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
                     public void onResponse(@NotNull Call<BasketCheckPOJO> call, @NotNull final Response<BasketCheckPOJO> response) {
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
-                                Log.d(AlexTAG.debug, "Method checkBasket() - BasketCheckPOJO: " + response.body().toString());
+                                Log.d(Logging.debug, "Method checkBasket() - BasketCheckPOJO: " + response.body().toString());
                                 deliveryTime = response.body().getDelivery().getTime();
                                 binding.time.setText(String.format("%s %s", deliveryTime, getText(R.string.delivery_time)));
-                                deliveryCost = new BigDecimal("0");
-                                //deliveryCost = new BigDecimal(response.body().getDelivery().getPrice());
+                                deliveryCost = new BigDecimal(response.body().getDelivery().getPrice());
                                 binding.deliveryCost.setText(String.format("%s %s", deliveryCost, LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
                                 new Thread(() -> updateBasketCartsQuantity(response.body().getDeletedId())).start();
                             } else {
-                                Log.e(AlexTAG.error, "Method checkBasket() - by some reason response is null!");
+                                Log.e(Logging.error, "Method checkBasket() - by some reason response is null!");
                             }
                         } else {
-                            Log.e(AlexTAG.error, "Method checkBasket() - response is not successful." +
+                            Log.e(Logging.error, "Method checkBasket() - response is not successful." +
                                     "Code: " + response.code() + "Message: " + response.message());
                         }
                     }
 
                     @Override
                     public void onFailure(@NotNull Call<BasketCheckPOJO> call, @NotNull Throwable t) {
-                        Log.e(AlexTAG.error, "Method checkBasket() - failure: " + t.toString());
+                        Log.e(Logging.error, "Method checkBasket() - failure: " + t.toString());
                     }
                 });
     }
 
     private void updateBasketCartsQuantity(List<DeletedId> deletedIDList) {
         for (DeletedId deletedId : deletedIDList) {
-            Log.d(AlexTAG.debug, "deletedId: " + deletedId.toString());
+            Log.d(Logging.debug, "deletedId: " + deletedId.toString());
             BasketCart basketCart = Common.basketCartRepository.getBasketCartById(deletedId.getId());
             if (basketCart != null) {
                 basketCart.quantity = deletedId.getAvailableCount();
@@ -186,7 +184,7 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
             }
         }
         binding.finalPrice.setText(String.format("%s %s", finalCost, LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
-        Log.d(AlexTAG.debug, "Method updateBasket() - finalCost: " + finalCost.toString());
+        Log.d(Logging.debug, "Method updateBasket() - finalCost: " + finalCost.toString());
         if (carts.size() != 0 && allowOrdering && currentAddress != null && !Constants.ShopID.equals("0")) {
             binding.ordering.setEnabled(true);
         } else {
@@ -206,7 +204,6 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
         binding.ordering.setOnClickListener(v -> {
             Intent intent = new Intent(this, OrderActivityNew.class);
             intent.putExtra("finalPrice", finalCost.toString());
-            intent.putExtra("discountPromo", discountPromo.toString());
             intent.putExtra("deliveryCost", deliveryCost.toString());
             intent.putExtra("deliveryTime", deliveryTime);
             intent.putExtra(UserAddress.class.getSimpleName(), currentAddress);
@@ -235,7 +232,7 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
     @Override
     public void selectedAddress(UserAddress userAddress) {
         currentAddress = userAddress;
-        Log.d(AlexTAG.debug, "Method selectedAddress() - address: " + currentAddress.address);
+        Log.d(Logging.debug, "Method selectedAddress() - address: " + currentAddress.address);
         binding.addressDelivery.setText(String.format("%s", currentAddress.address));
         checkBasket(currentAddress.latitude, currentAddress.longitude);
     }
@@ -270,7 +267,6 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
             }, 2000);
         }};
     }
-
 
     @Override
     protected void onDestroy() {

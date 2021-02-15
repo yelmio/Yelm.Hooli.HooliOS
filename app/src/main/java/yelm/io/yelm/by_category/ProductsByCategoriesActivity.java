@@ -25,7 +25,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import yelm.io.yelm.basket.controller.BasketActivityOnlyDelivery;
 import yelm.io.yelm.database_new.user_addresses.UserAddress;
-import yelm.io.yelm.support_stuff.AlexTAG;
+import yelm.io.yelm.support_stuff.Logging;
 import yelm.io.yelm.main.adapter.ProductsNewMenuSquareImageAdapter;
 import yelm.io.yelm.R;
 import yelm.io.yelm.database_new.basket_new.BasketCart;
@@ -82,8 +82,8 @@ public class ProductsByCategoriesActivity extends AppCompatActivity {
                 if (userAddress.isChecked) {
                     latitude = userAddress.latitude;
                     longitude = userAddress.longitude;
-                    Log.d(AlexTAG.debug, "latitude: " + latitude);
-                    Log.d(AlexTAG.debug, "longitude: " + longitude);
+                    Log.d(Logging.debug, "latitude: " + latitude);
+                    Log.d(Logging.debug, "longitude: " + longitude);
                     break;
                 }
             }
@@ -109,17 +109,17 @@ public class ProductsByCategoriesActivity extends AppCompatActivity {
                                 productsByCategoryList = response.body();
                                 rewriteView();
                             } else {
-                                Log.e(AlexTAG.error, "Method getProductByCategory() - by some reason response is null!");
+                                Log.e(Logging.error, "Method getProductByCategory() - by some reason response is null!");
                             }
                         } else {
-                            Log.e(AlexTAG.error, "Method getProductByCategory() - response is not successful." +
+                            Log.e(Logging.error, "Method getProductByCategory() - response is not successful." +
                                     "Code: " + response.code() + "Message: " + response.message());
                         }
                     }
 
                     @Override
                     public void onFailure(@NotNull Call<ArrayList<ProductsByCategoryClass>> call, @NotNull Throwable t) {
-                        Log.e(AlexTAG.error, "Method getProductByCategory() - failure: " + t.toString());
+                        Log.e(Logging.error, "Method getProductByCategory() - failure: " + t.toString());
                     }
                 });
     }
@@ -157,7 +157,7 @@ public class ProductsByCategoriesActivity extends AppCompatActivity {
                             basketPrice = basketPrice.add(new BigDecimal(cart.finalPrice).multiply(new BigDecimal(cart.count)));
                         }
                         binding.basket.setText(String.format("%s %s", basketPrice.toString(), LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
-                        Log.d(AlexTAG.debug, "Method updateCost() - carts.size(): " + carts.size() + "\n" +
+                        Log.d(Logging.debug, "Method updateCost() - carts.size(): " + carts.size() + "\n" +
                                 "basketPrice.toString(): " + basketPrice.toString());
                     }
                 }));

@@ -3,7 +3,6 @@ package yelm.io.yelm.main.news;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -20,26 +19,20 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import yelm.io.yelm.R;
-import yelm.io.yelm.constants.Constants;
 import yelm.io.yelm.databinding.ActivityNewsFromNotificationBinding;
 import yelm.io.yelm.main.adapter.ProductsNewMenuSquareImageAdapter;
-import yelm.io.yelm.main.controller.MainActivity;
-import yelm.io.yelm.main.model.CatalogsWithProductsClass;
 import yelm.io.yelm.retrofit.new_api.RestAPI;
 import yelm.io.yelm.retrofit.new_api.RetrofitClientNew;
-import yelm.io.yelm.support_stuff.AlexTAG;
+import yelm.io.yelm.support_stuff.Logging;
 
 public class NewsFromNotificationActivity extends AppCompatActivity implements AppBarLayout.OnOffsetChangedListener, Html.ImageGetter {
 
@@ -57,7 +50,7 @@ public class NewsFromNotificationActivity extends AppCompatActivity implements A
 
         Bundle args = getIntent().getExtras();
         if (args != null) {
-            Log.d(AlexTAG.debug, "NewsFromNotificationActivity - Notification data: " + args.getString("data"));
+            Log.d(Logging.debug, "NewsFromNotificationActivity - Notification data: " + args.getString("data"));
             String id = args.getString("id");
             getNewsById(id);
         }
@@ -83,17 +76,17 @@ public class NewsFromNotificationActivity extends AppCompatActivity implements A
                                 binding.recycler.setLayoutManager(new StaggeredGridLayoutManager(2, 1));
                                 binding.recycler.setAdapter(productsSquareAdapter);
                             } else {
-                                Log.e(AlexTAG.error, "Method getNewsById() - by some reason response is null!");
+                                Log.e(Logging.error, "Method getNewsById() - by some reason response is null!");
                             }
                         } else {
-                            Log.e(AlexTAG.error, "Method getNewsById() - response is not successful." +
+                            Log.e(Logging.error, "Method getNewsById() - response is not successful." +
                                     "Code: " + response.code() + "Message: " + response.message());
                         }
                     }
 
                     @Override
                     public void onFailure(@NotNull Call<NewNews> call, @NotNull Throwable t) {
-                        Log.e(AlexTAG.error, "Method getNewsById() - failure: " + t.toString());
+                        Log.e(Logging.error, "Method getNewsById() - failure: " + t.toString());
                     }
                 });
     }
