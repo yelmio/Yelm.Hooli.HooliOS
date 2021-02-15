@@ -3,6 +3,7 @@ package yelm.io.yelm.main.news;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -49,6 +50,15 @@ public class NewsActivity extends AppCompatActivity implements AppBarLayout.OnOf
             productsSquareAdapter = new ProductsNewMenuSquareImageAdapter(this, products);
             binding.recycler.setLayoutManager(new StaggeredGridLayoutManager(2, 1));
             binding.recycler.setAdapter(productsSquareAdapter);
+
+            binding.share.setOnClickListener(v -> {
+                String sharingLink = "https://yelm.io/news/" + news.getId();
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("text/plain");
+                intent.putExtra(Intent.EXTRA_SUBJECT, R.string.app_name);
+                intent.putExtra(Intent.EXTRA_TEXT, sharingLink);
+                startActivity(Intent.createChooser(intent, getResources().getString(R.string.newsActivityShare)));
+            });
         }
     }
 

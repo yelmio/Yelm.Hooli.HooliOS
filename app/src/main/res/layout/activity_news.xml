@@ -137,4 +137,14 @@
         android:background="@drawable/circle_button_selector"
         app:srcCompat="@drawable/ic_arrow_back_24" />
 
+    <ImageButton
+        android:id="@+id/share"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/circle_button_selector"
+        app:srcCompat="@drawable/ic_share" />
+
 </RelativeLayout>

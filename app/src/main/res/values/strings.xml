@@ -41,6 +41,10 @@
     <string name="product_search">Поиск товаров</string>
     <string name="product_search_hint">Поиск...</string>
 
+    <!-- NewsActivity -->
+    <string name="newsActivityShare">Поделиться</string>
+
+
     <!-- LoaderActivity -->
     <string name="loaderActivityUpdateNetworkConnection">Обновить</string>
     <string name="loaderActivityNoNetworkConnection">Нет подключения к интернету</string>
