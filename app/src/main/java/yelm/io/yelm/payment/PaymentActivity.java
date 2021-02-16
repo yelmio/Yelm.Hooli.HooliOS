@@ -76,7 +76,7 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
     private static final int CARD_CVC_TOTAL_SYMBOLS = 3;
 
     //order dara
-    private BigDecimal finalCost = new BigDecimal("0");
+    private BigDecimal paymentCost = new BigDecimal("0");
     private BigDecimal deliveryCost = new BigDecimal("0");
     private BigDecimal startCost = new BigDecimal("0");
     private BigDecimal discountPromo = new BigDecimal("0");
@@ -208,7 +208,7 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
 
         if (cardCryptogram != null) {
             if (Objects.equals(LoaderActivity.settings.getString(LoaderActivity.CURRENCY, "RUB"), "RUB")) {
-                auth(cardCryptogram, cardHolderName, finalCost, order);
+                auth(cardCryptogram, cardHolderName, paymentCost, order);
             } else {
                 convertPrice(cardCryptogram, cardHolderName);
             }
@@ -222,7 +222,7 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
                 getClient(RestAPI.URL_API_MAIN)
                 .create(RestAPI.class)
                 .convertPrice(
-                        finalCost.toString(),
+                        paymentCost.toString(),
                         LoaderActivity.settings.getString(LoaderActivity.CURRENCY, "")
                 ).enqueue(new Callback<PriceConverterResponseClass>() {
             @Override
@@ -259,10 +259,12 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
 
         Bundle args = getIntent().getExtras();
         if (args != null) {
-            finalCost = new BigDecimal(args.getString("finalPrice"));
             startCost = new BigDecimal(args.getString("startCost"));
+            paymentCost = new BigDecimal(args.getString("finalPrice"));
             deliveryCost = new BigDecimal(args.getString("deliveryCost"));
             discountPromo = new BigDecimal(args.getString("discountPromo"));
+            paymentCost = paymentCost.add(deliveryCost);
+
             floor = args.getString("floor");
             entrance = args.getString("entrance");
             phone = args.getString("phone");
@@ -270,10 +272,10 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
             //deliveryTime = args.getString("deliveryTime");
             currentAddress = (UserAddress) args.getSerializable(UserAddress.class.getSimpleName());
 
-            Log.d(Logging.debug, "finalCost: " + finalCost);
             Log.d(Logging.debug, "startCost: " + startCost);
-            Log.d(Logging.debug, "deliveryCost: " + discountPromo);
-            Log.d(Logging.debug, "deliveryPrice: " + deliveryCost);
+            Log.d(Logging.debug, "paymentCost: " + paymentCost);
+            Log.d(Logging.debug, "discountPromo: " + discountPromo);
+            Log.d(Logging.debug, "deliveryCost: " + deliveryCost);
             Log.d(Logging.debug, "floor: " + floor);
             Log.d(Logging.debug, "entrance: " + entrance);
             Log.d(Logging.debug, "phone: " + phone);
@@ -283,7 +285,7 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
         }
 
         textViewTotal.setText(new StringBuilder()
-                .append(finalCost)
+                .append(paymentCost)
                 .append(" ")
                 .append(LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
     }
@@ -435,7 +437,7 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
                         "card",
                         floor,
                         entrance,
-                        finalCost.toString(),
+                        paymentCost.toString(),
                         phone,
                         flat,
                         "delivery",

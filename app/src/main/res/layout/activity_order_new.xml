@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".order.OrderActivityNew">
 
-
     <ProgressBar
         android:id="@+id/progress"
         style="?android:attr/progressBarStyle"
@@ -24,7 +23,6 @@
         app:cardBackgroundColor="@color/whiteColor"
         app:cardCornerRadius="16dp"
         app:cardElevation="12dp">
-
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -393,33 +391,6 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/layoutDiscount"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:orientation="horizontal"
-            android:visibility="gone">
-
-            <TextView
-                android:id="@+id/discountPercent"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/orderDiscount"
-                android:textColor="@color/colorRedDiscount"
-                android:textSize="16sp"
-                android:theme="@style/ProDisplayTextStyle" />
-
-            <TextView
-                android:id="@+id/discountPrice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/colorRedDiscount"
-                android:textSize="16sp"
-                android:theme="@style/ProDisplayTextStyle" />
-        </LinearLayout>
-
-        <LinearLayout
             android:id="@+id/layoutDelivery"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -442,6 +413,33 @@
                 android:layout_height="wrap_content"
 
                 android:textColor="@color/mainThemeColor"
+                android:textSize="16sp"
+                android:theme="@style/ProDisplayTextStyle" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutDiscount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/discountPercent"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/orderDiscount"
+                android:textColor="@color/colorRedDiscount"
+                android:textSize="16sp"
+                android:theme="@style/ProDisplayTextStyle" />
+
+            <TextView
+                android:id="@+id/discountPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorRedDiscount"
                 android:textSize="16sp"
                 android:theme="@style/ProDisplayTextStyle" />
         </LinearLayout>

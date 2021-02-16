@@ -94,8 +94,7 @@
                     android:layout_marginEnd="8dp" />
 
                 <TextView
-                    android:id="@+id/title"
-
+                    android:id="@+id/titleProducts"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
@@ -104,7 +103,8 @@
                     android:text="@string/products"
                     android:textColor="@color/colorText"
                     android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:visibility="gone" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler"

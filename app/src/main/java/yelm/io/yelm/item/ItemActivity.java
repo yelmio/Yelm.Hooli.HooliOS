@@ -3,6 +3,7 @@ package yelm.io.yelm.item;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -52,6 +53,14 @@ public class ItemActivity extends AppCompatActivity implements AppBarLayout.OnOf
             binding(item);
             bindingAddSubtractProductCount();
             bindingAddProductToBasket(item);
+            binding.share.setOnClickListener(v -> {
+                String sharingLink = "https://yelm.io/item/" + item.getId();
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("text/plain");
+                intent.putExtra(Intent.EXTRA_SUBJECT, R.string.app_name);
+                intent.putExtra(Intent.EXTRA_TEXT, sharingLink);
+                startActivity(Intent.createChooser(intent, getResources().getString(R.string.newsActivityShare)));
+            });
         } else {
             Log.e(Logging.error, "Method onCreate() in ItemActivity: by some reason item==null");
         }

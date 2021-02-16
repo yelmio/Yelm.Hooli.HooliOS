@@ -92,6 +92,7 @@
     <string name="inYourOrderProductsPC">шт.</string>
     <string name="inYourOrderProductsCount">Товаров:</string>
     <string name="orderDiscount">Скидка</string>
+    <string name="orderDiscountDelivery">Скидка на доставку</string>
     <string name="cardPayment">Оплата картой</string>
     <string name="paymentType">Способ оплаты</string>
     <string name="orderActivityEnterFloor">Укажите этаж</string>

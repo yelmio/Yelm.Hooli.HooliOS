@@ -194,9 +194,8 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
         } else {
             binding.layoutMinOrderPrice.setVisibility(View.GONE);
         }
-        finalCost = finalCost.add(deliveryCost);
 
-        binding.finalPrice.setText(String.format("%s %s", finalCost, LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
+        binding.finalPrice.setText(String.format("%s %s", finalCost.add(deliveryCost), LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
         Log.d(Logging.debug, "Method updateBasket() - finalCost: " + finalCost.toString());
         if (carts.size() != 0 && allowOrdering && currentAddress != null && !Constants.ShopID.equals("0")) {
             binding.ordering.setEnabled(true);

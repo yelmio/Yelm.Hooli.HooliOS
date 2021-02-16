@@ -15,6 +15,7 @@ import android.text.Html;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
+import android.view.View;
 
 import com.google.android.material.appbar.AppBarLayout;
 import com.squareup.picasso.Picasso;
@@ -48,6 +49,9 @@ public class NewsActivity extends AppCompatActivity implements AppBarLayout.OnOf
         if (news != null) {
             binding(news);
             List<Item> products = news.getItems();
+            if (products.size() != 0) {
+                binding.titleProducts.setVisibility(View.VISIBLE);
+            }
             productsSquareAdapter = new ProductsNewMenuSquareImageAdapter(this, products);
             binding.recycler.setLayoutManager(new StaggeredGridLayoutManager(2, 1));
             binding.recycler.setAdapter(productsSquareAdapter);
@@ -59,6 +63,8 @@ public class NewsActivity extends AppCompatActivity implements AppBarLayout.OnOf
                 intent.putExtra(Intent.EXTRA_TEXT, sharingLink);
                 startActivity(Intent.createChooser(intent, getResources().getString(R.string.newsActivityShare)));
             });
+        } else {
+            Log.e(Logging.error, "Method onCreate() in NewsActivity: by some reason news==null");
         }
     }
 
@@ -115,7 +121,7 @@ public class NewsActivity extends AppCompatActivity implements AppBarLayout.OnOf
                 .load(news.getImage())
                 .noPlaceholder()
                 .centerCrop()
-                .resize(800, 0)
+                .resize(600, 0)
                 .into(binding.image);
     }
 

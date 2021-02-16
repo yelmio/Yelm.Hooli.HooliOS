@@ -44,6 +44,7 @@ import retrofit2.Response;
 import ru.cloudpayments.sdk.three_ds.ThreeDSDialogListener;
 import ru.cloudpayments.sdk.three_ds.ThreeDsDialogFragment;
 import yelm.io.yelm.constants.Constants;
+import yelm.io.yelm.order.promocode.PromoCode;
 import yelm.io.yelm.order.promocode.PromoCodeClass;
 import yelm.io.yelm.payment.PayApi;
 import yelm.io.yelm.payment.PaymentActivity;
@@ -68,11 +69,15 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
     private static final int PAYMENT_SUCCESS = 77;
 
     private PaymentsClient paymentsClient;
-    private BigDecimal finalCost = new BigDecimal("0");
-    private BigDecimal convertedCost = new BigDecimal("0");
-    private BigDecimal deliveryCost = new BigDecimal("0");
+
     private BigDecimal startCost = new BigDecimal("0");
-    private BigDecimal discountPromoPercent = new BigDecimal("0");
+    private BigDecimal finalCost = new BigDecimal("0");//without delivery cost
+    private BigDecimal paymentCost = new BigDecimal("0");
+
+    private BigDecimal deliveryCostStart = new BigDecimal("0");
+    private BigDecimal deliveryCostFinal = new BigDecimal("0");
+    private BigDecimal discountPromo = new BigDecimal("0");
+
     private String deliveryTime = "";
     UserAddress currentAddress;
 
@@ -101,14 +106,18 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
         if (args != null) {
             finalCost = new BigDecimal(args.getString("finalPrice"));
             startCost = finalCost;
-            convertedCost = finalCost;
-            deliveryCost = new BigDecimal(args.getString("deliveryCost"));
+            deliveryCostStart = new BigDecimal(args.getString("deliveryCost"));
+            deliveryCostFinal = deliveryCostStart;
+
+            paymentCost = finalCost.add(deliveryCostStart);
+
             deliveryTime = args.getString("deliveryTime");
             currentAddress = (UserAddress) args.getSerializable(UserAddress.class.getSimpleName());
-            Log.d(Logging.debug, "finalCost: " + finalCost);
             Log.d(Logging.debug, "startCost: " + startCost);
-            Log.d(Logging.debug, "deliveryCost: " + discountPromoPercent);
-            Log.d(Logging.debug, "deliveryPrice: " + deliveryCost);
+            Log.d(Logging.debug, "finalCost: " + finalCost);
+            Log.d(Logging.debug, "paymentCost: " + paymentCost);
+            Log.d(Logging.debug, "deliveryCost: " + discountPromo);
+            Log.d(Logging.debug, "deliveryPrice: " + deliveryCostStart);
             Log.d(Logging.debug, "deliveryTime: " + deliveryTime);
             Log.d(Logging.debug, "currentAddress: " + currentAddress.toString());
         }
@@ -140,17 +149,7 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
                         if (response.body() != null) {
                             Log.d(Logging.debug, " " + Constants.ShopID);
                             if (response.body().getStatus().equals("200")) {
-                                binding.layoutDiscount.setVisibility(View.VISIBLE);
-                                discountPromoPercent = new BigDecimal(response.body().getPromocode().getAmount());
-                                binding.discountPercent.setText(String.format("%s %s%%", getText(R.string.orderDiscount), discountPromoPercent));
-                                Log.d(Logging.debug, "discount percent: " + discountPromoPercent);
-                                BigDecimal discount = discountPromoPercent.divide(new BigDecimal("100"), 2, BigDecimal.ROUND_HALF_UP);
-                                discount = discount.multiply(finalCost).setScale(2, BigDecimal.ROUND_HALF_UP);
-                                Log.d(Logging.debug, "discount value: " + discount);
-                                binding.discountPrice.setText(discount.toString());
-                                finalCost = startCost;
-                                finalCost = finalCost.subtract(discount);
-                                binding.finalPrice.setText(String.format("%s %s", finalCost, LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
+                                setPromoCode(response.body().getPromocode());
                             }
                             showToast(response.body().getMessage());
                         } else {
@@ -169,6 +168,46 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
                 }
             });
         }
+    }
+
+    private void setPromoCode(PromoCode promoCode) {
+        binding.layoutDiscount.setVisibility(View.VISIBLE);
+        finalCost = startCost;
+        deliveryCostFinal = deliveryCostStart;
+        discountPromo = new BigDecimal(promoCode.getAmount());
+
+        Log.d(Logging.debug, "promoCode.getType(): " + promoCode.getType());
+        switch (promoCode.getType()) {
+            case "full":
+                binding.discountPercent.setText(String.format("%s",
+                        getText(R.string.orderDiscount)));
+                binding.discountPrice.setText(String.format("%s %s", discountPromo,
+                        LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
+                if (discountPromo.compareTo(finalCost) >= 0) {
+                    finalCost = new BigDecimal("1");
+                } else {
+                    finalCost = finalCost.subtract(discountPromo);
+                }
+                break;
+            case "delivery":
+                binding.discountPercent.setText(String.format("%s %s%%", getText(R.string.orderDiscountDelivery), discountPromo));
+                BigDecimal discountDelivery = discountPromo.divide(new BigDecimal("100"), 2, BigDecimal.ROUND_HALF_UP);
+                discountDelivery = discountDelivery.multiply(deliveryCostFinal).setScale(2, BigDecimal.ROUND_HALF_UP);
+                binding.discountPrice.setText(String.format("%s", discountDelivery));
+                deliveryCostFinal = deliveryCostFinal.subtract(discountDelivery);
+                break;
+            case "percent":
+                binding.discountPercent.setText(String.format("%s %s%%", getText(R.string.orderDiscount), discountPromo));
+                BigDecimal discount = discountPromo.divide(new BigDecimal("100"), 2, BigDecimal.ROUND_HALF_UP);
+                discount = discount.multiply(finalCost).setScale(2, BigDecimal.ROUND_HALF_UP);
+                binding.discountPrice.setText(String.format("%s", discount));
+                finalCost = finalCost.subtract(discount);
+                break;
+        }
+        paymentCost = finalCost.add(deliveryCostFinal);
+        binding.finalPrice.setText(String.format("%s %s", finalCost.add(deliveryCostFinal), LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
+        Log.d(Logging.debug, "finalCost: " + finalCost);
+        Log.d(Logging.debug, "paymentCost: " + paymentCost);
     }
 
     private void sendOrder() {
@@ -198,19 +237,19 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
                         currentAddress.longitude,
                         "test",
                         startCost.toString(),
-                        discountPromoPercent.toString(),
+                        discountPromo.toString(),
                         transactionID,
                         userID,
                         currentAddress.address,
                         "googlepay",
                         binding.floor.getText().toString(),
                         binding.entrance.getText().toString(),
-                        finalCost.toString(),
+                        finalCost.add(deliveryCostStart).toString(),
                         binding.phone.getText().toString(),
                         binding.flat.getText().toString(),
                         "delivery",
                         jsonObjectItems.toString(),
-                        deliveryCost.toString(),
+                        deliveryCostFinal.toString(),
                         currency
                 ).enqueue(new Callback<ResponseBody>() {
             @Override
@@ -324,10 +363,10 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
     }
 
     private void binding() {
-        binding.startPrice.setText(String.format("%s %s", startCost.subtract(deliveryCost), LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
-        binding.finalPrice.setText(String.format("%s %s", finalCost, LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
+        binding.startPrice.setText(String.format("%s %s", startCost, LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
+        binding.finalPrice.setText(String.format("%s %s", finalCost.add(deliveryCostStart), LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
         binding.back.setOnClickListener(v -> finish());
-        binding.deliveryPrice.setText(String.format("%s %s", deliveryCost, LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
+        binding.deliveryPrice.setText(String.format("%s %s", deliveryCostStart, LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
         binding.userAddress.setText(currentAddress.address);
 
         //set amount of products
@@ -339,21 +378,13 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
 
         binding.phone.addTextChangedListener(new PhoneTextFormatter(binding.phone, "+# (###) ###-##-##"));
 
-//        if (Objects.equals(getIntent().getStringExtra("methodDelivery"), "delivery")) {
-//            binding.layoutDelivery.setVisibility(View.VISIBLE);
-//            binding.deliveryPrice.setText(String.format("%s %s", getIntent().getStringExtra("deliveryCost"), LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
-//            binding.layoutAddress.setVisibility(View.VISIBLE);
-//            binding.time.setVisibility(View.VISIBLE);
-//            binding.time.setText(String.format("%s %s", getIntent().getStringExtra("deliveryTime"), getText(R.string.delivery_time)));
-//        }
-
         binding.paymentCard.setOnClickListener(v -> {
             if (preparePayment()) {
                 Intent intent = new Intent(OrderActivityNew.this, PaymentActivity.class);
                 intent.putExtra("startCost", startCost.toString());
                 intent.putExtra("finalPrice", finalCost.toString());
-                intent.putExtra("discountPromo", discountPromoPercent.toString());
-                intent.putExtra("deliveryCost", deliveryCost.toString());
+                intent.putExtra("discountPromo", discountPromo.toString());
+                intent.putExtra("deliveryCost", deliveryCostFinal.toString());
                 intent.putExtra("deliveryTime", deliveryTime);
                 intent.putExtra("order", "");
                 intent.putExtra("floor", binding.floor.getText().toString());
@@ -394,7 +425,6 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
         }
     }
 
-
     private void bindingGooglePayButton() {
         binding.pwgStatus.setVisibility(View.GONE);
         binding.pwgButton.getRoot().setVisibility(View.VISIBLE);
@@ -420,7 +450,7 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
 
         // The price provided to the API should include taxes and shipping.
         // This price is not displayed to the user.
-        String price = convertedCost.toString();
+        String price = paymentCost.toString();
 
         TransactionInfo transaction = PaymentsUtil.createTransaction(price);
         PaymentDataRequest request = PaymentsUtil.createPaymentDataRequest(transaction);
@@ -451,15 +481,15 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
                 getClient(RestAPI.URL_API_MAIN)
                 .create(RestAPI.class)
                 .convertPrice(
-                        finalCost.toString(),
+                        paymentCost.toString(),
                         LoaderActivity.settings.getString(LoaderActivity.CURRENCY, "")
                 ).enqueue(new Callback<PriceConverterResponseClass>() {
             @Override
             public void onResponse(@NotNull Call<PriceConverterResponseClass> call, @NotNull Response<PriceConverterResponseClass> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
-                        Log.d(Logging.debug, "Method convertPrice() - response.code(): " + response.code());
-                        convertedCost = new BigDecimal(response.body().getPrice());
+                        Log.d(Logging.debug, "Method convertPrice() - paymentCost: " + response.body().getPrice());
+                        paymentCost = new BigDecimal(response.body().getPrice());
                         requestPayment(paymentsClient);
                     } else {
                         Log.e(Logging.error, "Method convertPrice() - by some reason response is null!");
@@ -469,6 +499,7 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
                             "Code: " + response.code() + "Message: " + response.message());
                 }
             }
+
             @Override
             public void onFailure(@NotNull Call<PriceConverterResponseClass> call, @NotNull Throwable t) {
                 Log.e(Logging.error, "Method convertPrice() - failure: " + t.toString());
@@ -490,7 +521,8 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
             Toast.makeText(this, getString(R.string.payments_show_name, billingName), Toast.LENGTH_LONG).show();
             // Use token.getToken() to get the token string.
             Log.d(Logging.debug, "token.getToken()" + token.getToken());
-            charge(token.getToken(), "Google Pay", convertedCost, order);
+            Log.d(Logging.debug, "Method handlePaymentSuccess() - paymentCost: " + paymentCost);
+            charge(token.getToken(), "Google Pay", paymentCost, order);
         }
     }
 
@@ -504,9 +536,9 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
 
     // Запрос на проведение одностадийного платежа
     private void charge(String cardCryptogramPacket, String cardHolderName, BigDecimal
-            convertedCost, String order) {
+            paymentCost, String order) {
         compositeDisposable.add(PayApi
-                .charge(cardCryptogramPacket, cardHolderName, convertedCost, order)
+                .charge(cardCryptogramPacket, cardHolderName, paymentCost, order)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(disposable -> showLoading())
