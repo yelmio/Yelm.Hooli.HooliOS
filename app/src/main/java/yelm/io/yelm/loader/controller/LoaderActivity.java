@@ -64,8 +64,6 @@ public class LoaderActivity extends AppCompatActivity {
     public static final String SHOP_ID = "SHOP_ID";
     public static final String CLIENT_ID = "CLIENT_ID";
 
-    //public static final String CLIENT_ID = "CLIENT_ID";
-
     public static SharedPreferences settings;
     private static final String APP_PREFERENCES = "settings";
     NotificationReceiver notificationReceiver = new NotificationReceiver();
@@ -229,7 +227,6 @@ public class LoaderActivity extends AppCompatActivity {
         Common.articlesRepository = ArticlesRepository.getInstance(ArticleDataSource.getInstance(Common.sDatabase.articlesDao()));
         //Common.userRepository = UserRepository.getInstance(UserDataSource.getInstance(Common.sDatabase.userDAO()));
         Common.userAddressesRepository = UserAddressesRepository.getInstance(UserAddressesDataSource.getInstance(Common.sDatabase.addressesDao()));
-
     }
 
     @Override
@@ -264,7 +261,6 @@ public class LoaderActivity extends AppCompatActivity {
 
         }
     }
-
 
     @Override
     protected void onStop() {
