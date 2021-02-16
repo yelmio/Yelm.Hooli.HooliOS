@@ -49,7 +49,8 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
     private final CompositeDisposable compositeDisposableBasket = new CompositeDisposable();
     UserAddress currentAddress;
     AddressesBottomSheet addressesBottomSheet = new AddressesBottomSheet();
-    private BigDecimal deliveryCost = new BigDecimal("0");
+    private BigDecimal deliveryCostStart = new BigDecimal("0");
+    private BigDecimal deliveryCostFinal = new BigDecimal("0");
     private BigDecimal finalCost = new BigDecimal("0");
     private String deliveryTime = "0";
     private static final int PAYMENT_SUCCESS = 777;
@@ -120,8 +121,7 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
                                 Log.d(Logging.debug, "Method checkBasket() - BasketCheckPOJO: " + response.body().toString());
                                 deliveryTime = response.body().getDelivery().getTime();
                                 binding.time.setText(String.format("%s %s", deliveryTime, getText(R.string.delivery_time)));
-                                deliveryCost = new BigDecimal(response.body().getDelivery().getPrice());
-                                binding.deliveryCost.setText(String.format("%s %s", deliveryCost, LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
+                                deliveryCostStart = new BigDecimal(response.body().getDelivery().getPrice());
                                 new Thread(() -> updateBasketCartsQuantity(response.body().getDeletedId())).start();
                             } else {
                                 Log.e(Logging.error, "Method checkBasket() - by some reason response is null!");
@@ -169,7 +169,6 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
         binding.recyclerCart.setAdapter(basketAdapter);
 
         finalCost = new BigDecimal("0");
-
         boolean allowOrdering = true;
         for (BasketCart cart : carts) {
             BigDecimal costCurrentCart = new BigDecimal(cart.finalPrice);
@@ -195,20 +194,35 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
             binding.layoutMinOrderPrice.setVisibility(View.GONE);
         }
 
-        binding.finalPrice.setText(String.format("%s %s", finalCost.add(deliveryCost), LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
         Log.d(Logging.debug, "Method updateBasket() - finalCost: " + finalCost.toString());
         if (carts.size() != 0 && allowOrdering && currentAddress != null && !Constants.ShopID.equals("0")) {
             binding.ordering.setEnabled(true);
         } else {
             binding.ordering.setEnabled(false);
         }
+
+        if (finalCost.compareTo(new BigDecimal(LoaderActivity.settings.getString(LoaderActivity.MIN_DELIVERY_PRICE, "0"))) < 0) {
+            deliveryCostFinal = deliveryCostStart;
+            BigDecimal freeDelivery = new BigDecimal(LoaderActivity.settings.getString(LoaderActivity.MIN_DELIVERY_PRICE, "0"));
+            freeDelivery = freeDelivery.subtract(finalCost);
+            binding.freeDelivery.setText(String.format("%s %s %s %s",
+                    getString(R.string.basketActivityFreeDelivery1),
+                    freeDelivery,
+                    LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, ""),
+                    getString(R.string.basketActivityFreeDelivery2)));
+        } else {
+            deliveryCostFinal = new BigDecimal("0");
+            binding.freeDelivery.setVisibility(View.GONE);
+        }
+        binding.deliveryCost.setText(String.format("%s %s", deliveryCostFinal, LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
+        binding.finalPrice.setText(String.format("%s %s", finalCost.add(deliveryCostFinal), LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
     }
 
     private void binding() {
         binding.recyclerCart.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         binding.back.setOnClickListener(v -> finish());
         binding.cleanBasket.setOnClickListener(v -> {
-            deliveryCost = new BigDecimal("0");
+            deliveryCostStart = new BigDecimal("0");
             Common.basketCartRepository.emptyBasketCart();
             binding.time.setText(String.format("0 %s", getText(R.string.delivery_time)));
         });
@@ -216,7 +230,7 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
         binding.ordering.setOnClickListener(v -> {
             Intent intent = new Intent(this, OrderActivityNew.class);
             intent.putExtra("finalPrice", finalCost.toString());
-            intent.putExtra("deliveryCost", deliveryCost.toString());
+            intent.putExtra("deliveryCost", deliveryCostFinal.toString());
             intent.putExtra("deliveryTime", deliveryTime);
             intent.putExtra(UserAddress.class.getSimpleName(), currentAddress);
             startActivityForResult(intent, PAYMENT_SUCCESS);
@@ -257,7 +271,7 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
         }
         switch (requestCode) {
             case PAYMENT_SUCCESS:
-                deliveryCost = new BigDecimal("0");
+                deliveryCostStart = new BigDecimal("0");
                 Common.basketCartRepository.emptyBasketCart();
                 binding.time.setText(String.format("0 %s", getText(R.string.delivery_time)));
                 Log.d("AlexDebug", "PAYMENT_SUCCESS " + data.getStringExtra("success"));

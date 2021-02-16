@@ -193,7 +193,8 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
                 binding.discountPercent.setText(String.format("%s %s%%", getText(R.string.orderDiscountDelivery), discountPromo));
                 BigDecimal discountDelivery = discountPromo.divide(new BigDecimal("100"), 2, BigDecimal.ROUND_HALF_UP);
                 discountDelivery = discountDelivery.multiply(deliveryCostFinal).setScale(2, BigDecimal.ROUND_HALF_UP);
-                binding.discountPrice.setText(String.format("%s", discountDelivery));
+                binding.discountPrice.setText(String.format("%s %s", discountDelivery,
+                        LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
                 deliveryCostFinal = deliveryCostFinal.subtract(discountDelivery);
                 break;
             case "percent":

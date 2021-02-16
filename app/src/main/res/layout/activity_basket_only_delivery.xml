@@ -200,6 +200,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/layoutDeliveryPickupButtons">
 
 
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -226,6 +227,15 @@
                             android:textSize="16sp"
                             android:theme="@style/ProDisplayTextStyle" />
                     </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/freeDelivery"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="TextView"
+                        android:textSize="14sp"
+                        android:textStyle="normal"                        android:theme="@style/ProDisplayTextStyle" />
 
                     <LinearLayout
                         android:layout_width="match_parent"

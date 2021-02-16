@@ -82,6 +82,10 @@
     <string name="basketActivityDeliveryNotAvailable">Доставка по этому адресу недоступна</string>
     <string name="basketActivityOrderMinPrice">Минимальная сумма заказа, исключая доставку, не менее -  </string>
 
+    <string name="basketActivityFreeDelivery1">Закажите ещё на</string>
+    <string name="basketActivityFreeDelivery2">для бесплатной доставки</string>
+
+
     <!-- OrderActivity -->
     <string name="ordering">Оформление</string>
     <string name="promocode">Промокод</string>
