@@ -58,7 +58,6 @@ import yelm.io.yelm.retrofit.RestAPI;
 import yelm.io.yelm.retrofit.RetrofitClient;
 import yelm.io.yelm.constants.Logging;
 
-
 public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogListener {
 
     private static final int CARD_NUMBER_TOTAL_SYMBOLS = 19; // size of pattern 0000-0000-0000-0000
@@ -92,7 +91,6 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
     private String phone = "";
 
     protected CompositeDisposable compositeDisposable = new CompositeDisposable();
-
 
     @BindView(R.id.text_total)
     TextView textViewTotal;
@@ -146,7 +144,7 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
         String cardHolderName = editTextCardHolderName.getText().toString();
 
         //testing
-        //sendOrder();
+        sendOrder();
         //testing
 
         CPCardApi api = new CPCardApi(this);
@@ -291,10 +289,10 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
     }
 
     // Запрос на проведение двустадийного платежа
-    private void auth(String cardCryptogramPacket, String cardHolderName, BigDecimal convertedCost, String order) {
+    private void auth(String cardCryptogramPacket, String cardHolderName, BigDecimal price, String order) {
         Log.d(Logging.debug, "Method auth()");
         compositeDisposable.add(PayApi
-                .auth(cardCryptogramPacket, cardHolderName, convertedCost, order)
+                .auth(cardCryptogramPacket, cardHolderName, price, order)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(disposable -> {

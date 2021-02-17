@@ -98,6 +98,7 @@
     <string name="inYourOrderProductsCount">Товаров:</string>
     <string name="orderDiscount">Скидка</string>
     <string name="orderDiscountDelivery">Скидка на доставку</string>
+    <string name="orderDiscountDeliveryAlreadyFree">доставка уже бесплатная</string>
     <string name="cardPayment">Оплата картой</string>
     <string name="paymentType">Способ оплаты</string>
     <string name="orderActivityEnterFloor">Укажите этаж</string>
@@ -112,6 +113,7 @@
     <string name="orderByIDActivityOrderPrice">Сумма заказа:</string>
     <string name="orderByIDActivityOrderData">Дата создания:</string>
     <string name="orderByIDActivityOrderAddress">Адрес:</string>
+    <string name="orderByIDActivityDelivery">Доставка:</string>
 
 
     <!-- profile fragment -->

@@ -19,6 +19,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.Objects;
 
 import retrofit2.Call;
@@ -27,6 +28,7 @@ import retrofit2.Response;
 import yelm.io.yelm.R;
 import yelm.io.yelm.databinding.ActivityOrderByIDBinding;
 import yelm.io.yelm.loader.controller.LoaderActivity;
+import yelm.io.yelm.order.user_order.model.OrderItemPOJO;
 import yelm.io.yelm.order.user_order.model.UserOrderPOJO;
 import yelm.io.yelm.retrofit.RestAPI;
 import yelm.io.yelm.retrofit.RetrofitClient;
@@ -95,33 +97,41 @@ public class OrderByIDActivity extends AppCompatActivity implements AppBarLayout
                                     e.printStackTrace();
                                 }
 
-                                binding.description.setText(String.format("№ %s\n%s %s %s\n%s %s\n%s %s",
+                                binding.description.setText(String.format("№ %s\n%s %s %s\n%s %s %s\n%s %s\n%s %s",
                                         response.body().getId(),
                                         getText(R.string.orderByIDActivityOrderPrice),
                                         response.body().getEndTotal(),
+                                        LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, ""),
+                                        getText(R.string.orderByIDActivityDelivery),
+                                        response.body().getDeliveryPrice(),
                                         LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, ""),
                                         getText(R.string.orderByIDActivityOrderData),
                                         printedFormatterDate.format(date.getTime()),
                                         getText(R.string.orderByIDActivityOrderAddress),
                                         response.body().getAddress()));
 
-
                                 binding.collapsingToolbar.setTitle(response.body().getTransactionStatus());
 
                                 if (response.body().getTransactionStatus().equals("Подтвержденный")) {
                                     binding.collapsingToolbar.setCollapsedTitleTextColor(getResources().getColor(R.color.greenColor));
                                     binding.collapsingToolbar.setExpandedTitleColor(getResources().getColor(R.color.greenColor));
-                                }else if (response.body().getTransactionStatus().equals("Неподтвержденный")){
+                                } else if (response.body().getTransactionStatus().equals("Неподтвержденный")) {
                                     binding.collapsingToolbar.setCollapsedTitleTextColor(getResources().getColor(R.color.colorOrangeText));
                                     binding.collapsingToolbar.setExpandedTitleColor(getResources().getColor(R.color.colorOrangeText));
-                                } else if (response.body().getTransactionStatus().equals("Отмененный")){
+                                } else if (response.body().getTransactionStatus().equals("Отмененный")) {
                                     binding.collapsingToolbar.setCollapsedTitleTextColor(getResources().getColor(R.color.redColor));
                                     binding.collapsingToolbar.setExpandedTitleColor(getResources().getColor(R.color.redColor));
                                 }
 
+
+                                HashMap<String, String> mapItems = new HashMap<>();
+                                for (OrderItemPOJO itemPOJO: response.body().getItems()){
+                                    mapItems.put(itemPOJO.getId(), itemPOJO.getCount());
+                                }
+
                                 orderProductAdapter = new OrderProductAdapter(OrderByIDActivity.this,
                                         response.body().getItemsInfo(),
-                                        response.body().getItems()
+                                        mapItems
                                 );
                                 binding.recyclerOrderItems.setLayoutManager(new LinearLayoutManager(OrderByIDActivity.this, LinearLayoutManager.VERTICAL, false));
                                 binding.recyclerOrderItems.setAdapter(orderProductAdapter);

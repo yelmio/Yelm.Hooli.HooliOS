@@ -11,10 +11,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.squareup.picasso.Picasso;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 
 import yelm.io.yelm.databinding.ProductItemOrderBinding;
-import yelm.io.yelm.databinding.ProductItemSearcheableBinding;
 import yelm.io.yelm.loader.controller.LoaderActivity;
 import yelm.io.yelm.main.model.Item;
 import yelm.io.yelm.order.user_order.model.OrderItemPOJO;
@@ -23,22 +23,22 @@ public class OrderProductAdapter extends RecyclerView.Adapter<OrderProductAdapte
 
     private Context context;
     private List<Item> products;
-    private List<OrderItemPOJO> productsCount;
+    private HashMap<String, String> itemsMap;
 
-    public OrderProductAdapter(Context context, List<Item> products, List<OrderItemPOJO> productsCount) {
+    public OrderProductAdapter(Context context, List<Item> products, HashMap<String, String> productsCount) {
         this.context = context;
         this.products = products;
-        this.productsCount = productsCount;
+        this.itemsMap = productsCount;
     }
 
     @Override
     public void onBindViewHolder(@NonNull final OrderProductAdapter.ProductHolder holder, final int position) {
         Item current = products.get(position);
-        OrderItemPOJO currentCount = productsCount.get(position);
+        String currentCount = itemsMap.get(current.getId());
         holder.binding.rating.setRating(Float.parseFloat(current.getRating()));
         holder.binding.rating.setRating(Float.parseFloat(current.getRating()));
 
-        BigDecimal weight = new BigDecimal(currentCount.getCount()).multiply(new BigDecimal(current.getUnitType()));
+        BigDecimal weight = new BigDecimal(currentCount).multiply(new BigDecimal(current.getUnitType()));
         holder.binding.weight.setText(String.format("%s / %s", weight, current.getType()));
 
         if (!current.getDiscount().equals("0")) {
@@ -57,7 +57,7 @@ public class OrderProductAdapter extends RecyclerView.Adapter<OrderProductAdapte
             }
         }
 
-        bd = bd.multiply(new BigDecimal(currentCount.getCount()));
+        bd = bd.multiply(new BigDecimal(currentCount));
 
         holder.binding.price.setText(String.format("%s %s", bd.toString(), LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
 

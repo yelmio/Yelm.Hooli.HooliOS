@@ -59,7 +59,7 @@
             android:name=".main.news.NewsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".order.OrderActivityNew"
+            android:name=".order.OrderActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".search.SearchActivity"

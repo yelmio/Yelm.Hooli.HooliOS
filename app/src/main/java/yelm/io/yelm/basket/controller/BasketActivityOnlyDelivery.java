@@ -37,7 +37,7 @@ import yelm.io.yelm.database_new.user_addresses.UserAddress;
 import yelm.io.yelm.databinding.ActivityBasketOnlyDeliveryBinding;
 import yelm.io.yelm.loader.controller.LoaderActivity;
 import yelm.io.yelm.main.model.Modifier;
-import yelm.io.yelm.order.OrderActivityNew;
+import yelm.io.yelm.order.OrderActivity;
 import yelm.io.yelm.retrofit.RestAPI;
 import yelm.io.yelm.retrofit.RetrofitClient;
 import yelm.io.yelm.constants.Logging;
@@ -232,7 +232,7 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity {
         binding.back.setOnClickListener(v -> finish());
         binding.cleanBasket.setOnClickListener(v -> Common.basketCartRepository.emptyBasketCart());
         binding.ordering.setOnClickListener(v -> {
-            Intent intent = new Intent(this, OrderActivityNew.class);
+            Intent intent = new Intent(this, OrderActivity.class);
             intent.putExtra("finalPrice", finalCost.toString());
             intent.putExtra("deliveryCost", deliveryCostFinal.toString());
             intent.putExtra("deliveryTime", deliveryTime);
@@ -278,7 +278,7 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity {
                 public void run() {
                     binding.paymentResult.setVisibility(View.GONE);
                 }
-            }, 2000);
+            }, 3000);
         }};
     }
 

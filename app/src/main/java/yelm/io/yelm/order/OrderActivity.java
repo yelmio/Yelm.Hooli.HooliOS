@@ -62,7 +62,7 @@ import yelm.io.yelm.loader.controller.LoaderActivity;
 import yelm.io.yelm.payment.googleplay.PaymentsUtil;
 import yelm.io.yelm.support_stuff.PhoneTextFormatter;
 
-public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialogListener {
+public class OrderActivity extends AppCompatActivity implements ThreeDSDialogListener {
 
     ActivityOrderNewBinding binding;
 
@@ -175,7 +175,6 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
         finalCost = startCost;
         deliveryCostFinal = deliveryCostStart;
         discountPromo = new BigDecimal(promoCode.getAmount());
-
         Log.d(Logging.debug, "promoCode.getType(): " + promoCode.getType());
         switch (promoCode.getType()) {
             case "full":
@@ -190,6 +189,10 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
                 }
                 break;
             case "delivery":
+                if (deliveryCostFinal.compareTo(new BigDecimal("0")) == 0) {
+                    binding.discountPercent.setText(String.format("%s - %s", getText(R.string.orderDiscountDelivery), getText(R.string.orderDiscountDeliveryAlreadyFree)));
+                    break;
+                }
                 binding.discountPercent.setText(String.format("%s %s%%", getText(R.string.orderDiscountDelivery), discountPromo));
                 BigDecimal discountDelivery = discountPromo.divide(new BigDecimal("100"), 2, BigDecimal.ROUND_HALF_UP);
                 discountDelivery = discountDelivery.multiply(deliveryCostFinal).setScale(2, BigDecimal.ROUND_HALF_UP);
@@ -381,7 +384,7 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
 
         binding.paymentCard.setOnClickListener(v -> {
             if (preparePayment()) {
-                Intent intent = new Intent(OrderActivityNew.this, PaymentActivity.class);
+                Intent intent = new Intent(OrderActivity.this, PaymentActivity.class);
                 intent.putExtra("startCost", startCost.toString());
                 intent.putExtra("finalPrice", finalCost.toString());
                 intent.putExtra("discountPromo", discountPromo.toString());
@@ -408,7 +411,6 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
                         boolean result = task.getResult(ApiException.class);
                         setPwgAvailable(result);
                     } catch (ApiException exception) {
-                        // Process error
                         Log.d(Logging.debug, exception.toString());
                     }
                 });
@@ -630,7 +632,7 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
 //                Snackbar.LENGTH_SHORT);
 //        snackbar.show();
 
-        Toast.makeText(OrderActivityNew.this, message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(OrderActivity.this, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override

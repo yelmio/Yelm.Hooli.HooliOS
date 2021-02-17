@@ -5,7 +5,7 @@
     android:id="@+id/layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".order.OrderActivityNew">
+    tools:context=".order.OrderActivity">
 
     <ProgressBar
         android:id="@+id/progress"
@@ -251,7 +251,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="46dp"
             android:layout_marginTop="8dp"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
@@ -261,7 +261,7 @@
             <EditText
                 android:id="@+id/entrance"
                 android:layout_width="wrap_content"
-                android:layout_height="46dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/stroke_back"
                 android:ems="10"
@@ -274,7 +274,7 @@
             <EditText
                 android:id="@+id/floor"
                 android:layout_width="wrap_content"
-                android:layout_height="46dp"
+                android:layout_height="match_parent"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_weight="1"
@@ -290,7 +290,7 @@
             <EditText
                 android:id="@+id/flat"
                 android:layout_width="wrap_content"
-                android:layout_height="46dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/stroke_back"
                 android:ems="10"

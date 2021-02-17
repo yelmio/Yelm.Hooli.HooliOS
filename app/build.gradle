@@ -140,5 +140,4 @@ dependencies {
 
     //socket io
     implementation 'com.github.nkzawa:socket.io-client:0.6.0'
-
 }

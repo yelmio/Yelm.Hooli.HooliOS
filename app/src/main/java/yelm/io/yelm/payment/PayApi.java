@@ -61,14 +61,16 @@ public class PayApi {
 
     public static Observable<Transaction> post3ds(String transactionId, String paRes) {
         Log.d("AlexDebug", "post3ds");
-
         Post3dsRequestArgs args = new Post3dsRequestArgs();
         args.setTransactionId(transactionId);
         args.setPaRes(paRes);
-
         return PayApiFactory.getPayMethods()
                 .post3ds(CONTENT_TYPE, args)
-                .flatMap(PayApiResponse::handleError)
-                .map(PayApiResponse::getData);
+                .flatMap(transactionPayApiResponse1 -> {
+                    return transactionPayApiResponse1.handleError();
+                })
+                .map(transactionPayApiResponse -> {
+                    return transactionPayApiResponse.getData();
+                });
     }
 }
