@@ -1,4 +1,4 @@
-package yelm.io.yelm.retrofit.new_api;
+package yelm.io.yelm.retrofit;
 
 import org.json.JSONObject;
 

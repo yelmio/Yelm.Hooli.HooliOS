@@ -19,7 +19,7 @@ import yelm.io.yelm.database_new.Common;
 import yelm.io.yelm.database_new.user_addresses.UserAddress;
 import yelm.io.yelm.databinding.AdressesBottomSheepDialogBinding;
 
-import yelm.io.yelm.support_stuff.Logging;
+import yelm.io.yelm.constants.Logging;
 import yelm.io.yelm.user_address.adapter.UserAddressesAdapter;
 
 public class AddressesBottomSheet extends BottomSheetDialogFragment {
@@ -52,7 +52,6 @@ public class AddressesBottomSheet extends BottomSheetDialogFragment {
         binding.addressesDone.setOnClickListener(v -> this.dismiss());
         binding.addNewAddress.setOnClickListener(v -> {
             startActivityForResult(new Intent(getContext(), AddressChooseActivity.class), USER_ADDRESS_CHOOSE_REQUEST_CODE);
-
         });
         binding.recyclerUserAddresses.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         userAddressesAdapter = new UserAddressesAdapter(getContext(), Common.userAddressesRepository.getUserAddressesList());

@@ -59,13 +59,7 @@
             android:name=".main.news.NewsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".pickup_address.controller.AddressPickupChooseActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".order.OrderActivityNew"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".basket.controller.BasketActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".search.SearchActivity"
@@ -79,15 +73,6 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".chat.controller.ChatActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".old_version.profile.ProfileSettingsActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".old_version.profile.PushActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".old_version.learning.LearnMain"
             android:screenOrientation="portrait" />
 
         <service
@@ -105,7 +90,6 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorYelmMediaDark" />
-
         <activity
             android:name=".loader.controller.LoaderActivity"
             android:screenOrientation="portrait"
@@ -117,31 +101,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".fragments.catalog_fragment.CategoryActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".old_version.user.UserDataActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".payment.PaymentActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".old_version.user.history_orders.OrdersHistoryActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".old_version.maps.MapShopActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".old_version.maps.MapActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".order.OrderActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".fragments.catalog_fragment.ProductActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".fragments.main_fragment.ArticleActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".main.controller.MainActivity"
@@ -150,5 +110,4 @@
             android:name="com.google.android.gms.wallet.api.enabled"
             android:value="true" />
     </application>
-
 </manifest>

@@ -50,9 +50,9 @@ import yelm.io.yelm.payment.PayApi;
 import yelm.io.yelm.payment.PaymentActivity;
 import yelm.io.yelm.payment.models.Transaction;
 import yelm.io.yelm.payment.response.PayApiError;
-import yelm.io.yelm.retrofit.new_api.RestAPI;
-import yelm.io.yelm.retrofit.new_api.RetrofitClientNew;
-import yelm.io.yelm.support_stuff.Logging;
+import yelm.io.yelm.retrofit.RestAPI;
+import yelm.io.yelm.retrofit.RetrofitClient;
+import yelm.io.yelm.constants.Logging;
 import yelm.io.yelm.R;
 import yelm.io.yelm.database_new.basket_new.BasketCart;
 import yelm.io.yelm.database_new.Common;
@@ -136,7 +136,7 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
         if (binding.promoCode.getText().toString().trim().isEmpty()) {
             showToast((String) getText(R.string.orderActivityEnterPromoCode));
         } else {
-            RetrofitClientNew.
+            RetrofitClient.
                     getClient(RestAPI.URL_API_MAIN)
                     .create(RestAPI.class)
                     .getPromoCode(binding.promoCode.getText().toString().trim(),
@@ -227,7 +227,7 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
             e.printStackTrace();
         }
         Log.d(Logging.debug, "jsonObjectItems: " + jsonObjectItems.toString());
-        RetrofitClientNew.
+        RetrofitClient.
                 getClient(RestAPI.URL_API_MAIN)
                 .create(RestAPI.class)
                 .sendOrder("3",
@@ -434,7 +434,7 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
 //                //testing
 //                sendOrder();
 //                //testing
-                if (Objects.equals(LoaderActivity.settings.getString(LoaderActivity.CURRENCY, "RUB"), "RUB")) {
+                if (Objects.equals(LoaderActivity.settings.getString(LoaderActivity.CURRENCY, ""), "RUB")) {
                     requestPayment(paymentsClient);
                 } else {
                     convertPrice();
@@ -478,7 +478,7 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
 
     private void convertPrice() {
         Log.d(Logging.debug, "Method convertPrice()");
-        RetrofitClientNew.
+        RetrofitClient.
                 getClient(RestAPI.URL_API_MAIN)
                 .create(RestAPI.class)
                 .convertPrice(
@@ -623,6 +623,13 @@ public class OrderActivityNew extends AppCompatActivity implements ThreeDSDialog
 
     public void showToast(String message) {
         Log.d(Logging.debug, "message: " + message);
+
+//        Snackbar snackbar = Snackbar.make(
+//                findViewById(R.id.layout),
+//                message,
+//                Snackbar.LENGTH_SHORT);
+//        snackbar.show();
+
         Toast.makeText(OrderActivityNew.this, message, Toast.LENGTH_SHORT).show();
     }
 

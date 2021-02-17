@@ -37,7 +37,7 @@ import yelm.io.yelm.loader.controller.LoaderActivity;
 import yelm.io.yelm.main.model.Item;
 import yelm.io.yelm.main.model.Modifier;
 import yelm.io.yelm.item.ProductModifierAdapter;
-import yelm.io.yelm.support_stuff.Logging;
+import yelm.io.yelm.constants.Logging;
 import yelm.io.yelm.support_stuff.ScreenDimensions;
 
 public class ProductsNewMenuSquareImageAdapter extends RecyclerView.Adapter<ProductsNewMenuSquareImageAdapter.ProductHolder> implements Filterable {

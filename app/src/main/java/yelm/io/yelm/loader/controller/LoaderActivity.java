@@ -28,7 +28,7 @@ import yelm.io.yelm.loader.model.ApplicationSettings;
 import yelm.io.yelm.loader.model.ChatSettingsClass;
 import yelm.io.yelm.notification.FcmMessageService;
 import yelm.io.yelm.notification.NotificationReceiver;
-import yelm.io.yelm.support_stuff.Logging;
+import yelm.io.yelm.constants.Logging;
 import yelm.io.yelm.database_new.basket_new.BasketCartDataSource;
 import yelm.io.yelm.database_new.basket_new.BasketCartRepository;
 import yelm.io.yelm.database_new.Common;
@@ -46,15 +46,15 @@ import yelm.io.yelm.database_old.news.NewsRepository;
 import yelm.io.yelm.loader.model.UserLoginResponse;
 import yelm.io.yelm.main.controller.MainActivity;
 import yelm.io.yelm.payment.Constants;
-import yelm.io.yelm.retrofit.new_api.RestAPI;
-import yelm.io.yelm.retrofit.new_api.RetrofitClientNew;
+import yelm.io.yelm.retrofit.RestAPI;
+import yelm.io.yelm.retrofit.RetrofitClient;
 
 public class LoaderActivity extends AppCompatActivity {
 
     public static final String USER_NAME = "USER_NAME";
     public static final String ALLOW_PAYMENTS = "ALLOW_PAYMENTS";
     public static final String CATALOG_STYLE = "CATALOG_STYLE";
-    public static final String MIN_DELIVERY_PRICE = "MIN_DELIVERY_PRICE";
+    public static final String MIN_PRICE_FOR_FREE_DELIVERY = "MIN_PRICE_FOR_FREE_DELIVERY";
     public static final String MIN_ORDER_PRICE = "MIN_ORDER_PRICE";
     public static final String PRICE_IN = "PRICE_IN";
     public static final String CURRENCY = "CNT";
@@ -132,7 +132,7 @@ public class LoaderActivity extends AppCompatActivity {
             getApplicationSettings();
             getChatSettings(settings.getString(USER_NAME, ""));
         } else {
-            RetrofitClientNew.
+            RetrofitClient.
                     getClient(RestAPI.URL_API_MAIN)
                     .create(RestAPI.class)
                     .createUser(getResources().getConfiguration().locale.getLanguage(),
@@ -168,7 +168,7 @@ public class LoaderActivity extends AppCompatActivity {
 
     //we get main settings of app
     private void getApplicationSettings() {
-        RetrofitClientNew.
+        RetrofitClient.
                 getClient(RestAPI.URL_API_MAIN).
                 create(RestAPI.class).
                 getAppSettings(RestAPI.PLATFORM_NUMBER,
@@ -184,7 +184,7 @@ public class LoaderActivity extends AppCompatActivity {
                                         " " + response.body().getSettings().getPublicId());
                                 Constants.MERCHANT_PUBLIC_ID = response.body().getSettings().getPublicId();
                                 SharedPreferences.Editor editor = settings.edit();
-                                editor.putString(MIN_DELIVERY_PRICE, response.body().getSettings().getMinDeliveryPrice());
+                                editor.putString(MIN_PRICE_FOR_FREE_DELIVERY, response.body().getSettings().getMinDeliveryPrice());
                                 editor.putString(MIN_ORDER_PRICE, response.body().getSettings().getMinOrderPrice());
                                 editor.putString(CURRENCY, response.body().getCurrency());
                                 editor.putString(PRICE_IN, response.body().getSymbol());
@@ -258,25 +258,22 @@ public class LoaderActivity extends AppCompatActivity {
                     Snackbar.LENGTH_INDEFINITE)
                     .setAction(R.string.loaderActivityUpdateNetworkConnection, view -> init());
             snackbar.show();
-
         }
     }
 
     @Override
     protected void onStop() {
-
         super.onStop();
     }
 
     @Override
     protected void onDestroy() {
         unregisterReceiver(notificationReceiver);
-
         super.onDestroy();
     }
 
     private void getChatSettings(String login) {
-        RetrofitClientNew.
+        RetrofitClient.
                 getClient(RestAPI.URL_API_MAIN).
                 create(RestAPI.class).
                 getChatSettings(login).

@@ -26,10 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import yelm.io.yelm.databinding.NewsItemBinding;
-import yelm.io.yelm.fragments.catalog_fragment.ProductActivity;
-import yelm.io.yelm.fragments.main_fragment.ArticleActivity;
-import yelm.io.yelm.item.ItemActivity;
-import yelm.io.yelm.item.ItemsOfOneCategoryActivity;
+
 import yelm.io.yelm.support_stuff.GradientTransformation;
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsHolder> {
@@ -171,84 +168,6 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsHolder> {
 //                return true;
 //            }
 //        });
-    }
-
-    private void setLinks(String attachments) {
-        JSONObject json;
-        JSONArray jsonArrayItems = null;
-        JSONArray jsonArrayNews = null;
-        String link = "";
-
-        try {
-            json = new JSONObject(attachments);
-            link = json.get("link").toString();
-            jsonArrayItems = json.getJSONArray("items");
-            jsonArrayNews = json.getJSONArray("news");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        if (!link.isEmpty() && URLUtil.isValidUrl(link)) {
-            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(link)));
-        }
-
-        if (jsonArrayItems != null && jsonArrayItems.length() != 0) {
-            String name = "";
-            String price = "0";
-            String url = "";
-            String text_about = "";
-            String id = "";
-            String type = "";
-            String quantity = "";
-            String parameters = "";
-            try {
-                JSONObject jsonItem = jsonArrayItems.getJSONObject(0);
-                id = jsonItem.get("id").toString();
-                name = jsonItem.get("name").toString();
-                JSONObject item = (JSONObject) jsonItem.get("item");
-                quantity = item.get("quantity").toString();
-                parameters = item.get("parameters").toString();
-                price = item.get("price").toString();
-                text_about = item.get("text_about").toString();
-                type = item.get("type").toString();
-                JSONArray urls = item.getJSONArray("images");
-                url = urls.toString();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            Intent intent = new Intent(context, ProductActivity.class);
-            intent.putExtra("name", name);
-            intent.putExtra("price", price);
-            intent.putExtra("image", url);
-            intent.putExtra("id", id);
-            intent.putExtra("parameters", parameters);
-            intent.putExtra("type", type);
-            intent.putExtra("quantity", quantity);
-            intent.putExtra("text_about", text_about);
-            context.startActivity(intent);
-        }
-
-        if (jsonArrayNews != null && jsonArrayNews.length() != 0) {
-            String image = "";
-            String title = "";
-            String text_about = "";
-            try {
-                JSONObject jsonNews = jsonArrayNews.getJSONObject(0);
-                JSONArray jsonArray = jsonNews.getJSONArray("images");
-                image = jsonArray.get(0).toString();
-                title = jsonNews.get("title").toString();
-                JSONObject text = (JSONObject) jsonNews.get("item");
-                text_about = text.get("text_about").toString();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            Intent intent = new Intent(context, ArticleActivity.class);
-            intent.putExtra("image", image);
-            intent.putExtra("title", title);
-            intent.putExtra("text_about", text_about);
-            context.startActivity(intent);
-        }
-
     }
 
     @Override

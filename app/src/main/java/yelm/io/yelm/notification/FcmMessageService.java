@@ -23,9 +23,9 @@ import retrofit2.Call;
 import retrofit2.Response;
 import yelm.io.yelm.R;
 import yelm.io.yelm.loader.controller.LoaderActivity;
-import yelm.io.yelm.retrofit.new_api.RestAPI;
-import yelm.io.yelm.retrofit.new_api.RetrofitClientNew;
-import yelm.io.yelm.support_stuff.Logging;
+import yelm.io.yelm.retrofit.RestAPI;
+import yelm.io.yelm.retrofit.RetrofitClient;
+import yelm.io.yelm.constants.Logging;
 
 public class FcmMessageService extends FirebaseMessagingService {
 
@@ -47,7 +47,7 @@ public class FcmMessageService extends FirebaseMessagingService {
                 public void run() {
                     String user = LoaderActivity.settings.getString(LoaderActivity.USER_NAME, "");
                     Log.d("AlexDebug", "FCM user: " + user);
-                    RetrofitClientNew
+                    RetrofitClient
                             .getClient(RestAPI.URL_API_MAIN)
                             .create(RestAPI.class)
                             .putFCM(RestAPI.PLATFORM_NUMBER, user, s)

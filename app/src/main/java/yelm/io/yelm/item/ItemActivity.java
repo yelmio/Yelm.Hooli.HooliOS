@@ -26,7 +26,7 @@ import yelm.io.yelm.databinding.ActivityItemBinding;
 import yelm.io.yelm.loader.controller.LoaderActivity;
 import yelm.io.yelm.main.model.Item;
 import yelm.io.yelm.main.model.Modifier;
-import yelm.io.yelm.support_stuff.Logging;
+import yelm.io.yelm.constants.Logging;
 
 public class ItemActivity extends AppCompatActivity implements AppBarLayout.OnOffsetChangedListener {
     ActivityItemBinding binding;

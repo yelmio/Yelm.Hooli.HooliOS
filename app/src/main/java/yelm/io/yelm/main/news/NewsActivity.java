@@ -4,33 +4,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LevelListDrawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.Html;
-import android.text.Spanned;
-import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
 
 import com.google.android.material.appbar.AppBarLayout;
 import com.squareup.picasso.Picasso;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.List;
 
 import yelm.io.yelm.R;
-import yelm.io.yelm.constants.Constants;
 import yelm.io.yelm.databinding.ActivityNewsBinding;
 import yelm.io.yelm.main.adapter.ProductsNewMenuSquareImageAdapter;
 import yelm.io.yelm.main.model.Item;
-import yelm.io.yelm.support_stuff.Logging;
+import yelm.io.yelm.constants.Logging;
 
 public class NewsActivity extends AppCompatActivity implements AppBarLayout.OnOffsetChangedListener {
 

@@ -1,4 +1,4 @@
-package yelm.io.yelm.retrofit.new_api;
+package yelm.io.yelm.retrofit;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

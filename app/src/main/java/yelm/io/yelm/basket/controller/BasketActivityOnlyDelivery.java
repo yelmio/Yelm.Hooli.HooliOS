@@ -18,6 +18,7 @@ import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -37,18 +38,16 @@ import yelm.io.yelm.databinding.ActivityBasketOnlyDeliveryBinding;
 import yelm.io.yelm.loader.controller.LoaderActivity;
 import yelm.io.yelm.main.model.Modifier;
 import yelm.io.yelm.order.OrderActivityNew;
-import yelm.io.yelm.retrofit.new_api.RestAPI;
-import yelm.io.yelm.retrofit.new_api.RetrofitClientNew;
-import yelm.io.yelm.support_stuff.Logging;
-import yelm.io.yelm.user_address.controller.AddressesBottomSheet;
+import yelm.io.yelm.retrofit.RestAPI;
+import yelm.io.yelm.retrofit.RetrofitClient;
+import yelm.io.yelm.constants.Logging;
 
-public class BasketActivityOnlyDelivery extends AppCompatActivity implements AddressesBottomSheet.AddressesBottomSheetListener {
+public class BasketActivityOnlyDelivery extends AppCompatActivity {
 
     ActivityBasketOnlyDeliveryBinding binding;
     BasketAdapter basketAdapter;
     private final CompositeDisposable compositeDisposableBasket = new CompositeDisposable();
     UserAddress currentAddress;
-    AddressesBottomSheet addressesBottomSheet = new AddressesBottomSheet();
     private BigDecimal deliveryCostStart = new BigDecimal("0");
     private BigDecimal deliveryCostFinal = new BigDecimal("0");
     private BigDecimal finalCost = new BigDecimal("0");
@@ -61,15 +60,16 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
         binding = ActivityBasketOnlyDeliveryBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         binding();
-        currentAddress = setDeliveryAddress();
-        //check if there is user address in db - if there is not we just show basket and disable ordering button
+        currentAddress = getDeliveryAddress();
+        //check if there is user address in db and delivery available to it
+        //if there is not we just show basket and disable ordering button
         if (currentAddress != null && !Constants.ShopID.equals("0")) {
             checkBasket(currentAddress.latitude, currentAddress.longitude);
         } else {
             Log.d(Logging.debug, "Method onCreate() - currentAddress is null or ShopID equals 0");
-            //binding.addressDelivery.setText(getText(R.string.basketActivitySelectAddress));
             binding.time.setText(String.format("%s %s", deliveryTime, getText(R.string.delivery_time)));
             binding.layoutDeliveryNotAvailable.setVisibility(View.VISIBLE);
+            binding.layoutDelivery.setVisibility(View.GONE);
             setCompositeDisposableBasket();
             basketAdapter = new BasketAdapter(this, Common.basketCartRepository.getBasketCartsList());
             binding.recyclerCart.setAdapter(basketAdapter);
@@ -101,7 +101,7 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
         }
         Log.d(Logging.debug, "Method checkBasket() - jsonObjectItems: " + jsonObjectItems.toString());
 
-        RetrofitClientNew.
+        RetrofitClient.
                 getClient(RestAPI.URL_API_MAIN).
                 create(RestAPI.class).
                 checkBasket(
@@ -163,7 +163,8 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
     private void updateBasket(List<BasketCart> carts) {
 
         binding.emptyTextView.setVisibility(carts.size() == 0 ? View.VISIBLE : View.GONE);
-        binding.layoutDeliveryCost.setVisibility(carts.size() == 0 ? View.GONE : View.VISIBLE);
+        binding.layoutDeliveryInfo.setVisibility(carts.size() == 0 ? View.GONE : View.VISIBLE);
+        binding.layoutFinalCost.setVisibility(carts.size() == 0 ? View.GONE : View.VISIBLE);
 
         basketAdapter = new BasketAdapter(this, carts);
         binding.recyclerCart.setAdapter(basketAdapter);
@@ -201,32 +202,35 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
             binding.ordering.setEnabled(false);
         }
 
-        if (finalCost.compareTo(new BigDecimal(LoaderActivity.settings.getString(LoaderActivity.MIN_DELIVERY_PRICE, "0"))) < 0) {
+        //show a note about possible free shipping
+        //if finalCost of basket more than minimum value for free delivery
+        if (finalCost.compareTo(new BigDecimal(LoaderActivity.settings.getString(LoaderActivity.MIN_PRICE_FOR_FREE_DELIVERY, "0"))) < 0) {
             deliveryCostFinal = deliveryCostStart;
-            BigDecimal freeDelivery = new BigDecimal(LoaderActivity.settings.getString(LoaderActivity.MIN_DELIVERY_PRICE, "0"));
+            BigDecimal freeDelivery = new BigDecimal(LoaderActivity.settings.getString(LoaderActivity.MIN_PRICE_FOR_FREE_DELIVERY, "0"));
             freeDelivery = freeDelivery.subtract(finalCost);
             binding.freeDelivery.setText(String.format("%s %s %s %s",
                     getString(R.string.basketActivityFreeDelivery1),
                     freeDelivery,
                     LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, ""),
                     getString(R.string.basketActivityFreeDelivery2)));
+            binding.freeDelivery.setVisibility(View.VISIBLE);
         } else {
             deliveryCostFinal = new BigDecimal("0");
             binding.freeDelivery.setVisibility(View.GONE);
         }
-        binding.deliveryCost.setText(String.format("%s %s", deliveryCostFinal, LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
-        binding.finalPrice.setText(String.format("%s %s", finalCost.add(deliveryCostFinal), LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
+
+        binding.deliveryCost.setText(String.format("%s %s",
+                deliveryCostFinal,
+                LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
+        binding.finalPrice.setText(String.format("%s %s",
+                finalCost.add(deliveryCostFinal),
+                LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
     }
 
     private void binding() {
         binding.recyclerCart.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         binding.back.setOnClickListener(v -> finish());
-        binding.cleanBasket.setOnClickListener(v -> {
-            deliveryCostStart = new BigDecimal("0");
-            Common.basketCartRepository.emptyBasketCart();
-            binding.time.setText(String.format("0 %s", getText(R.string.delivery_time)));
-        });
-        binding.addressDelivery.setOnClickListener(v -> callAddressesBottomSheet());
+        binding.cleanBasket.setOnClickListener(v -> Common.basketCartRepository.emptyBasketCart());
         binding.ordering.setOnClickListener(v -> {
             Intent intent = new Intent(this, OrderActivityNew.class);
             intent.putExtra("finalPrice", finalCost.toString());
@@ -237,30 +241,16 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
         });
     }
 
-    private void callAddressesBottomSheet() {
-        //check if addressesBottomSheetForBasket is added otherwise we get exception:
-        //java.lang.IllegalStateException: Fragment already added
-        if (!addressesBottomSheet.isAdded()) {
-            addressesBottomSheet.show(getSupportFragmentManager(), "addressesBottomSheet");
+    public UserAddress getDeliveryAddress() {
+        if (Common.userAddressesRepository.getUserAddressesList() == null) {
+            return null;
         }
-    }
-
-    public UserAddress setDeliveryAddress() {
         for (UserAddress current : Common.userAddressesRepository.getUserAddressesList()) {
             if (current.isChecked) {
-                binding.addressDelivery.setText(current.address);
                 return current;
             }
         }
         return null;
-    }
-
-    @Override
-    public void selectedAddress(UserAddress userAddress) {
-        currentAddress = userAddress;
-        Log.d(Logging.debug, "Method selectedAddress() - address: " + currentAddress.address);
-        binding.addressDelivery.setText(String.format("%s", currentAddress.address));
-        checkBasket(currentAddress.latitude, currentAddress.longitude);
     }
 
     @Override
@@ -271,16 +261,14 @@ public class BasketActivityOnlyDelivery extends AppCompatActivity implements Add
         }
         switch (requestCode) {
             case PAYMENT_SUCCESS:
-                deliveryCostStart = new BigDecimal("0");
                 Common.basketCartRepository.emptyBasketCart();
-                binding.time.setText(String.format("0 %s", getText(R.string.delivery_time)));
                 Log.d("AlexDebug", "PAYMENT_SUCCESS " + data.getStringExtra("success"));
-                binding.paymentResult.setVisibility(View.VISIBLE);
-                if (data.getStringExtra("success").equals("card")) {
+                if (Objects.equals(data.getStringExtra("success"), "card")) {
                     binding.paymentResultText.setText(getText(R.string.order_is_accepted_by_card));
                 } else {
                     binding.paymentResultText.setText(getText(R.string.order_is_accepted_by_google_pay));
                 }
+                binding.paymentResult.setVisibility(View.VISIBLE);
                 binding.lotti.playAnimation();
                 break;
         }

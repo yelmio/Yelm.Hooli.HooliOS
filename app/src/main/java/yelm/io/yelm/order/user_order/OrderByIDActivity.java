@@ -1,30 +1,22 @@
 package yelm.io.yelm.order.user_order;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.room.FtsOptions;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.google.android.gms.location.LocationServices;
 import com.google.android.material.appbar.AppBarLayout;
 import com.yandex.mapkit.Animation;
 import com.yandex.mapkit.MapKitFactory;
 import com.yandex.mapkit.geometry.Point;
-import com.yandex.mapkit.map.CameraListener;
 import com.yandex.mapkit.map.CameraPosition;
-import com.yandex.mapkit.map.CameraUpdateSource;
-import com.yandex.mapkit.map.Map;
 
 
 import org.jetbrains.annotations.NotNull;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Objects;
@@ -33,18 +25,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import yelm.io.yelm.R;
-import yelm.io.yelm.chat.adapter.ChatAdapter;
-import yelm.io.yelm.chat.controller.ChatActivity;
-import yelm.io.yelm.chat.model.ChatContent;
-import yelm.io.yelm.chat.model.ChatHistoryClass;
 import yelm.io.yelm.databinding.ActivityOrderByIDBinding;
 import yelm.io.yelm.loader.controller.LoaderActivity;
 import yelm.io.yelm.order.user_order.model.UserOrderPOJO;
-import yelm.io.yelm.retrofit.new_api.RestAPI;
-import yelm.io.yelm.retrofit.new_api.RestApiChat;
-import yelm.io.yelm.retrofit.new_api.RetrofitClientChat;
-import yelm.io.yelm.retrofit.new_api.RetrofitClientNew;
-import yelm.io.yelm.support_stuff.Logging;
+import yelm.io.yelm.retrofit.RestAPI;
+import yelm.io.yelm.retrofit.RetrofitClient;
+import yelm.io.yelm.constants.Logging;
 
 public class OrderByIDActivity extends AppCompatActivity implements AppBarLayout.OnOffsetChangedListener {
     ActivityOrderByIDBinding binding;
@@ -79,7 +65,7 @@ public class OrderByIDActivity extends AppCompatActivity implements AppBarLayout
     }
 
     private void getOrder(String id) {
-        RetrofitClientNew.
+        RetrofitClient.
                 getClient(RestAPI.URL_API_MAIN).
                 create(RestAPI.class).
                 getOrderByID(RestAPI.PLATFORM_NUMBER,

@@ -53,7 +53,7 @@ import yelm.io.yelm.database_new.basket_new.BasketCart;
 import yelm.io.yelm.item.ItemActivity;
 import yelm.io.yelm.loader.controller.LoaderActivity;
 import yelm.io.yelm.order.user_order.OrderByIDActivity;
-import yelm.io.yelm.support_stuff.Logging;
+import yelm.io.yelm.constants.Logging;
 import yelm.io.yelm.support_stuff.ScreenDimensions;
 
 public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

@@ -1,4 +1,4 @@
-package yelm.io.yelm.support_stuff;
+package yelm.io.yelm.constants;
 
 public class Logging {
     public static String error = "AlexError";

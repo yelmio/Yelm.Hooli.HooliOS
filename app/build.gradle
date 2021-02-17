@@ -121,10 +121,6 @@ dependencies {
 //dependency for location by play services:
     implementation 'com.google.android.gms:play-services-location:17.0.0'
 
-    //qrcode
-    implementation 'me.dm7.barcodescanner:zxing:1.9.13'
-    implementation 'com.karumi:dexter:5.0.0'
-
     //blur
     implementation 'com.github.mmin18:realtimeblurview:1.2.1'
 

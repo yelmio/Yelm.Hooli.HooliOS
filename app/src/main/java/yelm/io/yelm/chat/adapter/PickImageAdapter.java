@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit;
 
 import yelm.io.yelm.databinding.CameraPreviewLayoutBinding;
 import yelm.io.yelm.databinding.PickStorageImageBinding;
-import yelm.io.yelm.support_stuff.Logging;
+import yelm.io.yelm.constants.Logging;
 import yelm.io.yelm.support_stuff.ScreenDimensions;
 
 public class PickImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

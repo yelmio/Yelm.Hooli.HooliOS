@@ -21,7 +21,7 @@ import java.util.List;
 
 import yelm.io.yelm.item.ItemActivity;
 import yelm.io.yelm.main.model.Item;
-import yelm.io.yelm.support_stuff.Logging;
+import yelm.io.yelm.constants.Logging;
 import yelm.io.yelm.databinding.ProductItemSearcheableBinding;
 import yelm.io.yelm.loader.controller.LoaderActivity;
 

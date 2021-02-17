@@ -30,9 +30,9 @@ import retrofit2.Response;
 import yelm.io.yelm.R;
 import yelm.io.yelm.databinding.ActivityNewsFromNotificationBinding;
 import yelm.io.yelm.main.adapter.ProductsNewMenuSquareImageAdapter;
-import yelm.io.yelm.retrofit.new_api.RestAPI;
-import yelm.io.yelm.retrofit.new_api.RetrofitClientNew;
-import yelm.io.yelm.support_stuff.Logging;
+import yelm.io.yelm.retrofit.RestAPI;
+import yelm.io.yelm.retrofit.RetrofitClient;
+import yelm.io.yelm.constants.Logging;
 
 public class NewsFromNotificationActivity extends AppCompatActivity implements AppBarLayout.OnOffsetChangedListener, Html.ImageGetter {
 
@@ -57,7 +57,7 @@ public class NewsFromNotificationActivity extends AppCompatActivity implements A
     }
 
     private void getNewsById(String id) {
-        RetrofitClientNew.
+        RetrofitClient.
                 getClient(RestAPI.URL_API_MAIN).
                 create(RestAPI.class).
                 getNewsByID(

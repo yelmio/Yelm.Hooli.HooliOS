@@ -1,4 +1,4 @@
-package yelm.io.yelm.fragments.catalog_fragment;
+package yelm.io.yelm.support_stuff;
 
 import android.content.Context;
 import android.util.AttributeSet;

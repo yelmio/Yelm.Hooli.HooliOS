@@ -25,7 +25,7 @@ import yelm.io.yelm.R;
 import yelm.io.yelm.chat.adapter.PickImageAdapter;
 import yelm.io.yelm.databinding.PickImageBottomSheetBinding;
 import yelm.io.yelm.chat.model.ModelImages;
-import yelm.io.yelm.support_stuff.Logging;
+import yelm.io.yelm.constants.Logging;
 
 public class PickImageBottomSheet extends BottomSheetDialogFragment {
 

@@ -61,10 +61,10 @@ import yelm.io.yelm.chat.model.ChatHistoryClass;
 import yelm.io.yelm.databinding.ActivityChatBinding;
 import yelm.io.yelm.loader.controller.LoaderActivity;
 import yelm.io.yelm.main.model.Item;
-import yelm.io.yelm.retrofit.new_api.RestAPI;
-import yelm.io.yelm.retrofit.new_api.RestApiChat;
-import yelm.io.yelm.retrofit.new_api.RetrofitClientChat;
-import yelm.io.yelm.support_stuff.Logging;
+import yelm.io.yelm.retrofit.RestAPI;
+import yelm.io.yelm.retrofit.RestApiChat;
+import yelm.io.yelm.retrofit.RetrofitClientChat;
+import yelm.io.yelm.constants.Logging;
 
 
 public class ChatActivity extends AppCompatActivity implements PickImageBottomSheet.BottomSheetShopListener, PickImageBottomSheet.CameraListener {

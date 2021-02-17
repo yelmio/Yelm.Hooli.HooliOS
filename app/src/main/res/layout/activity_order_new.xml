@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".order.OrderActivityNew">
@@ -101,7 +102,7 @@
                     android:layout_height="40dp"
                     android:layout_marginStart="2dp"
                     android:layout_marginEnd="2dp"
-                    android:background="@drawable/background_main_button"
+                    android:background="@drawable/main_button_selector"
                     android:gravity="center"
                     android:paddingBottom="2dp"
                     android:text="@string/checkout_payment"
@@ -264,8 +265,8 @@
                 android:layout_weight="1"
                 android:background="@drawable/stroke_back"
                 android:ems="10"
-                android:inputType="number"
                 android:hint="@string/entrance"
+                android:inputType="number"
                 android:paddingStart="16dp"
                 android:paddingEnd="16sp"
                 android:theme="@style/ProDisplayTextStyle" />
@@ -279,11 +280,11 @@
                 android:layout_weight="1"
                 android:background="@drawable/stroke_back"
                 android:ems="10"
-                android:maxLength="3"
                 android:hint="@string/floor"
                 android:inputType="number"
-                android:paddingEnd="16sp"
+                android:maxLength="3"
                 android:paddingStart="16dp"
+                android:paddingEnd="16sp"
                 android:theme="@style/ProDisplayTextStyle" />
 
             <EditText
@@ -466,7 +467,7 @@
             android:theme="@style/ProDisplayTextStyle" />
 
         <androidx.cardview.widget.CardView
-            style="@style/ProductTitleDescriptionViewStyle"
+            style="@style/choicePaymentTypeCardStyle"
             android:layout_marginStart="16dp"
             android:layout_marginTop="12dp"
             android:layout_marginEnd="16dp"

@@ -6,10 +6,7 @@
         <item name="colorAccent">@color/colorYelmMediaDark</item>
         <item name="android:popupMenuStyle">@style/PopupMenu</item>
         <item name="android:itemTextAppearance">@style/itemTextStyle.AppTheme</item>
-
     </style>
-
-<!--    <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>-->
 
     <style name="PopupMenu" parent="@android:style/Widget.PopupMenu">
         <item name="android:dropDownHorizontalOffset">2dp</item>
@@ -22,7 +19,6 @@
         <item name="android:textColor">#FFFFFF</item>
         <item name="android:textSize">16sp</item>
     </style>
-
 
     <style name="ProDisplayTextStyle" parent="">
         <item name="android:fontFamily">@font/sf_prodisplay_regular</item>
@@ -45,18 +41,9 @@
         <item name="android:textColor">@color/colorText</item>
     </style>
 
-
-
-    <style name="CustomEditText" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <item name="colorAccent">#A8A7A7</item>
-        <item name="colorPrimary">#A8A7A7</item>
-        <item name="colorPrimaryDark">#A8A7A7</item>
-    </style>
-
     <style name="ProgressBarAddress">
         <item name="colorAccent">@color/whiteColor</item>
     </style>
-
 
     <style name="ToolBarWithNavigationBack" >
         <item name="navigationIcon">@drawable/ic_arrow_back_24</item>
@@ -68,8 +55,6 @@
         <item name="colorControlActivated">#FDCD02</item>
     </style>
 
-
-    <!--AddressesBottomSheetRoundedStyle -->
     <style name="AppBottomSheetDialogTheme"  parent="Theme.Design.Light.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/AddressesBottomSheetRoundedStyle</item>
     </style>
@@ -77,7 +62,6 @@
         <item name="android:background">@drawable/rounded_bottom_sheet_addresses</item>
     </style>
 
-    <!--ProductCardNewMenuStyle -->
     <style name="ProductCardNewMenuStyle" parent="Theme.MaterialComponents.Light">
         <item name="android:layout_width">160dp</item>
         <item name="android:layout_height">220dp</item>
@@ -87,7 +71,6 @@
         <item name="android:layout_marginTop">8dp</item>
     </style>
 
-    <!--ProductCardNewMenuSquareImageStyle -->
     <style name="ProductCardNewMenuSquareImageStyle" parent="Theme.MaterialComponents.Light">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -98,53 +81,15 @@
         <item name="android:layout_marginTop">8dp</item>
     </style>
 
-
-    <style name="SeekBarColor" parent="Widget.AppCompat.SeekBar">
-        <item name="colorAccent">@color/colorYelmMediaDark</item>
-    </style>
-
-    <!-- ProgressBarTheme for PromoCode  -->
     <style name="ProgressBarTheme">
         <item name="colorAccent">@color/colorYelmMediaDark</item>
-    </style>
-
-    <style name="SwitchStyle">
-        <item name="colorAccent">@color/colorYelmMediaDark</item>
-        <item name="android:fontFamily">@font/sf_prodisplay_regular</item>
     </style>
 
     <style name="SplashTheme" parent="@style/AppTheme">
         <item name="android:windowBackground">@drawable/splashscreen_bg</item>
     </style>
 
-    <style name="AlertDialogInfo" parent="Theme.MaterialComponents.Light.Dialog.Alert">
-        <item name="colorAccent">@color/colorIconOrder</item>
-    </style>
-
-    <style name="BasketCardStyle" parent="Theme.MaterialComponents.Light">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">150dp</item>
-        <item name="cardCornerRadius">12dp</item>
-        <item name="cardElevation">8dp</item>
-        <item name="cardBackgroundColor">@color/colorBackgroundGray</item>
-        <item name="android:layout_marginStart">16dp</item>
-        <item name="android:layout_marginEnd">16dp</item>
-        <item name="android:layout_marginBottom">16dp</item>
-    </style>
-
-    <style name="ArticleCardStyle" parent="Theme.MaterialComponents.Light">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="cardCornerRadius">12dp</item>
-        <item name="cardElevation">6dp</item>
-        <item name="android:layout_marginStart">16dp</item>
-        <item name="android:layout_marginEnd">16dp</item>
-        <item name="android:layout_marginTop">4dp</item>
-        <item name="android:layout_marginBottom">32dp</item>
-    </style>
-
-    <style name="TopCardStyle" parent="Theme.MaterialComponents.Light">
-
+    <style name="newsCardStyle" parent="Theme.MaterialComponents.Light">
         <item name="cardCornerRadius">12dp</item>
         <item name="cardElevation">6dp</item>
         <item name="android:layout_marginStart">16dp</item>
@@ -152,127 +97,12 @@
         <item name="android:layout_marginTop">8dp</item>
     </style>
 
-    <style name="ProductCardStyle" parent="Theme.MaterialComponents.Light">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">240dp</item>
-        <item name="cardCornerRadius">12dp</item>
-        <item name="cardElevation">6dp</item>
-        <item name="android:layout_marginStart">8dp</item>
-        <item name="android:layout_marginEnd">8dp</item>
-        <item name="android:layout_marginTop">4dp</item>
-        <item name="android:layout_marginBottom">12dp</item>
-    </style>
-
-    <style name="CategorySquareCardStyle" parent="Theme.MaterialComponents.Light">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">200dp</item>
-        <item name="cardCornerRadius">12dp</item>
-        <item name="cardElevation">6dp</item>
-        <item name="android:layout_marginStart">8dp</item>
-        <item name="android:layout_marginEnd">8dp</item>
-        <item name="android:layout_marginTop">6dp</item>
-        <item name="android:layout_marginBottom">10dp</item>
-    </style>
-
-
-    <!-- рефакторим внизу -->
-
-
-    <style name="CustomButton" parent="Widget.MaterialComponents.Button">
-        <item name="android:background">@drawable/custom_button</item>
-        <item name="android:textColor">@color/colorText</item>
-        <item name="android:elevation">12dp</item>
-        <item name="android:translationZ">2dp</item>
-        <item name="drawableStartCompat">@drawable/ic_add_24_white</item>
-        <item name="android:stateListAnimator">@null</item>
-    </style>
-
-
-    <style name="BasketButtonCardViewStyle" parent="Theme.AppCompat.Light">
-        <item name="cardCornerRadius">10dp</item>
-        <item name="cardElevation">6dp</item>
-        <item name="cardBackgroundColor">@color/colorBackgroundGray</item>
-        <item name="android:layout_width">130dp</item>
-        <item name="android:layout_height">35dp</item>
-    </style>
-
-
-    <style name="AddRemoveProductViewStyle" parent="Theme.AppCompat.Light">
-        <item name="cardCornerRadius">14dp</item>
-        <item name="cardElevation">3dp</item>
-        <item name="cardBackgroundColor">@color/colorBackgroundGray</item>
-        <item name="android:layout_width">28dp</item>
-        <item name="android:layout_margin">16dp</item>
-        <item name="android:layout_height">28dp</item>
-    </style>
-
-
-    <style name="HeartReviewViewStyle" parent="Theme.AppCompat.Light">
-        <item name="cardCornerRadius">28dp</item>
-        <item name="cardElevation">6dp</item>
-        <item name="cardBackgroundColor">@color/colorBackgroundGray</item>
-        <item name="android:layout_width">56dp</item>
-        <item name="android:layout_marginTop">8dp</item>
-        <item name="android:layout_marginEnd">16dp</item>
-        <item name="android:layout_marginBottom">8dp</item>
-        <item name="android:layout_marginStart">8dp</item>
-        <item name="android:layout_height">56dp</item>
-    </style>
-
-    <style name="ProductTitleDescriptionViewStyle" parent="Theme.AppCompat.Light">
+    <style name="choicePaymentTypeCardStyle" parent="Theme.AppCompat.Light">
         <item name="cardCornerRadius">8dp</item>
         <item name="cardElevation">0dp</item>
         <item name="cardBackgroundColor">@color/colorBackgroundGray</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">35dp</item>
     </style>
-
-    <style name="InformationCardViewStyle" parent="Theme.AppCompat.Light">
-        <item name="cardCornerRadius">8dp</item>
-        <item name="cardElevation">4dp</item>
-        <item name="cardBackgroundColor">@color/colorBackgroundGray</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">40dp</item>
-        <item name="android:layout_marginTop">12dp</item>
-        <item name="android:layout_marginBottom">12dp</item>
-    </style>
-
-    <style name="AddressCardViewStyle" parent="Theme.AppCompat.Light">
-        <item name="cardCornerRadius">8dp</item>
-        <item name="cardElevation">14dp</item>
-        <item name="cardBackgroundColor">@color/colorBackgroundGray</item>
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">40dp</item>
-        <item name="android:layout_marginTop">12dp</item>
-        <item name="android:layout_marginBottom">10dp</item>
-    </style>
-
-
-    <style name="CardViewCustomStyle" parent="Theme.AppCompat.Light">
-        <item name="cardCornerRadius">8dp</item>
-        <item name="cardElevation">4dp</item>
-        <item name="cardBackgroundColor">@color/colorBackgroundGray</item>
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">40dp</item>
-        <item name="android:layout_marginTop">12dp</item>
-        <item name="android:layout_marginBottom">10dp</item>
-    </style>
-
-
-    <style name="MineCustomTabText" parent="TextAppearance.AppCompat.Body2">
-        <item name="android:textSize">16sp</item>
-        <item name="android:fontFamily">@font/sf_prodisplay_regular</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
-    <style name="CustomTextPayButton" parent="TextAppearance.AppCompat.Body2">
-        <item name="android:textSize">18sp</item>
-        <item name="android:fontFamily">@font/sf_prodisplay_regular</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
-
-
-
 
 </resources>

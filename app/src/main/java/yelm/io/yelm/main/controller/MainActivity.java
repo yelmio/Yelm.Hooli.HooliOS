@@ -23,14 +23,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.badge.BadgeDrawable;
-import com.google.zxing.Result;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -45,14 +43,13 @@ import java.util.Locale;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
-import me.dm7.barcodescanner.zxing.ZXingScannerView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import yelm.io.yelm.basket.controller.BasketActivityOnlyDelivery;
 import yelm.io.yelm.main.news.NewNews;
 import yelm.io.yelm.main.news.NewsFromNotificationActivity;
-import yelm.io.yelm.support_stuff.Logging;
+import yelm.io.yelm.constants.Logging;
 import yelm.io.yelm.search.SearchActivity;
 import yelm.io.yelm.database_new.basket_new.BasketCart;
 import yelm.io.yelm.database_new.user_addresses.UserAddress;
@@ -60,8 +57,8 @@ import yelm.io.yelm.databinding.ActivityMainBinding;
 import yelm.io.yelm.loader.controller.LoaderActivity;
 import yelm.io.yelm.main.model.CatalogsWithProductsClass;
 import yelm.io.yelm.main.model.Modifier;
-import yelm.io.yelm.retrofit.new_api.RestAPI;
-import yelm.io.yelm.retrofit.new_api.RetrofitClientNew;
+import yelm.io.yelm.retrofit.RestAPI;
+import yelm.io.yelm.retrofit.RetrofitClient;
 import yelm.io.yelm.constants.Constants;
 import yelm.io.yelm.user_address.controller.AddressesBottomSheet;
 import yelm.io.yelm.chat.controller.ChatActivity;
@@ -70,9 +67,8 @@ import yelm.io.yelm.R;
 import yelm.io.yelm.database_new.Common;
 import yelm.io.yelm.main.news.NewsAdapter;
 import yelm.io.yelm.support_stuff.ItemOffsetDecorationRight;
-import yelm.io.yelm.retrofit.DynamicURL;
 
-public class MainActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler, AddressesBottomSheet.AddressesBottomSheetListener {
+public class MainActivity extends AppCompatActivity implements AddressesBottomSheet.AddressesBottomSheetListener {
 
     public BadgeDrawable badge;
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
@@ -300,7 +296,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     }
 
     private void getCategoriesWithProducts(String Lat, String Lon) {
-        RetrofitClientNew.
+        RetrofitClient.
                 getClient(RestAPI.URL_API_MAIN).
                 create(RestAPI.class).
                 getCategoriesWithProducts(
@@ -343,7 +339,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     }
 
     private void initNews() {
-        RetrofitClientNew.
+        RetrofitClient.
                 getClient(RestAPI.URL_API_MAIN).
                 create(RestAPI.class).
                 getNews("3",
@@ -468,22 +464,5 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         footer.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
                 (int) getResources().getDimension(R.dimen.dimen_70dp)));
         binding.storeFragments.addView(footer);
-    }
-
-    public void setScanCode(String code) {
-        DynamicURL.setPLATFORM(code);
-        Toast.makeText(this, "QRCode получен", Toast.LENGTH_SHORT).show();
-    }
-
-    private boolean checkPlatform() {
-        return (DynamicURL.getPlatformValue().equals("5f771d465f4191.76733056")
-                || DynamicURL.getPlatformValue().equals("5f8561895c51f7.73864076")
-                || DynamicURL.getPlatformValue().equals("5f5dfa9a7023c2.94067733"));
-    }
-
-    @Override
-    public void handleResult(Result rawResult) {
-        Log.d("AlexDebug", "rawResult.getText(): " + rawResult.getText());
-        DynamicURL.setPLATFORM(rawResult.getText());
     }
 }

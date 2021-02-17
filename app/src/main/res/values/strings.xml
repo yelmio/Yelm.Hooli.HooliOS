@@ -73,7 +73,7 @@
     <string name="basket_delivery">Доставка</string>
     <string name="basket_checkout">Оформить</string>
     <string name="basket_pickup">Самовывоз</string>
-    <string name="basket_address">Адрес: </string>
+    <string name="basketActivityAddress">Адрес:</string>
     <string name="basketActivityAddressPickup">Адрес самовывоза: </string>
     <string name="basketActivityProductIsOver">Нет достаточного количества товара, всего осталось</string>
     <string name="basket_receiving">Получение</string>
@@ -81,6 +81,7 @@
     <string name="basketActivityPC">шт.</string>
     <string name="basketActivityDeliveryNotAvailable">Доставка по этому адресу недоступна</string>
     <string name="basketActivityOrderMinPrice">Минимальная сумма заказа, исключая доставку, не менее -  </string>
+    <string name="basketActivityNotAvailbleAddress">нет доступных адресов</string>
 
     <string name="basketActivityFreeDelivery1">Закажите ещё на</string>
     <string name="basketActivityFreeDelivery2">для бесплатной доставки</string>
@@ -102,7 +103,7 @@
     <string name="orderActivityEnterFloor">Укажите этаж</string>
     <string name="orderActivityEnterEntrance">Укажите подъезд</string>
     <string name="orderActivityEnterFlat">Укажите квартиру</string>
-    <string name="orderActivityEnterCorrectPhone">Укажите корректный телефон</string>
+    <string name="orderActivityEnterCorrectPhone">Укажите контактный телефон</string>
 
     <!-- PaymentCardActivity -->
     <string name="paymentCardActivityOffer">Нажимая кнопку "Оплатить", Вы\n соглашаетесь с офертой</string>

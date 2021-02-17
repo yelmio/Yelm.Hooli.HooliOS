@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
-    tools:context=".payment.pages.GooglePayFragment">
+    >
 
     <include
         android:id="@+id/pwg_button"

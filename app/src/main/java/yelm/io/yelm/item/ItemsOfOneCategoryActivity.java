@@ -21,7 +21,7 @@ import yelm.io.yelm.databinding.ActivityItemsFromNewsBinding;
 import yelm.io.yelm.loader.controller.LoaderActivity;
 import yelm.io.yelm.main.adapter.ProductsNewMenuSquareImageAdapter;
 import yelm.io.yelm.main.model.Item;
-import yelm.io.yelm.support_stuff.Logging;
+import yelm.io.yelm.constants.Logging;
 
 public class ItemsOfOneCategoryActivity extends AppCompatActivity {
     ActivityItemsFromNewsBinding binding;

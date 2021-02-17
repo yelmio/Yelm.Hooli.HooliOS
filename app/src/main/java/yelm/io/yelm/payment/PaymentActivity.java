@@ -54,9 +54,9 @@ import yelm.io.yelm.loader.controller.LoaderActivity;
 import yelm.io.yelm.order.PriceConverterResponseClass;
 import yelm.io.yelm.payment.models.Transaction;
 import yelm.io.yelm.payment.response.PayApiError;
-import yelm.io.yelm.retrofit.new_api.RestAPI;
-import yelm.io.yelm.retrofit.new_api.RetrofitClientNew;
-import yelm.io.yelm.support_stuff.Logging;
+import yelm.io.yelm.retrofit.RestAPI;
+import yelm.io.yelm.retrofit.RetrofitClient;
+import yelm.io.yelm.constants.Logging;
 
 
 public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogListener {
@@ -218,7 +218,7 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
     private void convertPrice(String cardCryptogram, String cardHolderName) {
         showLoading();
         Log.d(Logging.debug, "Method convertPrice()");
-        RetrofitClientNew.
+        RetrofitClient.
                 getClient(RestAPI.URL_API_MAIN)
                 .create(RestAPI.class)
                 .convertPrice(
@@ -419,7 +419,7 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
             e.printStackTrace();
         }
         Log.d(Logging.debug, "jsonObjectItems: " + jsonObjectItems.toString());
-        RetrofitClientNew.
+        RetrofitClient.
                 getClient(RestAPI.URL_API_MAIN)
                 .create(RestAPI.class)
                 .sendOrder("3",
