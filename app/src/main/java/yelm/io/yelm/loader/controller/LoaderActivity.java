@@ -1,9 +1,12 @@
 package yelm.io.yelm.loader.controller;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -13,6 +16,7 @@ import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import com.google.android.material.snackbar.Snackbar;
 
@@ -20,14 +24,14 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Objects;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import yelm.io.yelm.R;
 import yelm.io.yelm.loader.model.ApplicationSettings;
 import yelm.io.yelm.loader.model.ChatSettingsClass;
-import yelm.io.yelm.notification.FcmMessageService;
-import yelm.io.yelm.notification.NotificationReceiver;
 import yelm.io.yelm.constants.Logging;
 import yelm.io.yelm.database_new.basket_new.BasketCartDataSource;
 import yelm.io.yelm.database_new.basket_new.BasketCartRepository;
@@ -63,25 +67,39 @@ public class LoaderActivity extends AppCompatActivity {
     public static final String ROOM_ID = "ROOM_ID";
     public static final String SHOP_ID = "SHOP_ID";
     public static final String CLIENT_ID = "CLIENT_ID";
+    public static final String NOTIFICATION_DATA = "NOTIFICATION_DATA";
 
     public static SharedPreferences settings;
     private static final String APP_PREFERENCES = "settings";
-    NotificationReceiver notificationReceiver = new NotificationReceiver();
+    //NotificationReceiver notificationReceiver = new NotificationReceiver();
 
-//    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            Log.d(Logging.debug, "LoaderActivity - onReceive: " + intent.getStringExtra(FcmMessageService.DATA_KEY));
-//
-//        }
-//    };
+
+    private BroadcastReceiver notificationReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String data = intent.getStringExtra("data");
+            Log.d("AlexDebug", "BroadcastReceiver - data: " + data);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loader);
         settings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
-        registerReceiver(notificationReceiver, new IntentFilter(FcmMessageService.ACTION_GET_DATA));
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                notificationReceiver, new IntentFilter("NOTIFICATION"));
+
+        Bundle args = getIntent().getExtras();
+        if (args != null) {
+            Log.d(Logging.debug, "LoaderActivity - Notification data: " + args.getString("data"));
+            Log.d(Logging.debug, "args: " + args.toString());
+            Log.d(Logging.debug, "NOTIFICATION_DATA: " + LoaderActivity.settings.getString(LoaderActivity.NOTIFICATION_DATA, "empty"));
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(NOTIFICATION_DATA, "").apply();
+        }
+
+        //registerReceiver(notificationReceiver, new IntentFilter(FcmMessageService.ACTION_GET_DATA));
 
 //        Log.d(Logging.debug, "Locale.getDefault().getDisplayLanguage(): " + Locale.getDefault().getDisplayLanguage());
 //        Log.d(Logging.debug, "Locale.getDefault().getLanguage(): " + Locale.getDefault().getLanguage());
@@ -268,7 +286,7 @@ public class LoaderActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        unregisterReceiver(notificationReceiver);
+        //unregisterReceiver(timeReceiver);
         super.onDestroy();
     }
 

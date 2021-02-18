@@ -29,6 +29,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.badge.BadgeDrawable;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -39,6 +40,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -62,7 +64,6 @@ import yelm.io.yelm.retrofit.RetrofitClient;
 import yelm.io.yelm.constants.Constants;
 import yelm.io.yelm.user_address.controller.AddressesBottomSheet;
 import yelm.io.yelm.chat.controller.ChatActivity;
-import yelm.io.yelm.main.adapter.ProductsNewMenuAdapter;
 import yelm.io.yelm.R;
 import yelm.io.yelm.database_new.Common;
 import yelm.io.yelm.main.news.NewsAdapter;
@@ -71,13 +72,10 @@ import yelm.io.yelm.support_stuff.ItemOffsetDecorationRight;
 public class MainActivity extends AppCompatActivity implements AddressesBottomSheet.AddressesBottomSheetListener {
 
     public BadgeDrawable badge;
-    private final CompositeDisposable compositeDisposable = new CompositeDisposable();
 
-    private String userID = LoaderActivity.settings.getString(LoaderActivity.USER_NAME, "");
     ActivityMainBinding binding;
     AddressesBottomSheet addressesBottomSheet = new AddressesBottomSheet();
 
-    private ProductsNewMenuAdapter productsAdapter;
     private ArrayList<CatalogsWithProductsClass> catalogsWithProductsList = new ArrayList<>();
     private NewsAdapter newsAdapter;
 
@@ -97,35 +95,37 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
         binding();
         getCategoriesWithProducts("0", "0");
         initNews();
         getLocationPermission();
 
-        Bundle args = getIntent().getExtras();
-        if (args != null) {
-            Log.d(Logging.debug, "MainActivity - Notification data: " + args.getString("data"));
-            String data = args.getString("data");
-            if (data != null && !data.isEmpty()) {
-                try {
-                    JSONObject jsonObj = new JSONObject(data);
-                    Log.d(Logging.debug, "jsonObj: " + jsonObj.getString("id"));
-                    Log.d(Logging.debug, "jsonObj: " + jsonObj.getString("name"));
-                    if (jsonObj.getString("name").equals("news")) {
-                        Intent intent = new Intent(MainActivity.this, NewsFromNotificationActivity.class);
-                        intent.putExtra("id", jsonObj.getString("id"));
-                        startActivity(intent);
-                    } else if (jsonObj.getString("name").equals("items")) {
-                        //Intent intent = new Intent(MainActivity.this, NewsFromNotificationActivity.class);
-                        //intent.putExtra("id", jsonObj.getString("id"));
-                        //startActivity(intent);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+//        getAppToken();
+//        Bundle args = getIntent().getExtras();
+//        if (args != null) {
+//            Log.d(Logging.debug, "MainActivity - Notification data: " + args.getString("data"));
+//            String data = args.getString("data");
+//            if (data != null && !data.isEmpty()) {
+//                try {
+//                    JSONObject jsonObj = new JSONObject(data);
+//                    Log.d(Logging.debug, "jsonObj: " + jsonObj.getString("id"));
+//                    Log.d(Logging.debug, "jsonObj: " + jsonObj.getString("name"));
+//                    if (jsonObj.getString("name").equals("news")) {
+//                        Intent intent = new Intent(MainActivity.this, NewsFromNotificationActivity.class);
+//                        intent.putExtra("id", jsonObj.getString("id"));
+//                        startActivity(intent);
+//                    } else if (jsonObj.getString("name").equals("items")) {
+//                        //Intent intent = new Intent(MainActivity.this, NewsFromNotificationActivity.class);
+//                        //intent.putExtra("id", jsonObj.getString("id"));
+//                        //startActivity(intent);
+//                    }
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+
+
     }
 
     private void binding() {
@@ -239,7 +239,7 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
                 String userStreet = getUserStreet(locationResult.getLastLocation());
                 Log.d(Logging.debug, "Method getUserCurrentLocation() - userStreet: " + userStreet);
 
-                if (userStreet.trim().isEmpty()){
+                if (userStreet.trim().isEmpty()) {
                     performIfNoLocationPermission();
                     return;
                 }
@@ -312,7 +312,9 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
                                 catalogsWithProductsList = response.body();
-                                Constants.ShopID = catalogsWithProductsList.get(0).getShopID();
+                                if (catalogsWithProductsList.size()!=0){
+                                    Constants.ShopID = catalogsWithProductsList.get(0).getShopID();
+                                }
                                 Log.d(Logging.debug, "Method getCategoriesWithProducts() - Constants.ShopID: " + Constants.ShopID);
                                 redrawProducts();
                             } else {
@@ -328,6 +330,20 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
                     public void onFailure(@NotNull Call<ArrayList<CatalogsWithProductsClass>> call, @NotNull Throwable t) {
                         Log.e(Logging.error, "Method getCategoriesWithProducts() - failure: " + t.toString());
                     }
+                });
+    }
+
+    private void getAppToken() {
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        Log.e(Logging.error, "Fetching FCM registration token failed", task.getException());
+                        return;
+                    }
+                    // Get new FCM registration token
+                    String token = task.getResult();
+
+                    Log.d(Logging.debug, "FCM: token:" + token);
                 });
     }
 
@@ -352,30 +368,8 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
                                 List<NewNews> newsList = response.body();
-//                                if (newsList.size() == 1) {
-//                                    binding.recyclerCards.setVisibility(View.GONE);
-//                                    if (newsList.get(0).getName().trim().isEmpty()) {
-//                                        Picasso.get()
-//                                                .load(newsList.get(0).getImage().get(0))
-//                                                .noPlaceholder()
-//                                                .into(binding.mainTopImage);
-//                                    } else {
-//                                        Picasso.get()
-//                                                .load(newsList.get(0).getImage().get(0))
-//                                                .noPlaceholder()
-//                                                .transform(new GradientTransformation(MainActivity.this))
-//                                                .into(binding.mainTopImage);
-//                                        binding.name.setText(newsList.get(0).getName());
-//                                    }
-//                                    binding.cardTopImage.setVisibility(View.VISIBLE);
-//                                    binding.cardTopImage.setOnClickListener((v) -> {
-//                                        //setLinks(stockList.get(0).getAttachments());
-//                                    });
-//                                } else {
-                                //binding.cardTopImage.setVisibility(View.GONE);
                                 newsAdapter = new NewsAdapter(MainActivity.this, newsList);
                                 binding.recyclerCards.setAdapter(newsAdapter);
-                                //}
                             } else {
                                 Log.e(Logging.error, "Method initNews() - by some reason response is null!");
                             }
@@ -390,7 +384,6 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
                         Log.e(Logging.error, "Method initNews() - failure: " + t.toString());
                     }
                 });
-
     }
 
     @Override
@@ -447,7 +440,7 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
     synchronized private void redrawProducts() {
         Log.d(Logging.debug, "Method redrawProducts()");
         for (Fragment fragment : getSupportFragmentManager().getFragments()) {
-            if (!fragment.getTag().equals("addressBottomSheet")) {
+            if (!Objects.equals(fragment.getTag(), "addressBottomSheet")) {
                 getSupportFragmentManager().beginTransaction().remove(fragment).commitAllowingStateLoss();
             }
         }

@@ -144,7 +144,7 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
         String cardHolderName = editTextCardHolderName.getText().toString();
 
         //testing
-        sendOrder();
+        //sendOrder();
         //testing
 
         CPCardApi api = new CPCardApi(this);

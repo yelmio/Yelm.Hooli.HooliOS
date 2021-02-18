@@ -123,12 +123,11 @@ public class OrderByIDActivity extends AppCompatActivity implements AppBarLayout
                                     binding.collapsingToolbar.setExpandedTitleColor(getResources().getColor(R.color.redColor));
                                 }
 
-
+                                //need for correct getting counts of items cuz server BD gives weird result >_<
                                 HashMap<String, String> mapItems = new HashMap<>();
-                                for (OrderItemPOJO itemPOJO: response.body().getItems()){
+                                for (OrderItemPOJO itemPOJO : response.body().getItems()) {
                                     mapItems.put(itemPOJO.getId(), itemPOJO.getCount());
                                 }
-
                                 orderProductAdapter = new OrderProductAdapter(OrderByIDActivity.this,
                                         response.body().getItemsInfo(),
                                         mapItems

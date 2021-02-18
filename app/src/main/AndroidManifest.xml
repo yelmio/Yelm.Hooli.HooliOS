@@ -14,10 +14,9 @@
     <uses-permission android:name="com.sec.android.provider.badge.permission.WRITE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <uses-feature android:name="android.hardware.camera.any" />
-
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.CAMERA" />
 
     <application
@@ -32,17 +31,6 @@
         <activity
             android:name=".order.user_order.OrderByIDActivity"
             android:screenOrientation="portrait" />
-
-        <service
-            android:name=".notification.ForegroundService"
-            android:enabled="true"
-            android:exported="true" />
-
-        <receiver
-            android:name=".notification.NotificationReceiver"
-            android:enabled="true"
-            android:exported="true" />
-
         <activity
             android:name=".main.news.NewsFromNotificationActivity"
             android:screenOrientation="portrait" />
@@ -75,10 +63,29 @@
             android:name=".chat.controller.ChatActivity"
             android:screenOrientation="portrait" />
 
+
+
+        <activity
+            android:name=".loader.controller.LoaderActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/SplashTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".payment.PaymentActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".main.controller.MainActivity"
+            android:screenOrientation="portrait" /> <!-- This element is required in order to use the PaymentsClient -->
+
         <service
             android:name=".notification.FcmMessageService"
             android:enabled="true"
-            android:exported="true">
+            android:directBootAware="true"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
@@ -90,22 +97,7 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorYelmMediaDark" />
-        <activity
-            android:name=".loader.controller.LoaderActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/SplashTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".payment.PaymentActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".main.controller.MainActivity"
-            android:screenOrientation="portrait" /> <!-- This element is required in order to use the PaymentsClient -->
         <meta-data
             android:name="com.google.android.gms.wallet.api.enabled"
             android:value="true" />
