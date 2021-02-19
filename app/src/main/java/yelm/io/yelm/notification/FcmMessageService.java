@@ -75,42 +75,12 @@ public class FcmMessageService extends FirebaseMessagingService {
         }};
     }
 
-
-    private void sendMessageToActivity(String data) {
-
-//        Intent sendLevel = new Intent();
-//        sendLevel.setAction("GET_WORK_TIME");
-//        sendLevel.putExtra( "WORK_TIME",time);
-//        sendBroadcast(sendLevel);
-
-        Intent intent = new Intent("NOTIFICATION");
-        intent.putExtra("data", data);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-    }
-
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        //showNotification(remoteMessage.getData().get("message"));
-        //showNotification(remoteMessage.getNotification().getBody());
-        // TODO(developer): Handle FCM messages here.
-        // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
+
         Log.d(Logging.debug, "From: " + remoteMessage.getFrom());
         Log.d(Logging.debug, "remoteMessage.getData(): " + remoteMessage.getData().toString());
         Log.d(Logging.debug, "remoteMessage.toString(): " + remoteMessage.toString());
-
-        //sendMessageToActivity("broadcast DATA");
-
-        if (remoteMessage.getData().size() > 0) {
-            // Log.d(Logging.debug, "Message data payload: " + remoteMessage.getData());
-
-            if (/* Check if data needs to be processed by long running job */ true) {
-                // For long-running tasks (10 seconds or more) use Firebase Job Dispatcher.
-                //scheduleJob();
-            } else {
-                // Handle message within 10 seconds
-                //handleNow();
-            }
-        }
 
         // Check if message contains a notification payload.
         if (remoteMessage.getNotification() != null) {
@@ -118,9 +88,6 @@ public class FcmMessageService extends FirebaseMessagingService {
             Log.d("AlexDebug", "Message Notification Title: " + remoteMessage.getNotification().getTitle());
         }
         showNotification(remoteMessage);
-
-        // Also if you intend on generating your own notifications as a result of a received FCM
-        // message, here is where that should be initiated. See sendNotification method below.
     }
 
     private void showNotification(RemoteMessage remoteMessage) {

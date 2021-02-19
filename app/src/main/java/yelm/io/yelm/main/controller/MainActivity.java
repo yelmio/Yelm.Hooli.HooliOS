@@ -28,7 +28,10 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.badge.BadgeDrawable;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.jetbrains.annotations.NotNull;
@@ -96,11 +99,12 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         binding();
-        getCategoriesWithProducts("0", "0");
+        //getCategoriesWithProducts("0", "0");
         initNews();
-        getLocationPermission();
+        //getLocationPermission();
+        getAppToken();
 
-//        getAppToken();
+
 //        Bundle args = getIntent().getExtras();
 //        if (args != null) {
 //            Log.d(Logging.debug, "MainActivity - Notification data: " + args.getString("data"));
@@ -312,7 +316,7 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
                                 catalogsWithProductsList = response.body();
-                                if (catalogsWithProductsList.size()!=0){
+                                if (catalogsWithProductsList.size() != 0) {
                                     Constants.ShopID = catalogsWithProductsList.get(0).getShopID();
                                 }
                                 Log.d(Logging.debug, "Method getCategoriesWithProducts() - Constants.ShopID: " + Constants.ShopID);

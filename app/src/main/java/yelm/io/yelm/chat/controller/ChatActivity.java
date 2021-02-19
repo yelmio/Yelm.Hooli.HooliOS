@@ -107,20 +107,22 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
         binding();
         tuneSocketConnection();
         getChatHistory();
+
+
+
+
     }
 
     private void tuneSocketConnection() {
         try {
             IO.Options options = new IO.Options();
-            String token = "token=" + LoaderActivity.settings.getString(LoaderActivity.API_TOKEN, "")
+            options.query = "token=" + LoaderActivity.settings.getString(LoaderActivity.API_TOKEN, "")
                     + "&room_id=" + LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, "")
                     + "&user=Client";
-            options.query = token;
             socket = IO.socket(CHAT_SERVER_URL, options);
             socket.on("room." + LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, ""), onLogin);
             socket.connect();
             Log.d("AlexDebug", "room: " + LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, ""));
-
             Log.d("AlexDebug", "connected!");
         } catch (URISyntaxException e) {
             e.printStackTrace();
@@ -229,27 +231,21 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
 
     private String ConvertingImageToBase64(Bitmap bitmap) {
         Log.d("AlexDebug", "ConvertingImageToBase64()");
-
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 40, baos);
         byte[] imageBytes = baos.toByteArray();
         bitmap.recycle();
-
-        //Log.d("AlexDebug", "imageBytes " + Arrays.toString(imageBytes));
         Log.d("AlexDebug", "imageBytes - length " + imageBytes.length);
-
         String imageString = Base64.encodeToString(imageBytes, Base64.DEFAULT);
-        //StringBuilder builder = new StringBuilder("data:image/png;base64,").append(imageString);
-        //Log.d("AlexDebug", "imageString " + imageString);
         Log.d("AlexDebug", "Base64.encodeToString - imageString.length " + imageString.length());
-        //Log.d("AlexDebug", "builder " + builder);
+
         //byte[] byteArray = Base64.decode(imageString, Base64.DEFAULT);
         //Log.d(Logging.debug, "Arrays.toString(byteArray) " + Arrays.toString(byteArray));
         //byte[] decodedString = Base64.decode(imageString, Base64.DEFAULT);
-        //Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);        //binding.imageView.setImageBitmap(decodedByte);
+        //Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+        // binding.imageView.setImageBitmap(decodedByte);
 
         return imageString;
-        //return "data:image/png;base64,"+imageString;
     }
 
     private void getChatHistory() {
@@ -481,23 +477,9 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
 
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
             if (data != null) {
-
-//                try {
-//                    Bitmap thumbnail = MediaStore.Images.Media.getBitmap(
-//                            getContentResolver(), imageUri);
-//                    Log.d(Logging.debug, "Bitmap: " + bitmap.getByteCount());
-//
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                    Log.d(Logging.debug, "Bitmap error: " + e.getMessage());
-//
-//                }
-
                 Bitmap bitmap = (Bitmap) data.getExtras().get("data");
                 Log.d(Logging.debug, "Bitmap: " + bitmap.getByteCount());
-
                 new Thread(() -> socketSendPhoto(bitmap)).start();
-
                 File dir = new File(Environment.getExternalStorageDirectory() + "/" + getText(R.string.app_name));
                 if (!dir.exists()) {
                     dir.mkdirs();
@@ -550,14 +532,10 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
 
     @Override
     public void onSendPictures(HashMap<Integer, String> picturesMap) {
-        ArrayList<String> images = new ArrayList<>();
+        Log.d(Logging.debug, "onSendPictures()");
         for (Map.Entry<Integer, String> picture : picturesMap.entrySet()) {
             Log.d("AlexDebug", "picture.getKey(): " + picture.getKey());
             Log.d("AlexDebug", "picture.getValue(): " + picture.getValue());
-            images.add(picture.getValue());
-        }
-        for (String image : images) {
-            Log.d(Logging.debug, "onSendPictures()");
             Calendar current = GregorianCalendar.getInstance();
             chatContentList.add(new ChatContent(
                     LoaderActivity.settings.getString(LoaderActivity.CLIENT_ID, ""),
@@ -565,14 +543,14 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
                     "",
                     printedFormatterDate.format(current.getTime()),
                     "images",
-                    image,
+                    picture.getValue(),
                     null,
                     true,
                     "0"));
             chatAdapter.notifyDataSetChanged();
             binding.chatRecycler.smoothScrollToPosition(chatContentList.size() - 1);
             new Thread(() -> {
-                socketSendPictures(image);
+                socketSendPictures(picture.getValue());
             }).start();
         }
     }
@@ -580,9 +558,8 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
     private void socketSendPictures(String image) {
         JSONObject jsonObjectItem = new JSONObject();
         JSONArray picturesArray = new JSONArray();
-        Uri uri = Uri.fromFile(new File(image));
         try {
-            Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.fromFile(new File(image)));
             Log.d(Logging.debug, "socketSendPictures: bitmap.getByteCount() " + bitmap.getByteCount());
             String base64 = ConvertingImageToBase64(bitmap);
             JSONObject pictureObject = new JSONObject();
@@ -600,7 +577,6 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
-
     }
 
     private void socketSendPhoto(Bitmap bitmap) {

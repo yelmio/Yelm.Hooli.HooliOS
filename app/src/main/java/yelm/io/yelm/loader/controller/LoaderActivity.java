@@ -68,27 +68,16 @@ public class LoaderActivity extends AppCompatActivity {
 
     public static SharedPreferences settings;
     private static final String APP_PREFERENCES = "settings";
-    //NotificationReceiver notificationReceiver = new NotificationReceiver();
-
-    private BroadcastReceiver notificationReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String data = intent.getStringExtra("data");
-            Log.d("AlexDebug", "BroadcastReceiver - data: " + data);
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loader);
         settings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
-        //LocalBroadcastManager.getInstance(this).registerReceiver(notificationReceiver, new IntentFilter("NOTIFICATION"));
 
         Bundle args = getIntent().getExtras();
         if (args != null) {
-//           Log.d(Logging.debug, "LoaderActivity - name: " + args.getString("name"));
-//            Log.d(Logging.debug, "LoaderActivity - id: " + args.getString("id"));
+            Log.d(Logging.debug, "LoaderActivity - item: " + args.getString("item"));
             Log.d(Logging.debug, "LoaderActivity - args: " + args.toString());
             Log.d(Logging.debug, "LoaderActivity - Notification data: " + args.getString("data"));
         }
@@ -269,16 +258,6 @@ public class LoaderActivity extends AppCompatActivity {
                     .setAction(R.string.loaderActivityUpdateNetworkConnection, view -> init());
             snackbar.show();
         }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
     }
 
     private void getChatSettings(String login) {

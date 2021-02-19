@@ -80,13 +80,12 @@ public class PickImageBottomSheet extends BottomSheetDialogFragment {
 
         String absolutePathOfImage = null;
         String[] projection = {MediaStore.MediaColumns.DATA, MediaStore.Images.Media.BUCKET_DISPLAY_NAME};
-        // String[] projection = {MediaStore.MediaColumns.DATA, MediaStore.Images.Media.DISPLAY_NAME};
 
-        //final String orderBy = MediaStore.Images.Media.DATE_TAKEN;
+        final String orderBy = MediaStore.Images.Media.DATE_ADDED;
         cursor = getContext().getApplicationContext().getContentResolver()
-                .query(uri, projection, null, null, MediaStore.Images.Media.DEFAULT_SORT_ORDER);
+                .query(uri, projection, null, null, orderBy + " DESC");
 //            cursor = getApplicationContext().getContentResolver()
-//                    .query(uri, projection, null, null, orderBy + " DESC");
+//                    .query(uri, projection, null, null, orderBy + " DESC");  orderBy + " ASC"
 
         columnIndexData = cursor != null ? cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA) : 0;
         columnIndexFolderName = cursor != null ? cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME) : 0;
