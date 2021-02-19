@@ -112,7 +112,6 @@
             android:layout_height="40dp"
             android:gravity="start|center_vertical"
             android:singleLine="true"
-            android:text="TextView"
             android:textColor="@color/colorText"
             android:textSize="14sp" />
 
@@ -128,13 +127,12 @@
                 android:background="@drawable/address_back_view_blue"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingStart="6dp"
-                android:paddingEnd="6dp">
+                android:paddingStart="6dp">
 
                 <ImageButton
                     android:id="@+id/removeProduct"
                     android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@android:color/transparent"
                     android:visibility="gone"
@@ -157,9 +155,8 @@
 
                 <ImageButton
                     android:id="@+id/addProduct"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_marginStart="4dp"
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@android:color/transparent"
                     android:visibility="visible"
@@ -177,7 +174,6 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="end|bottom"
-                    android:text="TextView"
                     android:textColor="@color/colorTextGray"
                     android:textSize="12sp"
                     android:theme="@style/ProDisplayTextStyle"

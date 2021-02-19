@@ -56,8 +56,6 @@ import yelm.io.yelm.retrofit.RetrofitClient;
 public class LoaderActivity extends AppCompatActivity {
 
     public static final String USER_NAME = "USER_NAME";
-    public static final String ALLOW_PAYMENTS = "ALLOW_PAYMENTS";
-    public static final String CATALOG_STYLE = "CATALOG_STYLE";
     public static final String MIN_PRICE_FOR_FREE_DELIVERY = "MIN_PRICE_FOR_FREE_DELIVERY";
     public static final String MIN_ORDER_PRICE = "MIN_ORDER_PRICE";
     public static final String PRICE_IN = "PRICE_IN";
@@ -67,12 +65,10 @@ public class LoaderActivity extends AppCompatActivity {
     public static final String ROOM_ID = "ROOM_ID";
     public static final String SHOP_ID = "SHOP_ID";
     public static final String CLIENT_ID = "CLIENT_ID";
-    public static final String NOTIFICATION_DATA = "NOTIFICATION_DATA";
 
     public static SharedPreferences settings;
     private static final String APP_PREFERENCES = "settings";
     //NotificationReceiver notificationReceiver = new NotificationReceiver();
-
 
     private BroadcastReceiver notificationReceiver = new BroadcastReceiver() {
         @Override
@@ -87,19 +83,15 @@ public class LoaderActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loader);
         settings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
-        LocalBroadcastManager.getInstance(this).registerReceiver(
-                notificationReceiver, new IntentFilter("NOTIFICATION"));
+        //LocalBroadcastManager.getInstance(this).registerReceiver(notificationReceiver, new IntentFilter("NOTIFICATION"));
 
         Bundle args = getIntent().getExtras();
         if (args != null) {
+//           Log.d(Logging.debug, "LoaderActivity - name: " + args.getString("name"));
+//            Log.d(Logging.debug, "LoaderActivity - id: " + args.getString("id"));
+            Log.d(Logging.debug, "LoaderActivity - args: " + args.toString());
             Log.d(Logging.debug, "LoaderActivity - Notification data: " + args.getString("data"));
-            Log.d(Logging.debug, "args: " + args.toString());
-            Log.d(Logging.debug, "NOTIFICATION_DATA: " + LoaderActivity.settings.getString(LoaderActivity.NOTIFICATION_DATA, "empty"));
-            SharedPreferences.Editor editor = settings.edit();
-            editor.putString(NOTIFICATION_DATA, "").apply();
         }
-
-        //registerReceiver(notificationReceiver, new IntentFilter(FcmMessageService.ACTION_GET_DATA));
 
 //        Log.d(Logging.debug, "Locale.getDefault().getDisplayLanguage(): " + Locale.getDefault().getDisplayLanguage());
 //        Log.d(Logging.debug, "Locale.getDefault().getLanguage(): " + Locale.getDefault().getLanguage());
@@ -210,13 +202,13 @@ public class LoaderActivity extends AppCompatActivity {
                                 editor.apply();
 
                                 Intent intent = new Intent(LoaderActivity.this, MainActivity.class);
-                                Bundle args = getIntent().getExtras();
-                                String data = "";
-                                if (args != null) {
-                                    Log.d(Logging.debug, "LoaderActivity - Notification data: " + args.getString("data"));
-                                    data = args.getString("data");
-                                }
-                                intent.putExtra("data", data);
+//                                Bundle args = getIntent().getExtras();
+//                                String data = "";
+//                                if (args != null) {
+//                                    Log.d(Logging.debug, "LoaderActivity - Notification data: " + args.getString("data"));
+//                                    data = args.getString("data");
+//                                }
+//                                intent.putExtra("data", data);
                                 startActivity(intent);
                                 finish();
                             } else {
@@ -286,7 +278,6 @@ public class LoaderActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        //unregisterReceiver(timeReceiver);
         super.onDestroy();
     }
 

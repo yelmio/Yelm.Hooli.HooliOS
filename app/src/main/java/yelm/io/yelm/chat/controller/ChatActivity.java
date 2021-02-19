@@ -134,6 +134,8 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
             ChatActivity.this.runOnUiThread(() -> {
                 Log.d("AlexDebug", "received");
                 JSONObject data = (JSONObject) args[0];
+                Log.d("AlexDebug", "data: " + data.toString());
+
                 if (data.has("role")) {
                     try {
                         String role = data.getString("role");
@@ -226,31 +228,28 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
     };
 
     private String ConvertingImageToBase64(Bitmap bitmap) {
+        Log.d("AlexDebug", "ConvertingImageToBase64()");
+
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 40, baos);
         byte[] imageBytes = baos.toByteArray();
         bitmap.recycle();
 
-        Log.d("AlexDebug", "imageBytes " + Arrays.toString(imageBytes));
-        Log.d("AlexDebug", "length " + imageBytes.length);
-
+        //Log.d("AlexDebug", "imageBytes " + Arrays.toString(imageBytes));
+        Log.d("AlexDebug", "imageBytes - length " + imageBytes.length);
 
         String imageString = Base64.encodeToString(imageBytes, Base64.DEFAULT);
         //StringBuilder builder = new StringBuilder("data:image/png;base64,").append(imageString);
-        Log.d("AlexDebug", "imageString " + imageString);
-        Log.d("AlexDebug", "imageString.length " + imageString.length());
+        //Log.d("AlexDebug", "imageString " + imageString);
+        Log.d("AlexDebug", "Base64.encodeToString - imageString.length " + imageString.length());
         //Log.d("AlexDebug", "builder " + builder);
         //byte[] byteArray = Base64.decode(imageString, Base64.DEFAULT);
         //Log.d(Logging.debug, "Arrays.toString(byteArray) " + Arrays.toString(byteArray));
-
-
         //byte[] decodedString = Base64.decode(imageString, Base64.DEFAULT);
-        //Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-        //binding.imageView.setImageBitmap(decodedByte);
+        //Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);        //binding.imageView.setImageBitmap(decodedByte);
 
         return imageString;
         //return "data:image/png;base64,"+imageString;
-
     }
 
     private void getChatHistory() {
@@ -497,7 +496,7 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
                 Bitmap bitmap = (Bitmap) data.getExtras().get("data");
                 Log.d(Logging.debug, "Bitmap: " + bitmap.getByteCount());
 
-                new Thread(()->socketSendPhoto(bitmap)).start();
+                new Thread(() -> socketSendPhoto(bitmap)).start();
 
                 File dir = new File(Environment.getExternalStorageDirectory() + "/" + getText(R.string.app_name));
                 if (!dir.exists()) {
@@ -558,6 +557,7 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
             images.add(picture.getValue());
         }
         for (String image : images) {
+            Log.d(Logging.debug, "onSendPictures()");
             Calendar current = GregorianCalendar.getInstance();
             chatContentList.add(new ChatContent(
                     LoaderActivity.settings.getString(LoaderActivity.CLIENT_ID, ""),
@@ -572,35 +572,35 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
             chatAdapter.notifyDataSetChanged();
             binding.chatRecycler.smoothScrollToPosition(chatContentList.size() - 1);
             new Thread(() -> {
-                socketSendPictures(images);
+                socketSendPictures(image);
             }).start();
         }
     }
 
-    private void socketSendPictures(ArrayList<String> images) {
+    private void socketSendPictures(String image) {
         JSONObject jsonObjectItem = new JSONObject();
         JSONArray picturesArray = new JSONArray();
-        for (String imageUri : images) {
-            Uri uri = Uri.fromFile(new File(imageUri));
-            try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
-                String base64 = ConvertingImageToBase64(bitmap);
-                JSONObject pictureObject = new JSONObject();
-                pictureObject.put("image", base64);
-                picturesArray.put(pictureObject);
-                jsonObjectItem.put("room_id", LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, ""));
-                jsonObjectItem.put("from_whom", LoaderActivity.settings.getString(LoaderActivity.CLIENT_ID, ""));
-                jsonObjectItem.put("to_whom", LoaderActivity.settings.getString(LoaderActivity.SHOP_ID, ""));
-                jsonObjectItem.put("message", "");
-                jsonObjectItem.put("items", "{}");
-                jsonObjectItem.put("type", "images");
-                jsonObjectItem.put("platform", RestAPI.PLATFORM_NUMBER);
-                jsonObjectItem.put("images", picturesArray.toString());
-                socket.emit("room." + LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, ""), jsonObjectItem);
-            } catch (IOException | JSONException e) {
-                e.printStackTrace();
-            }
+        Uri uri = Uri.fromFile(new File(image));
+        try {
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+            Log.d(Logging.debug, "socketSendPictures: bitmap.getByteCount() " + bitmap.getByteCount());
+            String base64 = ConvertingImageToBase64(bitmap);
+            JSONObject pictureObject = new JSONObject();
+            pictureObject.put("image", base64);
+            picturesArray.put(pictureObject);
+            jsonObjectItem.put("room_id", LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, ""));
+            jsonObjectItem.put("from_whom", LoaderActivity.settings.getString(LoaderActivity.CLIENT_ID, ""));
+            jsonObjectItem.put("to_whom", LoaderActivity.settings.getString(LoaderActivity.SHOP_ID, ""));
+            jsonObjectItem.put("message", "");
+            jsonObjectItem.put("items", "{}");
+            jsonObjectItem.put("type", "images");
+            jsonObjectItem.put("platform", RestAPI.PLATFORM_NUMBER);
+            jsonObjectItem.put("images", picturesArray.toString());
+            socket.emit("room." + LoaderActivity.settings.getString(LoaderActivity.ROOM_ID, ""), jsonObjectItem);
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
         }
+
     }
 
     private void socketSendPhoto(Bitmap bitmap) {

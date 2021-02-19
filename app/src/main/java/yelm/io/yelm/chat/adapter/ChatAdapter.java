@@ -1,8 +1,10 @@
 package yelm.io.yelm.chat.adapter;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -30,6 +32,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
@@ -52,6 +56,7 @@ import yelm.io.yelm.database_new.Common;
 import yelm.io.yelm.database_new.basket_new.BasketCart;
 import yelm.io.yelm.item.ItemActivity;
 import yelm.io.yelm.loader.controller.LoaderActivity;
+import yelm.io.yelm.order.OrderActivity;
 import yelm.io.yelm.order.user_order.OrderByIDActivity;
 import yelm.io.yelm.constants.Logging;
 import yelm.io.yelm.support_stuff.ScreenDimensions;
@@ -69,7 +74,12 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     ScreenDimensions screenDimensions;
     int widthFixedPortrait = 1;
     int widthFixedLandscape = 1;
+    private static final String[] READ_WRITE_EXTERNAL_PERMISSIONS = new String[]{
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+    };
 
+    private static final int REQUEST_PERMISSIONS_READ_WRITE_STORAGE = 333;
 
     public ChatAdapter(Context context, ArrayList<ChatContent> chatContentList) {
         this.chatContentList = chatContentList;
@@ -285,9 +295,6 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 newWight = widthFixedLandscape;
             }
             newHeight = (int) (newWight / ratio);
-//                if (newWight > (screenDimensions.getWidthDP() - 64) * screenDimensions.getScreenDensity()) {
-//                    newWight = (int) ((screenDimensions.getWidthDP() - 64) * screenDimensions.getScreenDensity());
-//                }
             Log.d(Logging.debug, "ratio " + ratio);
             Log.d(Logging.debug, "newHeight " + newHeight);
             Log.d(Logging.debug, "newWight " + newWight);
@@ -306,7 +313,15 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
+    private boolean hasReadExternalStoragePermission() {
+        int result = ContextCompat
+                .checkSelfPermission(context.getApplicationContext(), READ_WRITE_EXTERNAL_PERMISSIONS[0]);
+        return result == PackageManager.PERMISSION_GRANTED;
+    }
+
     private void setImageOuter(@NonNull PictureHolder holder, ChatContent chatContent) {
+
+
         Log.d(Logging.debug, "image: " + chatContent.getImage());
         Picasso.get().load(chatContent.getImage()).into(new Target() {
             @Override
@@ -388,49 +403,61 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private void popupMenu(Context context, View view, String image, boolean inner) {
         Log.d(Logging.debug, "image: " + image);
 
+        if (!hasReadExternalStoragePermission()){
+            ActivityCompat.requestPermissions((Activity) context, READ_WRITE_EXTERNAL_PERMISSIONS, REQUEST_PERMISSIONS_READ_WRITE_STORAGE);
+        }
+
         PopupMenu popupMenu = new PopupMenu(context, view);
         popupMenu.inflate(R.menu.popup_menu);
         if (inner) {
             popupMenu.setOnMenuItemClickListener(menuItem -> {
-                if (menuItem.getItemId() == R.id.save) {
-                    new Thread(() -> {
-                        Uri uri = Uri.fromFile(new File(image));
-                        Log.d(Logging.debug, "uri: " + uri.getPath());
-                        Bitmap bitmap;
-                        try {
-                            bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
-                            saveImage(bitmap);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            Log.d(Logging.debug, "IOException: " + e.getMessage());
-                        }
-                    }).start();
-                    Toast.makeText(context, context.getText(R.string.chatActivitySavedImage), Toast.LENGTH_SHORT).show();
-                    return true;
+                if (hasReadExternalStoragePermission()) {
+                    if (menuItem.getItemId() == R.id.save) {
+                        new Thread(() -> {
+                            Uri uri = Uri.fromFile(new File(image));
+                            Log.d(Logging.debug, "uri: " + uri.getPath());
+                            Bitmap bitmap;
+                            try {
+                                bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
+                                saveImage(bitmap);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                Log.d(Logging.debug, "IOException: " + e.getMessage());
+                            }
+                        }).start();
+                        Toast.makeText(context, context.getText(R.string.chatActivitySavedImage), Toast.LENGTH_SHORT).show();
+                        return true;
+                    }
+                } else {
+                    showToast(context.getResources().getText(R.string.chatActivityRequestStoragePermissionForSaveImages).toString());
                 }
                 return true;
             });
         } else {
             popupMenu.setOnMenuItemClickListener(menuItem -> {
-                if (menuItem.getItemId() == R.id.save) {
-                    Picasso.get().load(image).into(new Target() {
-                        @Override
-                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                            saveImage(bitmap);
-                            Toast.makeText(context, context.getText(R.string.chatActivitySavedImage), Toast.LENGTH_SHORT).show();
-                        }
+                if (hasReadExternalStoragePermission()) {
+                    if (menuItem.getItemId() == R.id.save) {
+                        Picasso.get().load(image).into(new Target() {
+                            @Override
+                            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                                saveImage(bitmap);
+                                Toast.makeText(context, context.getText(R.string.chatActivitySavedImage), Toast.LENGTH_SHORT).show();
+                            }
 
-                        @Override
-                        public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-                            e.printStackTrace();
-                            Log.d(Logging.debug, "IOException: " + e.getMessage());
-                        }
+                            @Override
+                            public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+                                e.printStackTrace();
+                                Log.d(Logging.debug, "IOException: " + e.getMessage());
+                            }
 
-                        @Override
-                        public void onPrepareLoad(Drawable placeHolderDrawable) {
-                        }
-                    });
-                    return true;
+                            @Override
+                            public void onPrepareLoad(Drawable placeHolderDrawable) {
+                            }
+                        });
+                        return true;
+                    }
+                } else {
+                    showToast(context.getResources().getText(R.string.chatActivityRequestStoragePermissionForSaveImages).toString());
                 }
                 return true;
             });
@@ -576,7 +603,6 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             nameSender = itemView.findViewById(R.id.nameSender);
             date = itemView.findViewById(R.id.date);
             image = itemView.findViewById(R.id.image);
-
         }
     }
 
@@ -603,6 +629,11 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             countItemsLayout = itemView.findViewById(R.id.countItemsLayout);
             countItemInCart = itemView.findViewById(R.id.countItemInCart);
         }
+    }
+
+    public void showToast(String message) {
+        Log.d(Logging.debug, "message: " + message);
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override

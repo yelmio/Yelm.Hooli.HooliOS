@@ -35,11 +35,6 @@ import yelm.io.yelm.constants.Logging;
 public class FcmMessageService extends FirebaseMessagingService {
 
     private static final int NOTIFY_ID = 101;
-    public static final String ACTION_GET_DATA = "notification.RESPONSE";
-    public static final String DATA_KEY = "data";
-    public static SharedPreferences settings;
-    private static final String APP_PREFERENCES = "settings";
-    public static final String NOTIFICATION_DATA = "NOTIFICATION_DATA";
 
     @Override
     public void onNewToken(String s) {
@@ -80,26 +75,6 @@ public class FcmMessageService extends FirebaseMessagingService {
         }};
     }
 
-//    public void sendBroadcastNotification(String data) {
-//        Log.d(Logging.debug, "Sending broadcast notification: " + data);
-//        Intent intentBroadcast = new Intent(ACTION_GET_DATA);
-//        intentBroadcast.putExtra(DATA_KEY, data);
-//        sendBroadcast(intentBroadcast);
-//    }
-
-//    @Override
-//    public void handleIntent(Intent intent) {
-//        super.handleIntent(intent);
-//        Log.d(Logging.debug, "handleIntent");
-//        Log.d(Logging.debug, "intent: " + intent.getStringExtra("data"));
-//
-//        Intent responseIntent = new Intent();
-//        responseIntent.setAction(ACTION_GET_DATA);
-//        responseIntent.addCategory(Intent.CATEGORY_DEFAULT);
-//        responseIntent.putExtra(DATA_KEY, "test");
-//        sendBroadcast(responseIntent);
-//    }
-
 
     private void sendMessageToActivity(String data) {
 
@@ -123,12 +98,7 @@ public class FcmMessageService extends FirebaseMessagingService {
         Log.d(Logging.debug, "remoteMessage.getData(): " + remoteMessage.getData().toString());
         Log.d(Logging.debug, "remoteMessage.toString(): " + remoteMessage.toString());
 
-        sendMessageToActivity("broadcast DATA");
-
-        settings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putString(NOTIFICATION_DATA, "data").apply();
-        // Check if message contains a data payload.
+        //sendMessageToActivity("broadcast DATA");
 
         if (remoteMessage.getData().size() > 0) {
             // Log.d(Logging.debug, "Message data payload: " + remoteMessage.getData());
@@ -156,7 +126,7 @@ public class FcmMessageService extends FirebaseMessagingService {
     private void showNotification(RemoteMessage remoteMessage) {
 
         Intent i = new Intent(this, LoaderActivity.class);
-        i.putExtra("data", "text");
+        i.putExtra("data", remoteMessage.getData().toString());
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 333, i, PendingIntent.FLAG_UPDATE_CURRENT);
 //FLAG_ONE_SHOT       FLAG_UPDATE_CURRENT

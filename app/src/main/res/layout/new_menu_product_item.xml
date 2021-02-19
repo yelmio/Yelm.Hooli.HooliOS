@@ -130,27 +130,26 @@
                 android:background="@drawable/address_back_view_blue"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingStart="6dp"
-                android:paddingEnd="6dp">
+                android:paddingStart="6dp">
 
                 <ImageButton
                     android:id="@+id/removeProduct"
                     android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_weight="1"
+                    android:layout_height="30dp"
                     android:background="@android:color/transparent"
                     android:visibility="gone"
                     app:srcCompat="@drawable/ic_remove_24_white" />
 
                 <TextView
                     android:id="@+id/priceFinal"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="4dp"
                     android:layout_weight="1"
                     android:drawableTint="@color/whiteColor"
                     android:gravity="center_vertical"
+                    android:paddingStart="4dp"
                     android:singleLine="true"
+                    android:text="sdf"
                     android:textColor="@color/whiteColor"
                     android:textSize="14sp"
                     android:textStyle="bold"
@@ -158,10 +157,8 @@
 
                 <ImageButton
                     android:id="@+id/addProduct"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_marginStart="4dp"
-                    android:layout_weight="1"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:background="@android:color/transparent"
                     android:visibility="visible"
                     app:srcCompat="@drawable/ic_add_24_white" />

@@ -58,8 +58,10 @@
     <string name="chatActivitySaveImage">Сохранить</string>
     <string name="chatActivitySavedImage">Изображение сохранено</string>
     <string name="chatActivityYourMessage">Ваше сообщение</string>
-    <string name="chatActivityRequestStoragePermission">Для отправки сообщения разрешите приложению доступ к галереи. </string>
+    <string name="chatActivityRequestStoragePermission">Для отправки изображения разрешите приложению доступ к галереи. </string>
+    <string name="chatActivityRequestStoragePermissionForSaveImages">Для сохранения изображения разрешите приложению доступ к файлам на устройстве. </string>
     <string name="chatActivityRequestCameraPermission">Для отправки фотографии разрешите приложению доступ к камере. </string>
+
 
     <!-- PickImageBottomSheet -->
     <string name="pickImageBottomSheetPictures">Фотографии</string>
@@ -275,7 +277,6 @@
     <string name="entrance">Подъезд</string>
     <string name="floor">Этаж</string>
 
-
     <!-- payment -->
     <string name="checkout_total">Всего к оплате: </string>
     <string name="checkout_card_number">Номер карты</string>
@@ -297,7 +298,6 @@
     <string name="default_notification_channel_id">fcm_default_channel</string>
     <string name="default_notification_channel_name">yelm</string>
 
-
     <string name="call">Позвонить</string>
     <string name="mail">Почта</string>
     <string name="whatsapp">Whatsapp</string>
@@ -308,7 +308,6 @@
     <string name="preview">Предпросмотр</string>
     <string name="qr">Отсканируйте QR код в разделе превью в панели управления</string>
     <string name="title_dynamicfeature">YelmInstantApp</string>
-
 
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>
@@ -324,7 +323,5 @@
     <string name="attachment_summary_on">Automatically download attachments for incoming emails
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
-
-
 
 </resources>
