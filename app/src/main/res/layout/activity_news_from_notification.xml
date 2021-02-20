@@ -29,7 +29,8 @@
                 app:expandedTitleMarginStart="16dp"
 
                 app:expandedTitleTextAppearance="@style/CollapsingTextAppearance.Inverse"
-                app:layout_scrollFlags="scroll|exitUntilCollapsed">
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                app:title="Article's name">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -46,7 +47,7 @@
                     <TextView
                         android:id="@+id/newsTitle"
                         android:layout_width="match_parent"
-                        android:layout_height="66dp"
+                        android:layout_height="60dp"
                         android:layout_alignParentBottom="true"
                         android:background="@drawable/coordinator_layout_top_rounded_decoration"
                         android:textColor="@color/colorText"
@@ -65,8 +66,8 @@
                     app:contentInsetStart="0dp"
                     app:contentInsetStartWithNavigation="0dp"
                     app:layout_collapseMode="pin"
-                    app:titleMarginStart="8dp"
-                    app:titleMarginTop="8dp" />
+                    app:titleMarginTop="8dp"
+                    app:titleMarginStart="8dp" />
 
             </com.google.android.material.appbar.CollapsingToolbarLayout>
         </com.google.android.material.appbar.AppBarLayout>
@@ -81,35 +82,29 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_height="match_parent"
                 android:background="@color/whiteColor"
                 android:orientation="vertical">
 
+                <WebView
+                    android:id="@+id/web"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp" />
+
                 <TextView
-                    android:id="@+id/description"
+                    android:id="@+id/titleProducts"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:fontFamily="@font/sf_prodisplay_regular"
-                    android:lineSpacingExtra="4dp"
-                    android:textColor="@color/colorText"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/title"
-
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
                     android:layout_marginEnd="16dp"
                     android:fontFamily="@font/sf_prodisplay_regular"
                     android:text="@string/products"
                     android:textColor="@color/colorText"
                     android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:visibility="gone" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler"
@@ -130,11 +125,21 @@
 
     <ImageButton
         android:id="@+id/back"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="10dp"
         android:background="@drawable/circle_button_selector"
         app:srcCompat="@drawable/ic_arrow_back_24" />
+
+    <ImageButton
+        android:id="@+id/share"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/circle_button_selector"
+        app:srcCompat="@drawable/ic_share" />
 
 </RelativeLayout>

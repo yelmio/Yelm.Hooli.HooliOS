@@ -123,15 +123,11 @@ public class NewsActivity extends AppCompatActivity implements AppBarLayout.OnOf
         if (currentScrollPercentage >= PERCENTAGE_TO_SHOW_IMAGE) {
             if (!isImageHidden) {
                 isImageHidden = true;
-                //ViewCompat.animate(mFab).scaleY((float) 0.9).scaleX((float) 0.9).start();
-                //ViewCompat.animate(imageButton).scaleY((float) 0.2).scaleX((float) 0.2).setDuration(200).start();
             }
         }
         if (currentScrollPercentage < PERCENTAGE_TO_SHOW_IMAGE) {
             if (isImageHidden) {
                 isImageHidden = false;
-                //ViewCompat.animate(mFab).scaleY(1).scaleX(1).start();
-                //ViewCompat.animate(imageButton).scaleY(1).scaleX(1).start();
             }
         }
     }

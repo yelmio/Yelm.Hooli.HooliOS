@@ -3,6 +3,7 @@ package yelm.io.yelm.notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -95,6 +96,7 @@ public class FcmMessageService extends FirebaseMessagingService {
         Intent i = new Intent(this, LoaderActivity.class);
         i.putExtra("data", remoteMessage.getData().toString());
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 333, i, PendingIntent.FLAG_UPDATE_CURRENT);
 //FLAG_ONE_SHOT       FLAG_UPDATE_CURRENT
 

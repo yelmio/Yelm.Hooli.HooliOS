@@ -52,6 +52,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import yelm.io.yelm.basket.controller.BasketActivityOnlyDelivery;
+import yelm.io.yelm.item.ItemFromNotificationActivity;
 import yelm.io.yelm.main.news.NewNews;
 import yelm.io.yelm.main.news.NewsFromNotificationActivity;
 import yelm.io.yelm.constants.Logging;
@@ -99,37 +100,26 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         binding();
-        //getCategoriesWithProducts("0", "0");
+        getCategoriesWithProducts("0", "0");
         initNews();
-        //getLocationPermission();
+        getLocationPermission();
         getAppToken();
 
 
-//        Bundle args = getIntent().getExtras();
-//        if (args != null) {
-//            Log.d(Logging.debug, "MainActivity - Notification data: " + args.getString("data"));
-//            String data = args.getString("data");
-//            if (data != null && !data.isEmpty()) {
-//                try {
-//                    JSONObject jsonObj = new JSONObject(data);
-//                    Log.d(Logging.debug, "jsonObj: " + jsonObj.getString("id"));
-//                    Log.d(Logging.debug, "jsonObj: " + jsonObj.getString("name"));
-//                    if (jsonObj.getString("name").equals("news")) {
-//                        Intent intent = new Intent(MainActivity.this, NewsFromNotificationActivity.class);
-//                        intent.putExtra("id", jsonObj.getString("id"));
-//                        startActivity(intent);
-//                    } else if (jsonObj.getString("name").equals("items")) {
-//                        //Intent intent = new Intent(MainActivity.this, NewsFromNotificationActivity.class);
-//                        //intent.putExtra("id", jsonObj.getString("id"));
-//                        //startActivity(intent);
-//                    }
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
-
-
+        Bundle args = getIntent().getExtras();
+        if (args != null) {
+            Log.d(Logging.debug, "MainActivity - Notification data: " + args.getString("id"));
+            Log.d(Logging.debug, "MainActivity - Notification data: " + args.getString("name"));
+            if (Objects.equals(args.getString("name"), "news")) {
+                Intent intent = new Intent(MainActivity.this, NewsFromNotificationActivity.class);
+                intent.putExtra("id", args.getString("id"));
+                startActivity(intent);
+            } else if (Objects.equals(args.getString("name"), "item")) {
+                Intent intent = new Intent(MainActivity.this, ItemFromNotificationActivity.class);
+                intent.putExtra("id", args.getString("id"));
+                startActivity(intent);
+            }
+        }
     }
 
     private void binding() {

@@ -6,6 +6,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -74,13 +75,6 @@ public class LoaderActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loader);
         settings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
-
-        Bundle args = getIntent().getExtras();
-        if (args != null) {
-            Log.d(Logging.debug, "LoaderActivity - item: " + args.getString("item"));
-            Log.d(Logging.debug, "LoaderActivity - args: " + args.toString());
-            Log.d(Logging.debug, "LoaderActivity - Notification data: " + args.getString("data"));
-        }
 
 //        Log.d(Logging.debug, "Locale.getDefault().getDisplayLanguage(): " + Locale.getDefault().getDisplayLanguage());
 //        Log.d(Logging.debug, "Locale.getDefault().getLanguage(): " + Locale.getDefault().getLanguage());
@@ -189,17 +183,7 @@ public class LoaderActivity extends AppCompatActivity {
                                 editor.putString(PRICE_IN, response.body().getSymbol());
                                 editor.putString(COUNTRY_CODE, response.body().getSettings().getRegionCode());
                                 editor.apply();
-
-                                Intent intent = new Intent(LoaderActivity.this, MainActivity.class);
-//                                Bundle args = getIntent().getExtras();
-//                                String data = "";
-//                                if (args != null) {
-//                                    Log.d(Logging.debug, "LoaderActivity - Notification data: " + args.getString("data"));
-//                                    data = args.getString("data");
-//                                }
-//                                intent.putExtra("data", data);
-                                startActivity(intent);
-                                finish();
+                                launchMain();
                             } else {
                                 Log.e(Logging.error, "Method getApplicationSettings(): by some reason response is null!");
                             }
@@ -214,6 +198,35 @@ public class LoaderActivity extends AppCompatActivity {
                         Log.e(Logging.error, "Method getApplicationSettings() failure: " + t.toString());
                     }
                 });
+    }
+
+    private void launchMain() {
+        Bundle args = getIntent().getExtras();
+        Intent intent = new Intent(LoaderActivity.this, MainActivity.class);
+        if (args != null) {
+            String data = args.getString("data");
+            if (data != null) {
+                Log.d(Logging.debug, "LoaderActivity - Notification data: " + data);
+                try {
+                    JSONObject jsonObj = new JSONObject(data);
+                    Log.d(Logging.debug, "jsonObj id: " + jsonObj.getString("id"));
+                    Log.d(Logging.debug, "jsonObj name: " + jsonObj.getString("name"));
+                    intent.putExtra("id", jsonObj.getString("id"));
+                    intent.putExtra("name", jsonObj.getString("name"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Log.d(Logging.debug, "LoaderActivity - id: " + args.getString("id"));
+                Log.d(Logging.debug, "LoaderActivity - name: " + args.getString("name"));
+                intent.putExtra("id", args.getString("id"));
+                intent.putExtra("name", args.getString("name"));
+            }
+        } else {
+            Log.d(Logging.debug, "LoaderActivity - args is NULL");
+        }
+        startActivity(intent);
+        finish();
     }
 
     private void initRoom() {

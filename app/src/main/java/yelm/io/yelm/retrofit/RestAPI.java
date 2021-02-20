@@ -26,7 +26,7 @@ import yelm.io.yelm.order.user_order.model.UserOrderPOJO;
 
 public interface RestAPI {
 
-    String URL_API_MAIN = "https://dev.yelm.io/api/mobile/";
+    String URL_API_MAIN = "https://rest.yelm.io/api/mobile/";
     String PLATFORM_NUMBER = "5fd33466e17963.29052139";
 
     @FormUrlEncoded
@@ -84,6 +84,17 @@ public interface RestAPI {
             @Query("region_code") String regionCode,
             @Query("id") String id
     );
+
+    //need correct later
+    @GET("item?")
+    Call<Item> getIemByID(
+            @Query("version") String version,
+            @Query("platform") String platform,
+            @Query("language_code") String languageCode,
+            @Query("region_code") String regionCode,
+            @Query("id") String id
+    );
+
 
     @FormUrlEncoded
     @GET("converter?")
