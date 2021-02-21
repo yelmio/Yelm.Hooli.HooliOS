@@ -29,7 +29,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".item.ItemFromNotificationActivity"></activity>
+        <activity
+            android:name=".item.ItemFromNotificationActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".order.user_order.OrderByIDActivity"
             android:screenOrientation="portrait" />

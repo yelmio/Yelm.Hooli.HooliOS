@@ -16,12 +16,12 @@ import yelm.io.yelm.R;
 import yelm.io.yelm.by_category.ProductsByCategoriesActivity;
 import yelm.io.yelm.databinding.FragmentCategoryBinding;
 import yelm.io.yelm.main.adapter.ProductsNewMenuAdapter;
-import yelm.io.yelm.main.model.CatalogsWithProductsClass;
+import yelm.io.yelm.main.model.CategoriesWithProductsClass;
 import yelm.io.yelm.support_stuff.ItemOffsetDecorationRight;
 
 public class CategoryFragment extends Fragment {
 
-    CatalogsWithProductsClass catalogsWithProductsClass;
+    CategoriesWithProductsClass catalogsWithProductsClass;
 
     private FragmentCategoryBinding binding;
     ProductsNewMenuAdapter productsAdapter;
@@ -29,8 +29,8 @@ public class CategoryFragment extends Fragment {
     public CategoryFragment() {
     }
 
-    public CategoryFragment(CatalogsWithProductsClass catalogsWithProductsClass) {
-        this.catalogsWithProductsClass = catalogsWithProductsClass;
+    public CategoryFragment(CategoriesWithProductsClass categoriesWithProductsClass) {
+        this.catalogsWithProductsClass = categoriesWithProductsClass;
     }
 
     @Override

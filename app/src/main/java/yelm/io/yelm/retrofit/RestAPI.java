@@ -17,7 +17,7 @@ import yelm.io.yelm.by_category.ProductsByCategoryClass;
 import yelm.io.yelm.loader.model.ApplicationSettings;
 import yelm.io.yelm.loader.model.ChatSettingsClass;
 import yelm.io.yelm.loader.model.UserLoginResponse;
-import yelm.io.yelm.main.model.CatalogsWithProductsClass;
+import yelm.io.yelm.main.model.CategoriesWithProductsClass;
 import yelm.io.yelm.main.model.Item;
 import yelm.io.yelm.main.news.NewNews;
 import yelm.io.yelm.order.PriceConverterResponseClass;
@@ -51,6 +51,22 @@ public interface RestAPI {
                                      @Query("id") String id
     );
 
+    @GET("categories?")
+    Call<ArrayList<CategoriesWithProductsClass>> getCategories(@Query("platform") String platform,
+                                     @Query("language_code") String languageCode,
+                                     @Query("region_code") String regionCode
+    );
+
+    @GET("items?")
+    Call<ArrayList<CategoriesWithProductsClass>> getCategoriesWithChosenProducts(
+            @Query("version") String version,
+            @Query("language_code") String languageCode,
+            @Query("region_code") String regionCode,
+            @Query("platform") String platform,
+            @Query("lat") String lat,
+            @Query("lon") String lon
+    );
+
     @FormUrlEncoded
     @PUT("user?")
     Call<ResponseBody> putFCM(
@@ -66,15 +82,7 @@ public interface RestAPI {
             @Field("login") String login);
 
 
-    @GET("items?")
-    Call<ArrayList<CatalogsWithProductsClass>> getCategoriesWithProducts(
-            @Query("version") String version,
-            @Query("language_code") String languageCode,
-            @Query("region_code") String regionCode,
-            @Query("platform") String platform,
-            @Query("lat") String lat,
-            @Query("lon") String lon
-    );
+
 
     @GET("news?")
     Call<NewNews> getNewsByID(

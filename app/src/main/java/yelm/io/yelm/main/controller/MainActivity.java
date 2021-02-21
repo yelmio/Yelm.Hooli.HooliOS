@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -28,15 +29,10 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.badge.BadgeDrawable;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -53,6 +49,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import yelm.io.yelm.basket.controller.BasketActivityOnlyDelivery;
 import yelm.io.yelm.item.ItemFromNotificationActivity;
+import yelm.io.yelm.main.adapter.CategoriesAdapter;
 import yelm.io.yelm.main.news.NewNews;
 import yelm.io.yelm.main.news.NewsFromNotificationActivity;
 import yelm.io.yelm.constants.Logging;
@@ -61,7 +58,7 @@ import yelm.io.yelm.database_new.basket_new.BasketCart;
 import yelm.io.yelm.database_new.user_addresses.UserAddress;
 import yelm.io.yelm.databinding.ActivityMainBinding;
 import yelm.io.yelm.loader.controller.LoaderActivity;
-import yelm.io.yelm.main.model.CatalogsWithProductsClass;
+import yelm.io.yelm.main.model.CategoriesWithProductsClass;
 import yelm.io.yelm.main.model.Modifier;
 import yelm.io.yelm.retrofit.RestAPI;
 import yelm.io.yelm.retrofit.RetrofitClient;
@@ -80,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
     ActivityMainBinding binding;
     AddressesBottomSheet addressesBottomSheet = new AddressesBottomSheet();
 
-    private ArrayList<CatalogsWithProductsClass> catalogsWithProductsList = new ArrayList<>();
+    private ArrayList<CategoriesWithProductsClass> catalogsWithProductsList = new ArrayList<>();
     private NewsAdapter newsAdapter;
 
     private static final String[] LOCATION_PERMISSIONS = new String[]{
@@ -104,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
         initNews();
         getLocationPermission();
         getAppToken();
-
+        getCategories();
 
         Bundle args = getIntent().getExtras();
         if (args != null) {
@@ -293,16 +290,16 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
         RetrofitClient.
                 getClient(RestAPI.URL_API_MAIN).
                 create(RestAPI.class).
-                getCategoriesWithProducts(
+                getCategoriesWithChosenProducts(
                         "3",
                         getResources().getConfiguration().locale.getLanguage(),
                         getResources().getConfiguration().locale.getCountry(),
                         RestAPI.PLATFORM_NUMBER,
                         Lat,
                         Lon).
-                enqueue(new Callback<ArrayList<CatalogsWithProductsClass>>() {
+                enqueue(new Callback<ArrayList<CategoriesWithProductsClass>>() {
                     @Override
-                    public void onResponse(@NotNull Call<ArrayList<CatalogsWithProductsClass>> call, @NotNull final Response<ArrayList<CatalogsWithProductsClass>> response) {
+                    public void onResponse(@NotNull Call<ArrayList<CategoriesWithProductsClass>> call, @NotNull final Response<ArrayList<CategoriesWithProductsClass>> response) {
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
                                 catalogsWithProductsList = response.body();
@@ -321,11 +318,45 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
                     }
 
                     @Override
-                    public void onFailure(@NotNull Call<ArrayList<CatalogsWithProductsClass>> call, @NotNull Throwable t) {
+                    public void onFailure(@NotNull Call<ArrayList<CategoriesWithProductsClass>> call, @NotNull Throwable t) {
                         Log.e(Logging.error, "Method getCategoriesWithProducts() - failure: " + t.toString());
                     }
                 });
     }
+
+    private void getCategories() {
+        RetrofitClient.
+                getClient(RestAPI.URL_API_MAIN).
+                create(RestAPI.class).
+                getCategories(
+                        RestAPI.PLATFORM_NUMBER,
+                        getResources().getConfiguration().locale.getLanguage(),
+                        getResources().getConfiguration().locale.getCountry()
+                ).
+                enqueue(new Callback<ArrayList<CategoriesWithProductsClass>>() {
+                    @Override
+                    public void onResponse(@NotNull Call<ArrayList<CategoriesWithProductsClass>> call, @NotNull final Response<ArrayList<CategoriesWithProductsClass>> response) {
+                        if (response.isSuccessful()) {
+                            if (response.body() != null) {
+                                CategoriesAdapter categoriesAdapter = new CategoriesAdapter(MainActivity.this, response.body());
+                                binding.recyclerCategories.setLayoutManager(new StaggeredGridLayoutManager(2, LinearLayout.VERTICAL));
+                                binding.recyclerCategories.setAdapter(categoriesAdapter);
+                            } else {
+                                Log.e(Logging.error, "Method getCategories() - by some reason response is null!");
+                            }
+                        } else {
+                            Log.e(Logging.error, "Method getCategories() - response is not successful." +
+                                    "Code: " + response.code() + "Message: " + response.message());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NotNull Call<ArrayList<CategoriesWithProductsClass>> call, @NotNull Throwable t) {
+                        Log.e(Logging.error, "Method getCategories() - failure: " + t.toString());
+                    }
+                });
+    }
+
 
     private void getAppToken() {
         FirebaseMessaging.getInstance().getToken()

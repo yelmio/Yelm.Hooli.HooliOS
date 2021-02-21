@@ -26,7 +26,6 @@ import retrofit2.Response;
 import yelm.io.yelm.basket.controller.BasketActivityOnlyDelivery;
 import yelm.io.yelm.database_new.user_addresses.UserAddress;
 import yelm.io.yelm.constants.Logging;
-import yelm.io.yelm.main.adapter.ProductsNewMenuSquareImageAdapter;
 import yelm.io.yelm.R;
 import yelm.io.yelm.database_new.basket_new.BasketCart;
 import yelm.io.yelm.database_new.Common;
@@ -39,7 +38,6 @@ import yelm.io.yelm.retrofit.RetrofitClient;
 public class ProductsByCategoriesActivity extends AppCompatActivity {
 
     ActivityProductsByCategoryBinding binding;
-    ProductsNewMenuSquareImageAdapter productsAdapter;
 
     private final CompositeDisposable compositeDisposableBasket = new CompositeDisposable();
     private ArrayList<ProductsByCategoryClass> productsByCategoryList = new ArrayList<>();
@@ -53,8 +51,11 @@ public class ProductsByCategoriesActivity extends AppCompatActivity {
         binding = ActivityProductsByCategoryBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        getProductByCategory(getIntent().getStringExtra("catalogID"));
-        binding.title.setText(getIntent().getStringExtra("catalogName"));
+        Bundle args = getIntent().getExtras();
+        if (args != null) {
+            getProductByCategory(args.getString("catalogID"));
+            binding.title.setText(args.getString("catalogName"));
+        }
         binding.back.setOnClickListener(v -> finish());
         binding.basket.setOnClickListener(v -> startActivity(new Intent(this, BasketActivityOnlyDelivery.class)));
 
@@ -88,14 +89,13 @@ public class ProductsByCategoriesActivity extends AppCompatActivity {
                 }
             }
         }
-
         RetrofitClient.
                 getClient(RestAPI.URL_API_MAIN).
                 create(RestAPI.class).
                 getProductsByCategory(
                         "3",
-                        String.valueOf(getResources().getConfiguration().locale.getLanguage()),
-                        String.valueOf(getResources().getConfiguration().locale.getCountry()),
+                        getResources().getConfiguration().locale.getLanguage(),
+                        getResources().getConfiguration().locale.getCountry(),
                         RestAPI.PLATFORM_NUMBER,
                         Constants.ShopID,
                         categoryID,

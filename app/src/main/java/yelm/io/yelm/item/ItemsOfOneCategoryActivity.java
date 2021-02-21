@@ -1,12 +1,14 @@
 package yelm.io.yelm.item;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -38,7 +40,7 @@ public class ItemsOfOneCategoryActivity extends AppCompatActivity {
 
     private void binding() {
         binding.title.setText(getIntent().getStringExtra("title"));
-        binding.recycler.setLayoutManager(new StaggeredGridLayoutManager(2, 1));
+        binding.recycler.setLayoutManager(new StaggeredGridLayoutManager(2, LinearLayout.VERTICAL));
         binding.back.setOnClickListener(v -> finish());
         binding.basket.setOnClickListener(v -> startActivity(new Intent(this, BasketActivityOnlyDelivery.class)));
     }

@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class CatalogsWithProductsClass {
+public class CategoriesWithProductsClass {
 
     @SerializedName("name")
     @Expose
