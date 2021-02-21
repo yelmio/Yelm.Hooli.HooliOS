@@ -41,7 +41,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-import yelm.io.yelm.constants.Logging;
+import yelm.io.yelm.support_stuff.Logging;
 import yelm.io.yelm.R;
 import yelm.io.yelm.database_new.Common;
 import yelm.io.yelm.database_new.user_addresses.UserAddress;

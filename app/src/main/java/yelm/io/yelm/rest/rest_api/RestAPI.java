@@ -1,4 +1,4 @@
-package yelm.io.yelm.retrofit;
+package yelm.io.yelm.rest.rest_api;
 
 import org.json.JSONObject;
 
@@ -194,5 +194,14 @@ public interface RestAPI {
     Call<ChatSettingsClass> getChatSettings(
             @Field("login") String login
     );
+
+
+    @FormUrlEncoded
+    @POST("statistic?")
+    Call<ResponseBody> sendStatistic(
+            @Field("platform") String platform,
+            @Field("login") String login,
+            @Field("type") String type
+           );
 
 }

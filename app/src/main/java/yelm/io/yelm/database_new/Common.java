@@ -11,7 +11,6 @@ import yelm.io.yelm.database_old.catalog.products.ProductRepository;
 import yelm.io.yelm.database_old.user.UserRepository;
 
 public class Common {
-
     public static Database sDatabase;
     public static CartRepository cartRepository;
     public static ArticlesRepository articlesRepository;
@@ -23,8 +22,4 @@ public class Common {
     public static StockRepository stockRepository;
     public static UserAddressesRepository userAddressesRepository;
     public static NewsRepository newsRepository;
-
-
-
-
 }

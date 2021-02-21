@@ -56,9 +56,9 @@ import yelm.io.yelm.database_new.Common;
 import yelm.io.yelm.database_new.basket_new.BasketCart;
 import yelm.io.yelm.item.ItemActivity;
 import yelm.io.yelm.loader.controller.LoaderActivity;
-import yelm.io.yelm.order.OrderActivity;
 import yelm.io.yelm.order.user_order.OrderByIDActivity;
-import yelm.io.yelm.constants.Logging;
+import yelm.io.yelm.rest.query.Statistic;
+import yelm.io.yelm.support_stuff.Logging;
 import yelm.io.yelm.support_stuff.ScreenDimensions;
 
 public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -141,6 +141,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             ((OrderHolder) holder).nameSender.setText(context.getResources().getText(R.string.app_name));
             ((OrderHolder) holder).message.setText(chatContent.getMessage());
             ((OrderHolder) holder).details.setOnClickListener(v -> {
+                Statistic.sendStatistic("open_order_history");
                 Intent intent = new Intent(context, OrderByIDActivity.class);
                 intent.putExtra("id", chatContent.getOrderID());
                 context.startActivity(intent);
@@ -646,13 +647,13 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             case "order":
                 return MSG_TYPE_ORDER;
             case "message":
-                if (chatContentList.get(position).getFrom_whom().equals(LoaderActivity.settings.getString(LoaderActivity.CLIENT_ID, ""))) {
+                if (chatContentList.get(position).getFrom_whom().equals(LoaderActivity.settings.getString(LoaderActivity.CLIENT_CHAT_ID, ""))) {
                     return MSG_TYPE_MESSAGE_RIGHT;
                 } else {
                     return MSG_TYPE_MESSAGE_LEFT;
                 }
             case "images":
-                if (chatContentList.get(position).getFrom_whom().equals(LoaderActivity.settings.getString(LoaderActivity.CLIENT_ID, ""))) {
+                if (chatContentList.get(position).getFrom_whom().equals(LoaderActivity.settings.getString(LoaderActivity.CLIENT_CHAT_ID, ""))) {
                     return MSG_TYPE_PICTURE_RIGHT;
                 } else {
                     return MSG_TYPE_PICTURE_LEFT;

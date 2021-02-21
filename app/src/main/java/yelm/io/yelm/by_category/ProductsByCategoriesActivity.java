@@ -25,15 +25,15 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import yelm.io.yelm.basket.controller.BasketActivityOnlyDelivery;
 import yelm.io.yelm.database_new.user_addresses.UserAddress;
-import yelm.io.yelm.constants.Logging;
+import yelm.io.yelm.support_stuff.Logging;
 import yelm.io.yelm.R;
 import yelm.io.yelm.database_new.basket_new.BasketCart;
 import yelm.io.yelm.database_new.Common;
 import yelm.io.yelm.databinding.ActivityProductsByCategoryBinding;
 import yelm.io.yelm.loader.controller.LoaderActivity;
 import yelm.io.yelm.constants.Constants;
-import yelm.io.yelm.retrofit.RestAPI;
-import yelm.io.yelm.retrofit.RetrofitClient;
+import yelm.io.yelm.rest.rest_api.RestAPI;
+import yelm.io.yelm.rest.client.RetrofitClient;
 
 public class ProductsByCategoriesActivity extends AppCompatActivity {
 

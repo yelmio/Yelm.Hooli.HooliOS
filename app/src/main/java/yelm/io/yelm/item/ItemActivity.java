@@ -26,7 +26,8 @@ import yelm.io.yelm.databinding.ActivityItemBinding;
 import yelm.io.yelm.loader.controller.LoaderActivity;
 import yelm.io.yelm.main.model.Item;
 import yelm.io.yelm.main.model.Modifier;
-import yelm.io.yelm.constants.Logging;
+import yelm.io.yelm.rest.query.Statistic;
+import yelm.io.yelm.support_stuff.Logging;
 
 public class ItemActivity extends AppCompatActivity implements AppBarLayout.OnOffsetChangedListener {
     ActivityItemBinding binding;
@@ -54,6 +55,7 @@ public class ItemActivity extends AppCompatActivity implements AppBarLayout.OnOf
             bindingAddSubtractProductCount();
             bindingAddProductToBasket(item);
             binding.share.setOnClickListener(v -> {
+                Statistic.sendStatistic("share_item");
                 String sharingLink = "https://yelm.io/item/" + item.getId();
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 intent.setType("text/plain");

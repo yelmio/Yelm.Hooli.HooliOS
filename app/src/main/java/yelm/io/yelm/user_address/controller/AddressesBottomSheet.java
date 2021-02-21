@@ -19,7 +19,7 @@ import yelm.io.yelm.database_new.Common;
 import yelm.io.yelm.database_new.user_addresses.UserAddress;
 import yelm.io.yelm.databinding.AdressesBottomSheepDialogBinding;
 
-import yelm.io.yelm.constants.Logging;
+import yelm.io.yelm.support_stuff.Logging;
 import yelm.io.yelm.user_address.adapter.UserAddressesAdapter;
 
 public class AddressesBottomSheet extends BottomSheetDialogFragment {

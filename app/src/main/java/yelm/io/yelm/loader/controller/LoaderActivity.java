@@ -21,7 +21,8 @@ import retrofit2.Response;
 import yelm.io.yelm.R;
 import yelm.io.yelm.loader.model.ApplicationSettings;
 import yelm.io.yelm.loader.model.ChatSettingsClass;
-import yelm.io.yelm.constants.Logging;
+import yelm.io.yelm.rest.query.Statistic;
+import yelm.io.yelm.support_stuff.Logging;
 import yelm.io.yelm.database_new.basket_new.BasketCartDataSource;
 import yelm.io.yelm.database_new.basket_new.BasketCartRepository;
 import yelm.io.yelm.database_new.Common;
@@ -39,8 +40,8 @@ import yelm.io.yelm.database_old.news.NewsRepository;
 import yelm.io.yelm.loader.model.UserLoginResponse;
 import yelm.io.yelm.main.controller.MainActivity;
 import yelm.io.yelm.payment.Constants;
-import yelm.io.yelm.retrofit.RestAPI;
-import yelm.io.yelm.retrofit.RetrofitClient;
+import yelm.io.yelm.rest.rest_api.RestAPI;
+import yelm.io.yelm.rest.client.RetrofitClient;
 
 public class LoaderActivity extends AppCompatActivity {
 
@@ -51,9 +52,9 @@ public class LoaderActivity extends AppCompatActivity {
     public static final String CURRENCY = "CNT";
     public static final String COUNTRY_CODE = "COUNTRY_CODE";
     public static final String API_TOKEN = "API_TOKEN";
-    public static final String ROOM_ID = "ROOM_ID";
-    public static final String SHOP_ID = "SHOP_ID";
-    public static final String CLIENT_ID = "CLIENT_ID";
+    public static final String ROOM_CHAT_ID = "ROOM_ID";
+    public static final String SHOP_CHAT_ID = "SHOP_ID";
+    public static final String CLIENT_CHAT_ID = "CLIENT_ID";
 
     public static SharedPreferences settings;
     private static final String APP_PREFERENCES = "settings";
@@ -78,7 +79,7 @@ public class LoaderActivity extends AppCompatActivity {
             notificationManager.createNotificationChannel(new NotificationChannel(channelId,
                     channelName, NotificationManager.IMPORTANCE_LOW));
         }
-
+        Statistic.sendStatistic("open_app");
         initRoom();
         init();
     }
@@ -274,9 +275,9 @@ public class LoaderActivity extends AppCompatActivity {
                                 Log.d(Logging.debug, "ChatSettingsClass: " + response.body().toString());
                                 SharedPreferences.Editor editor = settings.edit();
                                 editor.putString(API_TOKEN, response.body().getApiToken());
-                                editor.putString(SHOP_ID, response.body().getShop());
-                                editor.putString(ROOM_ID, response.body().getRoomId());
-                                editor.putString(CLIENT_ID, response.body().getClient());
+                                editor.putString(SHOP_CHAT_ID, response.body().getShop());
+                                editor.putString(ROOM_CHAT_ID, response.body().getRoomId());
+                                editor.putString(CLIENT_CHAT_ID, response.body().getClient());
                                 editor.apply();
                             } else {
                                 Log.e(Logging.error, "Method getChatSettings(): by some reason response is null!");

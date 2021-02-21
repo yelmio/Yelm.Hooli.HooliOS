@@ -1,7 +1,6 @@
 package yelm.io.yelm.item;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.content.Intent;
@@ -23,7 +22,7 @@ import yelm.io.yelm.databinding.ActivityItemsFromNewsBinding;
 import yelm.io.yelm.loader.controller.LoaderActivity;
 import yelm.io.yelm.main.adapter.ProductsNewMenuSquareImageAdapter;
 import yelm.io.yelm.main.model.Item;
-import yelm.io.yelm.constants.Logging;
+import yelm.io.yelm.support_stuff.Logging;
 
 public class ItemsOfOneCategoryActivity extends AppCompatActivity {
     ActivityItemsFromNewsBinding binding;

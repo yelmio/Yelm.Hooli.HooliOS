@@ -17,7 +17,8 @@ import yelm.io.yelm.R;
 import yelm.io.yelm.databinding.ActivityNewsBinding;
 import yelm.io.yelm.main.adapter.ProductsNewMenuSquareImageAdapter;
 import yelm.io.yelm.main.model.Item;
-import yelm.io.yelm.constants.Logging;
+import yelm.io.yelm.rest.query.Statistic;
+import yelm.io.yelm.support_stuff.Logging;
 
 public class NewsActivity extends AppCompatActivity implements AppBarLayout.OnOffsetChangedListener {
 
@@ -43,6 +44,7 @@ public class NewsActivity extends AppCompatActivity implements AppBarLayout.OnOf
             binding.recycler.setLayoutManager(new StaggeredGridLayoutManager(2, 1));
             binding.recycler.setAdapter(productsSquareAdapter);
             binding.share.setOnClickListener(v -> {
+                Statistic.sendStatistic("share_news");
                 String sharingLink = "https://yelm.io/news/" + news.getId();
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 intent.setType("text/plain");

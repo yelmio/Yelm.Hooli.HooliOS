@@ -54,9 +54,9 @@ import yelm.io.yelm.loader.controller.LoaderActivity;
 import yelm.io.yelm.order.PriceConverterResponseClass;
 import yelm.io.yelm.payment.models.Transaction;
 import yelm.io.yelm.payment.response.PayApiError;
-import yelm.io.yelm.retrofit.RestAPI;
-import yelm.io.yelm.retrofit.RetrofitClient;
-import yelm.io.yelm.constants.Logging;
+import yelm.io.yelm.rest.rest_api.RestAPI;
+import yelm.io.yelm.rest.client.RetrofitClient;
+import yelm.io.yelm.support_stuff.Logging;
 
 public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogListener {
 

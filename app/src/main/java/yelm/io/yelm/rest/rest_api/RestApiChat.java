@@ -1,4 +1,4 @@
-package yelm.io.yelm.retrofit;
+package yelm.io.yelm.rest.rest_api;
 
 import java.util.ArrayList;
 

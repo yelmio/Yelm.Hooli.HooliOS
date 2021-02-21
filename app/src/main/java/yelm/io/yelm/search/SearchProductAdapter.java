@@ -21,7 +21,8 @@ import java.util.List;
 
 import yelm.io.yelm.item.ItemActivity;
 import yelm.io.yelm.main.model.Item;
-import yelm.io.yelm.constants.Logging;
+import yelm.io.yelm.rest.query.Statistic;
+import yelm.io.yelm.support_stuff.Logging;
 import yelm.io.yelm.databinding.ProductItemSearcheableBinding;
 import yelm.io.yelm.loader.controller.LoaderActivity;
 
@@ -98,6 +99,7 @@ public class SearchProductAdapter extends RecyclerView.Adapter<SearchProductAdap
         holder.binding.weight.setText(String.format("%s / %s", current.getUnitType(), current.getType()));
 
         holder.binding.containerProduct.setOnClickListener(v -> {
+            Statistic.sendStatistic("open_item_search");
             Intent intent = new Intent(context, ItemActivity.class);
             intent.putExtra("item", current);
             context.startActivity(intent);

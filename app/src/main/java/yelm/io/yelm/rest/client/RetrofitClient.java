@@ -1,4 +1,4 @@
-package yelm.io.yelm.retrofit;
+package yelm.io.yelm.rest.client;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

@@ -27,6 +27,7 @@ import java.util.List;
 
 import yelm.io.yelm.databinding.NewsItemBinding;
 
+import yelm.io.yelm.rest.query.Statistic;
 import yelm.io.yelm.support_stuff.GradientTransformation;
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsHolder> {
@@ -90,6 +91,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsHolder> {
                         Log.d("AlexDebug", "up");
                         animationSet.cancel();
                         if (!isMoving) {
+                            Statistic.sendStatistic("open_news");
                             Intent intent = new Intent(context, NewsActivity.class);
                             intent.putExtra("news", currentNews);
                             context.startActivity(intent);
@@ -104,6 +106,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsHolder> {
                         Log.d("AlexDebug", "cancel");
                         animationSet.cancel();
                         if (!isMoving) {
+                            Statistic.sendStatistic("open_news");
                             Intent intent = new Intent(context, NewsActivity.class);
                             intent.putExtra("news", currentNews);
                             intent.putParcelableArrayListExtra("items", (ArrayList<? extends Parcelable>) currentNews.getItems());

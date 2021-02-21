@@ -3,10 +3,7 @@ package yelm.io.yelm.notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
@@ -17,7 +14,6 @@ import android.os.Looper;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -29,9 +25,9 @@ import retrofit2.Call;
 import retrofit2.Response;
 import yelm.io.yelm.R;
 import yelm.io.yelm.loader.controller.LoaderActivity;
-import yelm.io.yelm.retrofit.RestAPI;
-import yelm.io.yelm.retrofit.RetrofitClient;
-import yelm.io.yelm.constants.Logging;
+import yelm.io.yelm.rest.rest_api.RestAPI;
+import yelm.io.yelm.rest.client.RetrofitClient;
+import yelm.io.yelm.support_stuff.Logging;
 
 public class FcmMessageService extends FirebaseMessagingService {
 

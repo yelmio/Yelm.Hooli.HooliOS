@@ -25,16 +25,15 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import yelm.io.yelm.R;
-import yelm.io.yelm.constants.Logging;
+import yelm.io.yelm.support_stuff.Logging;
 import yelm.io.yelm.database_new.Common;
 import yelm.io.yelm.database_new.basket_new.BasketCart;
 import yelm.io.yelm.databinding.ActivityItemFromNotificationBinding;
 import yelm.io.yelm.loader.controller.LoaderActivity;
 import yelm.io.yelm.main.model.Item;
 import yelm.io.yelm.main.model.Modifier;
-import yelm.io.yelm.main.news.NewNews;
-import yelm.io.yelm.retrofit.RestAPI;
-import yelm.io.yelm.retrofit.RetrofitClient;
+import yelm.io.yelm.rest.rest_api.RestAPI;
+import yelm.io.yelm.rest.client.RetrofitClient;
 
 public class ItemFromNotificationActivity extends AppCompatActivity  implements AppBarLayout.OnOffsetChangedListener{
     ActivityItemFromNotificationBinding binding;
