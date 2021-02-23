@@ -61,8 +61,6 @@ public class AddressChooseActivity extends AppCompatActivity {
             Manifest.permission.ACCESS_COARSE_LOCATION,
     };
 
-    private static final String FINE_LOCATION = android.Manifest.permission.ACCESS_FINE_LOCATION;
-    private static final String COARSE_LOCATION = android.Manifest.permission.ACCESS_COARSE_LOCATION;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 3333;
     private static final float DEFAULT_ZOOM = 15f;
     double currentLatitude = 0.0;
@@ -101,7 +99,7 @@ public class AddressChooseActivity extends AppCompatActivity {
 
         binding.getLocation.setOnClickListener(view -> {
             if (cameraPositionCurrent != null) {
-                String userStreet = "";
+                String userStreet;
                 userStreet =
                         (userSelectedAddress.getThoroughfare() == null ? "" : userSelectedAddress.getThoroughfare())
                                 + (userSelectedAddress.getThoroughfare() != null && userSelectedAddress.getFeatureName() != null ? ", " : "")
@@ -180,7 +178,7 @@ public class AddressChooseActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        Log.d("AlexDebug", "Call Request Permissions Result");
+        Log.d(Logging.debug, "Call Request Permissions Result");
         switch (requestCode) {
             case LOCATION_PERMISSION_REQUEST_CODE:
                 if (hasLocationPermission()) {
@@ -240,7 +238,7 @@ public class AddressChooseActivity extends AppCompatActivity {
                 //get current location
                 currentLatitude = locationResult.getLastLocation().getLatitude();
                 currentLongitude = locationResult.getLastLocation().getLongitude();
-                Log.d("AlexDebug", "location updated:"
+                Log.d(Logging.debug, "location updated:"
                         + "\nlatitude: " + currentLatitude
                         + "\nlongitude: " + currentLongitude);
                 //move camera to current location once
@@ -260,7 +258,7 @@ public class AddressChooseActivity extends AppCompatActivity {
                     cameraPositionCurrent.getTarget().getLongitude(), 1);
             if (addresses.size() > 0) {
                 userSelectedAddress = addresses.get(0);
-                Log.d("AlexDebug", "userAddress: " + userSelectedAddress.getThoroughfare() + userSelectedAddress.getFeatureName());
+                Log.d(Logging.debug, "userAddress: " + userSelectedAddress.getThoroughfare() + userSelectedAddress.getFeatureName());
                 runOnUiThread(() -> {
                     String userStreet =
                             (userSelectedAddress.getThoroughfare() == null ? "" : userSelectedAddress.getThoroughfare())

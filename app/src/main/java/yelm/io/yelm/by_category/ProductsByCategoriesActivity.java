@@ -23,7 +23,7 @@ import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import yelm.io.yelm.basket.controller.BasketActivityOnlyDelivery;
+import yelm.io.yelm.basket.controller.BasketActivity;
 import yelm.io.yelm.database_new.user_addresses.UserAddress;
 import yelm.io.yelm.support_stuff.Logging;
 import yelm.io.yelm.R;
@@ -57,7 +57,7 @@ public class ProductsByCategoriesActivity extends AppCompatActivity {
             binding.title.setText(args.getString("catalogName"));
         }
         binding.back.setOnClickListener(v -> finish());
-        binding.basket.setOnClickListener(v -> startActivity(new Intent(this, BasketActivityOnlyDelivery.class)));
+        binding.basket.setOnClickListener(v -> startActivity(new Intent(this, BasketActivity.class)));
 
         binding.search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -168,12 +168,10 @@ public class ProductsByCategoriesActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction().remove(fragment).commitAllowingStateLoss();
         }
         binding.storeFragments.removeAllViews();
-
         boolean isHorizontalLayout = true;
         if (productsByCategoryList.size() == 1) {
             isHorizontalLayout = false;
         }
-
         for (int i = 0; i < productsByCategoryList.size(); i++) {
             FrameLayout frameLayout = new FrameLayout(ProductsByCategoriesActivity.this);
             frameLayout.setId(View.generateViewId());
@@ -181,14 +179,7 @@ public class ProductsByCategoriesActivity extends AppCompatActivity {
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.add(frameLayout.getId(), categoryFragment, "fragment" + i).commitAllowingStateLoss();
             binding.storeFragments.addView(frameLayout);
-
             listFragments.add(categoryFragment);
         }
-
-        View footer = new View(ProductsByCategoriesActivity.this);
-        footer.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                (int) getResources().getDimension(R.dimen.dimen_60dp)));
-        binding.storeFragments.addView(footer);
-
     }
 }

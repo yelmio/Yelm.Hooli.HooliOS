@@ -25,6 +25,8 @@
     <string name="mainActivityYes">Да</string>
     <string name="mainActivityOk">Ok</string>
     <string name="mainActivityAttention">Внимание!</string>
+    <string name="mainActivityCategories">Категории</string>
+
     <string name="mainActivityRequestPermission">Для корректной работы разрешите приложению доступ к данным о местоположении устройства. </string>
 
 

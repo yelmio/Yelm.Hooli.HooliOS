@@ -261,7 +261,7 @@ public class ProductsNewMenuSquareImageAdapter extends RecyclerView.Adapter<Prod
             } else {
                 modifiers.remove(modifier.getName());
             }
-            Log.d("AlexDebug", "modifiers: " + modifiers.toString());
+            Log.d(Logging.debug, "modifiers: " + modifiers.toString());
 
             BigDecimal costCurrent = new BigDecimal(bd.toString());
             for (Map.Entry<String, String> modifierEntry : modifiers.entrySet()) {

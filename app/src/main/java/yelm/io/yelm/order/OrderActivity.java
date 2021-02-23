@@ -280,9 +280,9 @@ public class OrderActivity extends AppCompatActivity implements ThreeDSDialogLis
 
     private boolean preparePayment() {
         String phone = binding.phone.getText().toString();
-        Log.d("AlexDebug", "phone: " + phone);
+        Log.d(Logging.debug, "phone: " + phone);
         phone = phone.replaceAll("\\D", "");
-        Log.d("AlexDebug", "phone after replacement: " + phone);
+        Log.d(Logging.debug, "phone after replacement: " + phone);
         if (phone.trim().equals("") || phone.length() != 11) {
             showToast(getText(R.string.orderActivityEnterCorrectPhone).toString());
             return false;

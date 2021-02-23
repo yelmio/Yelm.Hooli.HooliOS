@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import com.google.gson.annotations.SerializedName;
 
 import io.reactivex.Observable;
+import yelm.io.yelm.support_stuff.Logging;
 
 public class PayApiResponse<T> {
 
@@ -22,7 +23,7 @@ public class PayApiResponse<T> {
 
     @Nullable
     public T getData() {
-        Log.d("AlexDebug", "getData");
+        Log.d(Logging.debug, "getData");
 
         return data;
     }
@@ -40,7 +41,7 @@ public class PayApiResponse<T> {
         if (isSuccess()) {
             return Observable.just(this);
         } else {
-            Log.d("AlexDebug", "handleError");
+            Log.d(Logging.debug, "handleError");
             return Observable.error(new PayApiError(message));
         }
     }

@@ -18,6 +18,8 @@ import androidx.core.app.NotificationCompat;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 
 import okhttp3.ResponseBody;
@@ -34,40 +36,37 @@ public class FcmMessageService extends FirebaseMessagingService {
     private static final int NOTIFY_ID = 101;
 
     @Override
-    public void onNewToken(String s) {
+    public void onNewToken(@NotNull String s) {
         super.onNewToken(s);
-        Log.d("AlexDebug", "Refreshed token: " + s);
+        Log.d(Logging.debug, "Refreshed token: " + s);
         sendRegistrationToServer(s);
     }
 
     private void sendRegistrationToServer(String s) {
         new Handler(Looper.getMainLooper()) {{
-            postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    String user = LoaderActivity.settings.getString(LoaderActivity.USER_NAME, "");
-                    Log.d("AlexDebug", "FCM user: " + user);
-                    RetrofitClient
-                            .getClient(RestAPI.URL_API_MAIN)
-                            .create(RestAPI.class)
-                            .putFCM(RestAPI.PLATFORM_NUMBER, user, s)
-                            .enqueue(new retrofit2.Callback<ResponseBody>() {
-                                @Override
-                                public void onResponse(Call<ResponseBody> call, final Response<ResponseBody> response) {
-                                    if (response.isSuccessful()) {
-                                        Log.d("AlexDebug", "FCM Token registered");
-                                        Log.d("AlexDebug", "FCM response: " + response);
-                                    } else {
-                                        Log.d("AlexDebug", "FCM Code: " + response.code() + "Message: " + response.message());
-                                    }
+            postDelayed(() -> {
+                String user = LoaderActivity.settings.getString(LoaderActivity.USER_NAME, "");
+                Log.d(Logging.debug, "FCM user: " + user);
+                RetrofitClient
+                        .getClient(RestAPI.URL_API_MAIN)
+                        .create(RestAPI.class)
+                        .putFCM(RestAPI.PLATFORM_NUMBER, user, s)
+                        .enqueue(new retrofit2.Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(@NotNull Call<ResponseBody> call, @NotNull final Response<ResponseBody> response) {
+                                if (response.isSuccessful()) {
+                                    Log.d(Logging.debug, "FCM Token registered");
+                                    Log.d(Logging.debug, "FCM response: " + response);
+                                } else {
+                                    Log.d(Logging.debug, "FCM Code: " + response.code() + "Message: " + response.message());
                                 }
+                            }
 
-                                @Override
-                                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                    Log.d("AlexDebug", "FCM Throwable: " + t.toString());
-                                }
-                            });
-                }
+                            @Override
+                            public void onFailure(@NotNull Call<ResponseBody> call, @NotNull Throwable t) {
+                                Log.d(Logging.debug, "FCM Throwable: " + t.toString());
+                            }
+                        });
             }, 2000);
         }};
     }
@@ -81,8 +80,8 @@ public class FcmMessageService extends FirebaseMessagingService {
 
         // Check if message contains a notification payload.
         if (remoteMessage.getNotification() != null) {
-            Log.d("AlexDebug", "Message Notification Body: " + remoteMessage.getNotification().getBody());
-            Log.d("AlexDebug", "Message Notification Title: " + remoteMessage.getNotification().getTitle());
+            Log.d(Logging.debug, "Message Notification Body: " + remoteMessage.getNotification().getBody());
+            Log.d(Logging.debug, "Message Notification Title: " + remoteMessage.getNotification().getTitle());
         }
         showNotification(remoteMessage);
     }

@@ -47,9 +47,10 @@ import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import yelm.io.yelm.basket.controller.BasketActivityOnlyDelivery;
+import yelm.io.yelm.basket.controller.BasketActivity;
 import yelm.io.yelm.item.ItemFromNotificationActivity;
 import yelm.io.yelm.main.adapter.CategoriesAdapter;
+import yelm.io.yelm.main.categories.CategoriesPOJO;
 import yelm.io.yelm.main.news.NewNews;
 import yelm.io.yelm.main.news.NewsFromNotificationActivity;
 import yelm.io.yelm.support_stuff.Logging;
@@ -99,10 +100,9 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
         binding();
         getCategoriesWithProducts("0", "0");
         initNews();
-        getLocationPermission();
         getAppToken();
         getCategories();
-
+        getLocationPermission();
         Bundle args = getIntent().getExtras();
         if (args != null) {
             Log.d(Logging.debug, "MainActivity - Notification data: " + args.getString("id"));
@@ -127,7 +127,17 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
         binding.addressLayout.setOnClickListener(v -> callAddressesBottomSheet());
         binding.userCurrentAddress.setOnClickListener(v -> callAddressesBottomSheet());
         binding.search.setOnClickListener(v -> startActivity(new Intent(this, SearchActivity.class)));
-        binding.basket.setOnClickListener(v -> startActivity(new Intent(this, BasketActivityOnlyDelivery.class)));
+        binding.basket.setOnClickListener(v -> startActivity(new Intent(this, BasketActivity.class)));
+
+        binding.categoryExpand.setOnClickListener(v->{
+            if (binding.recyclerCategories.getVisibility() == View.VISIBLE) {
+                binding.recyclerCategories.setVisibility(View.GONE);
+                binding.categoryExpand.setRotation(0);
+            } else {
+                binding.recyclerCategories.setVisibility(View.VISIBLE);
+                binding.categoryExpand.setRotation(90);
+            }
+        });
     }
 
     private void callAddressesBottomSheet() {
@@ -226,7 +236,7 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
             if (locationResult != null && locationResult.getLastLocation() != null) {
                 double latitude = locationResult.getLastLocation().getLatitude();
                 double longitude = locationResult.getLastLocation().getLongitude();
-                Log.d("AlexDebug", "location updated:" + "\nlatitude: " + latitude + "\nlongitude: " + longitude);
+                Log.d(Logging.debug, "location updated:" + "\nlatitude: " + latitude + "\nlongitude: " + longitude);
                 String userStreet = getUserStreet(locationResult.getLastLocation());
                 Log.d(Logging.debug, "Method getUserCurrentLocation() - userStreet: " + userStreet);
 
@@ -272,9 +282,9 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
                     location.getLongitude(), 1);
             if (addresses.size() > 0) {
                 Address userCurrentAddress = addresses.get(0);
-                Log.d("AlexDebug", "userChosenAddress: " + userCurrentAddress.getAddressLine(0));
-                Log.d("AlexDebug", "getFeatureName: " + userCurrentAddress.getFeatureName());
-                Log.d("AlexDebug", "getThoroughfare: " + userCurrentAddress.getThoroughfare());
+                Log.d(Logging.debug, "userChosenAddress: " + userCurrentAddress.getAddressLine(0));
+                Log.d(Logging.debug, "getFeatureName: " + userCurrentAddress.getFeatureName());
+                Log.d(Logging.debug, "getThoroughfare: " + userCurrentAddress.getThoroughfare());
                 userStreet =
                         (userCurrentAddress.getThoroughfare() == null ? "" : userCurrentAddress.getThoroughfare())
                                 + (userCurrentAddress.getThoroughfare() != null && userCurrentAddress.getFeatureName() != null ? ", " : "")
@@ -333,9 +343,9 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
                         getResources().getConfiguration().locale.getLanguage(),
                         getResources().getConfiguration().locale.getCountry()
                 ).
-                enqueue(new Callback<ArrayList<CategoriesWithProductsClass>>() {
+                enqueue(new Callback<ArrayList<CategoriesPOJO>>() {
                     @Override
-                    public void onResponse(@NotNull Call<ArrayList<CategoriesWithProductsClass>> call, @NotNull final Response<ArrayList<CategoriesWithProductsClass>> response) {
+                    public void onResponse(@NotNull Call<ArrayList<CategoriesPOJO>> call, @NotNull final Response<ArrayList<CategoriesPOJO>> response) {
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
                                 CategoriesAdapter categoriesAdapter = new CategoriesAdapter(MainActivity.this, response.body());
@@ -351,12 +361,11 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
                     }
 
                     @Override
-                    public void onFailure(@NotNull Call<ArrayList<CategoriesWithProductsClass>> call, @NotNull Throwable t) {
+                    public void onFailure(@NotNull Call<ArrayList<CategoriesPOJO>> call, @NotNull Throwable t) {
                         Log.e(Logging.error, "Method getCategories() - failure: " + t.toString());
                     }
                 });
     }
-
 
     private void getAppToken() {
         FirebaseMessaging.getInstance().getToken()
@@ -365,9 +374,7 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
                         Log.e(Logging.error, "Fetching FCM registration token failed", task.getException());
                         return;
                     }
-                    // Get new FCM registration token
                     String token = task.getResult();
-
                     Log.d(Logging.debug, "FCM: token:" + token);
                 });
     }
@@ -420,7 +427,7 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
     @Override
     protected void onStart() {
         super.onStart();
-        Log.d("AlexDebug", "allowUpdateUI: " + allowUpdateUI);
+        Log.d(Logging.debug, "allowUpdateUI: " + allowUpdateUI);
         updateCost();
         if (allowUpdateUI) {
             redrawProducts();
@@ -478,9 +485,5 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
             fragmentTransaction.add(frameLayout.getId(), categoryFragment, "fragment: " + i).commitAllowingStateLoss();
             binding.storeFragments.addView(frameLayout);
         }
-        View footer = new View(MainActivity.this);
-        footer.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                (int) getResources().getDimension(R.dimen.dimen_70dp)));
-        binding.storeFragments.addView(footer);
     }
 }

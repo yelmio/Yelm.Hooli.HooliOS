@@ -10,6 +10,7 @@ import yelm.io.yelm.payment.models.PayRequestArgs;
 import yelm.io.yelm.payment.models.Post3dsRequestArgs;
 import yelm.io.yelm.payment.models.Transaction;
 import yelm.io.yelm.payment.response.PayApiResponse;
+import yelm.io.yelm.support_stuff.Logging;
 
 
 public class PayApi {
@@ -49,7 +50,7 @@ public class PayApi {
         args.setDescription(""); // Описание оплаты в свободной форме (необязательный)
         args.setAccountId(""); // Идентификатор пользователя в вашей системе (необязательный)
         args.setJsonData(order); // Любые другие данные, которые будут связаны с транзакцией (необязательный)
-        Log.d("AlexDebug", "cardCryptogramPacket: " + cardCryptogramPacket);
+        Log.d(Logging.debug, "cardCryptogramPacket: " + cardCryptogramPacket);
 
         return PayApiFactory.getPayMethods()
                 .auth(CONTENT_TYPE, args)
@@ -60,7 +61,7 @@ public class PayApi {
     }
 
     public static Observable<Transaction> post3ds(String transactionId, String paRes) {
-        Log.d("AlexDebug", "post3ds");
+        Log.d(Logging.debug, "post3ds");
         Post3dsRequestArgs args = new Post3dsRequestArgs();
         args.setTransactionId(transactionId);
         args.setPaRes(paRes);

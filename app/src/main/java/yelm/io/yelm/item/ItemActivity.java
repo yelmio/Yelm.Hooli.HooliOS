@@ -101,7 +101,7 @@ public class ItemActivity extends AppCompatActivity implements AppBarLayout.OnOf
             } else {
                 modifiers.remove(modifier.getName());
             }
-            Log.d("AlexDebug", "modifiers: " + modifiers.toString());
+            Log.d(Logging.debug, "modifiers: " + modifiers.toString());
             BigDecimal costCurrent = new BigDecimal(finalPrice.toString());
             for (Map.Entry<String, String> modifierEntry : modifiers.entrySet()) {
                 costCurrent = costCurrent.add(new BigDecimal(modifierEntry.getValue()));

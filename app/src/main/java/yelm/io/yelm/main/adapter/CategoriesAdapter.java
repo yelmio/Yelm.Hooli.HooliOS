@@ -7,20 +7,22 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
 
 import yelm.io.yelm.databinding.SquareCategoryItemBinding;
+import yelm.io.yelm.main.categories.CategoriesPOJO;
 import yelm.io.yelm.main.model.CategoriesWithProductsClass;
 
 public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.ProductHolder> {
     private Context context;
-    private List<CategoriesWithProductsClass> categories;
+    private List<CategoriesPOJO> categories;
 
-    public CategoriesAdapter(Context context, List<CategoriesWithProductsClass> categories) {
+    public CategoriesAdapter(Context context, List<CategoriesPOJO> categories) {
         this.context = context;
         this.categories = categories;
     }
-
 
     @NonNull
     @Override
@@ -30,16 +32,14 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Pr
 
     @Override
     public void onBindViewHolder(@NonNull final CategoriesAdapter.ProductHolder holder, final int position) {
-        CategoriesWithProductsClass current = categories.get(position);
-
+        CategoriesPOJO current = categories.get(position);
         holder.binding.title.setText(current.getName());
-
-//        Picasso.get()
-//                .load(imageUrl)
-//                .noPlaceholder()
-//                .centerCrop()
-//                .resize(600, 0)
-//                .into(holder.binding.image);
+        Picasso.get()
+                .load(current.getImage())
+                .noPlaceholder()
+                .centerCrop()
+                .resize(400, 0)
+                .into(holder.binding.image);
     }
 
 

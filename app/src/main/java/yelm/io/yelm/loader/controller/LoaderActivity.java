@@ -77,7 +77,7 @@ public class LoaderActivity extends AppCompatActivity {
             NotificationManager notificationManager =
                     getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(new NotificationChannel(channelId,
-                    channelName, NotificationManager.IMPORTANCE_LOW));
+                    channelName, NotificationManager.IMPORTANCE_HIGH));
         }
         Statistic.sendStatistic("open_app");
         initRoom();
@@ -244,7 +244,6 @@ public class LoaderActivity extends AppCompatActivity {
     private void init() {
         if (isNetworkConnected()) {
             Log.d(Logging.debug, "Method init() - NetworkConnected successfully");
-
             //clean all data before adding if there is network connection
             //Common.productRepository.emptyProduct();
             //Common.articlesRepository.emptyArticles();

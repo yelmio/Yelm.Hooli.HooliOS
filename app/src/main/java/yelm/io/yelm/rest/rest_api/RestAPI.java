@@ -17,6 +17,7 @@ import yelm.io.yelm.by_category.ProductsByCategoryClass;
 import yelm.io.yelm.loader.model.ApplicationSettings;
 import yelm.io.yelm.loader.model.ChatSettingsClass;
 import yelm.io.yelm.loader.model.UserLoginResponse;
+import yelm.io.yelm.main.categories.CategoriesPOJO;
 import yelm.io.yelm.main.model.CategoriesWithProductsClass;
 import yelm.io.yelm.main.model.Item;
 import yelm.io.yelm.main.news.NewNews;
@@ -52,9 +53,9 @@ public interface RestAPI {
     );
 
     @GET("categories?")
-    Call<ArrayList<CategoriesWithProductsClass>> getCategories(@Query("platform") String platform,
-                                     @Query("language_code") String languageCode,
-                                     @Query("region_code") String regionCode
+    Call<ArrayList<CategoriesPOJO>> getCategories(@Query("platform") String platform,
+                                                  @Query("language_code") String languageCode,
+                                                  @Query("region_code") String regionCode
     );
 
     @GET("items?")

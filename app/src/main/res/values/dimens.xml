@@ -10,4 +10,5 @@
     <dimen name="buy_button_height">48sp</dimen>
     <dimen name="dimen_60dp">60dp</dimen>
     <dimen name="dimen_70dp">70dp</dimen>
+    <dimen name="dimen_80dp">80dp</dimen>
 </resources>

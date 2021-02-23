@@ -202,7 +202,7 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
         // Если данные карты введены корректно и криптограмма успешно созданна
         // используя методы API выполняем оплату по криптограмме
 
-        Log.d("AlexDebug", "cardCryptogram: " + cardCryptogram);
+        Log.d(Logging.debug, "cardCryptogram: " + cardCryptogram);
 
         if (cardCryptogram != null) {
             if (Objects.equals(LoaderActivity.settings.getString(LoaderActivity.CURRENCY, "RUB"), "RUB")) {

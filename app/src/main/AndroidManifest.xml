@@ -40,7 +40,7 @@
             android:parentActivityName=".main.controller.MainActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".basket.controller.BasketActivityOnlyDelivery"
+            android:name=".basket.controller.BasketActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".item.ItemsOfOneCategoryActivity"

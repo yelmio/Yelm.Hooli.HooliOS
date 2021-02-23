@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
-import yelm.io.yelm.basket.controller.BasketActivityOnlyDelivery;
+import yelm.io.yelm.basket.controller.BasketActivity;
 import yelm.io.yelm.database_new.Common;
 import yelm.io.yelm.database_new.basket_new.BasketCart;
 import yelm.io.yelm.databinding.ActivityItemsFromNewsBinding;
@@ -41,7 +41,7 @@ public class ItemsOfOneCategoryActivity extends AppCompatActivity {
         binding.title.setText(getIntent().getStringExtra("title"));
         binding.recycler.setLayoutManager(new StaggeredGridLayoutManager(2, LinearLayout.VERTICAL));
         binding.back.setOnClickListener(v -> finish());
-        binding.basket.setOnClickListener(v -> startActivity(new Intent(this, BasketActivityOnlyDelivery.class)));
+        binding.basket.setOnClickListener(v -> startActivity(new Intent(this, BasketActivity.class)));
     }
 
     private void rewriteView() {

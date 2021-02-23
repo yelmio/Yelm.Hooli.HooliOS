@@ -29,6 +29,7 @@ import yelm.io.yelm.databinding.NewsItemBinding;
 
 import yelm.io.yelm.rest.query.Statistic;
 import yelm.io.yelm.support_stuff.GradientTransformation;
+import yelm.io.yelm.support_stuff.Logging;
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsHolder> {
 
@@ -76,19 +77,19 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsHolder> {
         holder.binding.image.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                Log.d("AlexDebug", "onTouch");
+                Log.d(Logging.debug, "onTouch");
                 switch (motionEvent.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        Log.d("AlexDebug", "down");
+                        Log.d(Logging.debug, "down");
                         animationSet.start();
                         isMoving = false;
                         return true;
                     case MotionEvent.ACTION_MOVE:
-                        Log.d("AlexDebug", "move");
+                        Log.d(Logging.debug, "move");
                         isMoving = true;
                         break;
                     case MotionEvent.ACTION_UP:
-                        Log.d("AlexDebug", "up");
+                        Log.d(Logging.debug, "up");
                         animationSet.cancel();
                         if (!isMoving) {
                             Statistic.sendStatistic("open_news");
@@ -103,7 +104,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsHolder> {
                         animationSet1.start();
                         break;
                     case MotionEvent.ACTION_CANCEL:
-                        Log.d("AlexDebug", "cancel");
+                        Log.d(Logging.debug, "cancel");
                         animationSet.cancel();
                         if (!isMoving) {
                             Statistic.sendStatistic("open_news");

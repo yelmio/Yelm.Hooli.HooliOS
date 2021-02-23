@@ -19,7 +19,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import yelm.io.yelm.basket.controller.BasketActivityOnlyDelivery;
+import yelm.io.yelm.basket.controller.BasketActivity;
 import yelm.io.yelm.support_stuff.Logging;
 import yelm.io.yelm.R;
 import yelm.io.yelm.database_new.basket_new.BasketCart;
@@ -65,7 +65,7 @@ public class SearchActivity extends AppCompatActivity {
                 return false;
             }
         });
-        binding.basket.setOnClickListener(v -> startActivity(new Intent(this, BasketActivityOnlyDelivery.class)));
+        binding.basket.setOnClickListener(v -> startActivity(new Intent(this, BasketActivity.class)));
     }
 
     private void getAllProducts() {
