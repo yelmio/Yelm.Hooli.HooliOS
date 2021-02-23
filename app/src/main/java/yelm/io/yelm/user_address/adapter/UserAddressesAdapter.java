@@ -21,6 +21,7 @@ public class UserAddressesAdapter extends RecyclerView.Adapter<UserAddressesAdap
     private Context context;
     private List<UserAddress> userAddresses;
     private AddressChangeListener addressChangeListener;
+    boolean[] checked;
 
     public interface AddressChangeListener {
         void onAddressChange();

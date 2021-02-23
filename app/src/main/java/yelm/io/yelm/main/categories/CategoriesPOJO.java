@@ -7,7 +7,7 @@ public class CategoriesPOJO {
 
     @SerializedName("id")
     @Expose
-    private Integer id;
+    private String id;
     @SerializedName("name")
     @Expose
     private String name;
@@ -16,13 +16,13 @@ public class CategoriesPOJO {
     private String image;
     @SerializedName("items_count")
     @Expose
-    private Integer itemsCount;
+    private String itemsCount;
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -42,11 +42,11 @@ public class CategoriesPOJO {
         this.image = image;
     }
 
-    public Integer getItemsCount() {
+    public String getItemsCount() {
         return itemsCount;
     }
 
-    public void setItemsCount(Integer itemsCount) {
+    public void setItemsCount(String itemsCount) {
         this.itemsCount = itemsCount;
     }
 }

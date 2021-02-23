@@ -1,6 +1,7 @@
 package yelm.io.yelm.main.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -11,6 +12,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import yelm.io.yelm.by_category.ProductsByCategoriesActivity;
 import yelm.io.yelm.databinding.SquareCategoryItemBinding;
 import yelm.io.yelm.main.categories.CategoriesPOJO;
 import yelm.io.yelm.main.model.CategoriesWithProductsClass;
@@ -40,8 +42,13 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Pr
                 .centerCrop()
                 .resize(400, 0)
                 .into(holder.binding.image);
+        holder.binding.image.setOnClickListener(v->{
+            Intent intent = new Intent(context, ProductsByCategoriesActivity.class);
+            intent.putExtra("catalogID", current.getId());
+            intent.putExtra("catalogName", current.getName());
+            context.startActivity(intent);
+        });
     }
-
 
     @Override
     public int getItemCount() {

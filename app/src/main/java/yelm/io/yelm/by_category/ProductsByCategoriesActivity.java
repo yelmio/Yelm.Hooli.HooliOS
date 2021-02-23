@@ -53,6 +53,9 @@ public class ProductsByCategoriesActivity extends AppCompatActivity {
 
         Bundle args = getIntent().getExtras();
         if (args != null) {
+            Log.d(Logging.debug, "args.getString(catalogID): " + args.getString("catalogID"));
+            Log.d(Logging.debug, "args.getString(catalogName): " + args.getString("catalogName"));
+
             getProductByCategory(args.getString("catalogID"));
             binding.title.setText(args.getString("catalogName"));
         }

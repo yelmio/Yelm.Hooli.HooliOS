@@ -204,5 +204,4 @@ public interface RestAPI {
             @Field("login") String login,
             @Field("type") String type
            );
-
 }
