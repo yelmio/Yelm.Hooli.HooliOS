@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<yelm.io.yelm.support_stuff.SquareRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="8dp">
 
-    <yelm.io.yelm.support_stuff.ImageCornerRadius
+    <yelm.io.raccoon.support_stuff.ImageCornerRadius
         android:id="@+id/image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:cornerRadius="12dp"
         app:roundedCorners="all" />
+
+
 
     <TextView
         android:id="@+id/title"
@@ -25,4 +27,4 @@
         android:textSize="16sp"
         android:textStyle="bold"
         android:theme="@style/ProDisplayTextStyle" />
-</yelm.io.yelm.support_stuff.SquareRelativeLayout>
+</RelativeLayout>

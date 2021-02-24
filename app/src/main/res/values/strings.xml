@@ -1,6 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">Yelm</string>
-    <string name="yelm_app" translatable="false">Yelm App</string>
+    <string name="app_name" translatable="false">Енот</string>
     <string name="yandex_maps_API_key" translatable="false">09ee0a39-0ad1-490a-9ea8-8600c46b9ef8</string>
 
     <!-- ItemActivity -->
