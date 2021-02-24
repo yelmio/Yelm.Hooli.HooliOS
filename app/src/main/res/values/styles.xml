@@ -1,9 +1,9 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <item name="colorPrimary">@color/colorYelmMediaDark</item>
-        <item name="colorPrimaryDark">@color/colorYelmMediaDark</item>
-        <item name="colorAccent">@color/colorYelmMediaDark</item>
+        <item name="colorPrimary">@color/mainThemeColor</item>
+        <item name="colorPrimaryDark">@color/mainThemeColor</item>
+        <item name="colorAccent">@color/mainThemeColor</item>
         <item name="android:popupMenuStyle">@style/PopupMenu</item>
         <item name="android:itemTextAppearance">@style/itemTextStyle.AppTheme</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
@@ -84,14 +84,14 @@
     </style>
 
     <style name="ProgressBarTheme">
-        <item name="colorAccent">@color/colorYelmMediaDark</item>
+        <item name="colorAccent">@color/mainThemeColor</item>
     </style>
 
     <style name="SplashTheme" parent="@style/AppTheme">
         <item name="android:windowBackground">@drawable/splashscreen_bg</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
-        <item name="colorPrimaryDark">@color/colorYelmMediaDark</item>
-        <item name="android:statusBarColor">@color/colorYelmMediaDark</item>
+        <item name="colorPrimaryDark">@color/mainThemeColor</item>
+        <item name="android:statusBarColor">@color/mainThemeColor</item>
     </style>
 
     <style name="newsCardStyle" parent="Theme.MaterialComponents.Light">

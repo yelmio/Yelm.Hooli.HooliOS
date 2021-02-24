@@ -5,13 +5,13 @@
     <item>
         <shape
             android:shape="rectangle">
-            <solid android:color="#0A84FF"/>
+            <solid android:color="@color/mainThemeColor"/>
         </shape>
     </item>
 
     <item>
         <bitmap
-            android:src="@drawable/screen_yelm"
+            android:src="@drawable/raccoon_splash"
             android:gravity="center"/>
     </item>
 </layer-list>

@@ -2,12 +2,10 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
 
-    <item android:drawable="@color/colorBackgroundGray" />
-
     <item>
         <bitmap
             android:gravity="center"
-            android:src="@drawable/yelm_media" />
+            android:src="@drawable/raccoon_icon" />
     </item>
 
 </layer-list>

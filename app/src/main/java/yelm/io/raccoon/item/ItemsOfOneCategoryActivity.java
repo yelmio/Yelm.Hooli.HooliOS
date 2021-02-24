@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
+import yelm.io.raccoon.R;
 import yelm.io.raccoon.basket.controller.BasketActivity;
 import yelm.io.raccoon.database_new.Common;
 import yelm.io.raccoon.database_new.basket_new.BasketCart;
@@ -22,6 +23,7 @@ import yelm.io.raccoon.databinding.ActivityItemsFromNewsBinding;
 import yelm.io.raccoon.loader.controller.LoaderActivity;
 import yelm.io.raccoon.main.adapter.ProductsNewMenuSquareImageAdapter;
 import yelm.io.raccoon.main.model.Item;
+import yelm.io.raccoon.support_stuff.ItemOffsetDecorationBottom;
 import yelm.io.raccoon.support_stuff.Logging;
 
 public class ItemsOfOneCategoryActivity extends AppCompatActivity {
@@ -40,6 +42,8 @@ public class ItemsOfOneCategoryActivity extends AppCompatActivity {
     private void binding() {
         binding.title.setText(getIntent().getStringExtra("title"));
         binding.recycler.setLayoutManager(new StaggeredGridLayoutManager(2, LinearLayout.VERTICAL));
+        binding.recycler.setHasFixedSize(false);
+        binding.recycler.addItemDecoration(new ItemOffsetDecorationBottom((int) getResources().getDimension(R.dimen.dimen_70dp)));
         binding.back.setOnClickListener(v -> finish());
         binding.basket.setOnClickListener(v -> startActivity(new Intent(this, BasketActivity.class)));
     }
@@ -54,7 +58,6 @@ public class ItemsOfOneCategoryActivity extends AppCompatActivity {
     public void onStop() {
         compositeDisposableBasket.clear();
         super.onStop();
-        Log.d(Logging.debug, "onStop");
     }
 
     @Override
@@ -62,7 +65,6 @@ public class ItemsOfOneCategoryActivity extends AppCompatActivity {
         super.onStart();
         updateCost();
         rewriteView();
-        Log.d(Logging.debug, "onStart");
     }
 
     private void updateCost() {
@@ -71,10 +73,10 @@ public class ItemsOfOneCategoryActivity extends AppCompatActivity {
                 .subscribeOn(Schedulers.io())
                 .subscribe(carts -> {
                     if (carts.size() == 0) {
-                        binding.basketLayout.setVisibility(View.GONE);
+                        binding.basket.setVisibility(View.GONE);
                         binding.basket.setText(String.format("0 %s", LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
                     } else {
-                        binding.basketLayout.setVisibility(View.VISIBLE);
+                        binding.basket.setVisibility(View.VISIBLE);
                         BigDecimal basketPrice = new BigDecimal("0");
                         for (BasketCart cart : carts) {
                             basketPrice = basketPrice.add(new BigDecimal(cart.finalPrice).multiply(new BigDecimal(cart.count)));

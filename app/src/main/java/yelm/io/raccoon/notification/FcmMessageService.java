@@ -98,7 +98,7 @@ public class FcmMessageService extends FirebaseMessagingService {
         String channelId = getString(R.string.default_notification_channel_id);
         String channelName = getString(R.string.default_notification_channel_name);
 
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.yelm_media);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.raccoon_icon);
 
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId)

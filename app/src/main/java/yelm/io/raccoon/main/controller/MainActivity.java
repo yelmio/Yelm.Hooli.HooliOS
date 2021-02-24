@@ -441,10 +441,10 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
                 .subscribeOn(Schedulers.io())
                 .subscribe(carts -> {
                     if (carts.size() == 0) {
-                        binding.basketLayout.setVisibility(View.GONE);
+                        binding.basket.setVisibility(View.GONE);
                         binding.basket.setText(String.format("0 %s", LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
                     } else {
-                        binding.basketLayout.setVisibility(View.VISIBLE);
+                        binding.basket.setVisibility(View.VISIBLE);
                         BigDecimal basketPrice = new BigDecimal("0");
                         for (BasketCart cart : carts) {
                             BigDecimal costCurrentCart = new BigDecimal(cart.finalPrice);

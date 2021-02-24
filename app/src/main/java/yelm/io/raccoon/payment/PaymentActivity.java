@@ -441,7 +441,8 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
                         "delivery",
                         jsonObjectItems.toString(),
                         deliveryCost.toString(),
-                        currency
+                        currency,
+                        yelm.io.raccoon.constants.Constants.ShopID
                 ).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(@NotNull Call<ResponseBody> call, @NotNull Response<ResponseBody> response) {

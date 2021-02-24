@@ -254,7 +254,8 @@ public class OrderActivity extends AppCompatActivity implements ThreeDSDialogLis
                         "delivery",
                         jsonObjectItems.toString(),
                         deliveryCostFinal.toString(),
-                        currency
+                        currency,
+                        Constants.ShopID
                 ).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(@NotNull Call<ResponseBody> call, @NotNull Response<ResponseBody> response) {

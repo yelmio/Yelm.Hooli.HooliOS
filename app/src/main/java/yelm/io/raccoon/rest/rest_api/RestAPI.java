@@ -187,7 +187,8 @@ public interface RestAPI {
             @Query("delivery") String delivery,
             @Field("items") String items,
             @Query("delivery_price") String deliveryPrice,
-            @Query("currency") String currency
+            @Query("currency") String currency,
+            @Query("shop_id") String shopID
     );
 
     @FormUrlEncoded

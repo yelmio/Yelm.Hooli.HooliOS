@@ -30,7 +30,7 @@
                 android:layout_height="36dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-                android:background="@drawable/address_back_view_blue"
+                android:background="@drawable/circle_button_selector"
                 android:padding="6dp"
 
                 android:scaleType="fitCenter"

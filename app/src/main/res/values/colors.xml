@@ -4,10 +4,9 @@
     <color name="colorPrimaryDark">#007AFF</color>
     <color name="colorAccent">#007AFF</color>
 
-    <color name="colorYelmMediaDark">#0A84FF</color>
-    <color name="colorButtonPressed">#5DA9F6</color>
+    <color name="colorButtonPressed">#8DD573</color>
 
-    <color name="mainThemeColor">#0A84FF</color>
+    <color name="mainThemeColor">#5DC837</color>
 
     <color name="colorSeparatorLogistic">#D1D1D1</color>
 
@@ -41,7 +40,7 @@
 
     <!--chat messages-->
     <color name="colorChatMessageLeft">#F2F3F4</color>
-    <color name="colorChatMessageRight">#0A84FF</color>
+    <color name="colorChatMessageRight">@color/mainThemeColor</color>
     <color name="colorChatMessageFieldBackground">#F7F9FA</color>
     <color name="colorChatMessageTextSender">#BDBDBD</color>
 

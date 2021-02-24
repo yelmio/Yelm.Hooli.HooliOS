@@ -70,6 +70,7 @@ public class BasketActivity extends AppCompatActivity {
             binding.layoutFinalCost.setVisibility(View.GONE);
             binding.layoutDeliveryNotAvailable.setVisibility(View.VISIBLE);
             binding.layoutDelivery.setVisibility(View.GONE);
+            binding.time.setText(String.format("%s %s", "0", getText(R.string.delivery_time)));
             setCompositeDisposableBasket();
             basketAdapter = new BasketAdapter(this, Common.basketCartRepository.getBasketCartsList());
             binding.recyclerCart.setAdapter(basketAdapter);

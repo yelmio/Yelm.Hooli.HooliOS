@@ -44,44 +44,34 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@id/layoutTitle"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp" />
 
-    <LinearLayout
-        android:id="@+id/basketLayout"
+    <TextView
+        android:id="@+id/basket"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/address_back_view_blue"
+        android:drawableStart="@drawable/ic_basket_24"
+        android:drawablePadding="4dp"
+        android:drawableTint="@color/whiteColor"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="32dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <TextView
-            android:id="@+id/basket"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/address_back_view_blue"
-            android:drawableStart="@drawable/ic_basket_24"
-            android:drawablePadding="4dp"
-            android:drawableTint="@color/whiteColor"
-            android:gravity="center"
-            android:paddingStart="12dp"
-            android:paddingTop="6dp"
-            android:paddingEnd="12dp"
-            android:paddingBottom="6dp"
-            android:textColor="@color/whiteColor"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:theme="@style/ProDisplayTextStyle" />
-
-    </LinearLayout>
+        android:layout_marginBottom="24dp"
+        android:gravity="center"
+        android:paddingStart="12dp"
+        android:paddingTop="6dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="6dp"
+        android:textColor="@color/whiteColor"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:theme="@style/ProDisplayTextStyle" />
 
 
 </RelativeLayout>
