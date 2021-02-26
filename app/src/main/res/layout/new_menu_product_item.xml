@@ -112,7 +112,6 @@
             android:layout_height="40dp"
             android:gravity="start|center_vertical"
             android:singleLine="true"
-            android:text="TextView"
             android:textColor="@color/colorText"
 
             android:textSize="14sp"
@@ -142,14 +141,12 @@
 
                 <TextView
                     android:id="@+id/priceFinal"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
                     android:drawableTint="@color/whiteColor"
                     android:gravity="center_vertical"
                     android:paddingStart="4dp"
                     android:singleLine="true"
-                    android:text="sdf"
                     android:textColor="@color/whiteColor"
                     android:textSize="14sp"
                     android:textStyle="bold"
@@ -165,8 +162,9 @@
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="30dp"
+                android:layout_weight="1"
                 android:orientation="vertical">
 
                 <TextView
@@ -175,7 +173,6 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="end|bottom"
-                    android:text="test"
                     android:textColor="@color/colorTextGray"
                     android:textSize="12sp"
                     android:theme="@style/ProDisplayTextStyle"
@@ -188,7 +185,6 @@
                     android:layout_weight="1"
 
                     android:gravity="center_vertical|end"
-                    android:text="TextView"
                     android:textColor="@color/colorTextGray"
                     android:textSize="12sp"
                     android:theme="@style/ProDisplayTextStyle" />

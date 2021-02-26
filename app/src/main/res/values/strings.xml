@@ -2,6 +2,10 @@
     <string name="app_name" translatable="false">Енот</string>
     <string name="yandex_maps_API_key" translatable="false">09ee0a39-0ad1-490a-9ea8-8600c46b9ef8</string>
 
+
+    <string name="productsNotAvailable">Нет достаточного количества товара, всего осталось</string>
+
+
     <!-- ItemActivity -->
     <string name="product_discount">Скидка</string>
     <string name="product_specifications">Харатеристики</string>
@@ -89,7 +93,6 @@
     <string name="basketActivityFreeDelivery1">Закажите ещё на</string>
     <string name="basketActivityFreeDelivery2">для бесплатной доставки</string>
 
-
     <!-- OrderActivity -->
     <string name="ordering">Оформление</string>
     <string name="promocode">Промокод</string>
@@ -147,21 +150,6 @@
     <string name="push_send_button">Отправить</string>
     <string name="push_notifications_for_app">Push уведомления для Вашего приложения</string>
     <string name="push_notifications_description">Вы можете отправить push уведомления на все устройства</string>
-
-    <!-- profile settings activity -->
-    <string name="profile_settings_activity">Настройки</string>
-    <string name="profile_application">ПРИЛОЖЕНИЕ</string>
-    <string name="profile_payment">Оплата</string>
-    <string name="profile_delivery">Доставка</string>
-    <string name="profile_pickup">Самовывоз</string>
-    <string name="profile_download">Загрузки</string>
-    <string name="profile_assets">Актив.</string>
-    <string name="profile_total_orders">Всего заказов</string>
-    <string name="profile_account">АККАУНТ</string>
-    <string name="profile_currency">Валюта</string>
-    <string name="profile_name">Название</string>
-    <string name="profile_minimum_order">Минимальный заказ</string>
-    <string name="profile_application_version">Версия приложения</string>
 
 
     <!-- address bottom sheet dialog -->
@@ -240,13 +228,11 @@
     <string name="cash">Наличные</string>
     <string name="bonus_point">Бонусные баллы:</string>
 
-
     <string name="overview">Обзор</string>
 
     <string name="my_orders">Мои заказы</string>
 
     <string name="ruble_sign" translatable="false">₽</string>
-
 
     <string name="description_product">Описание</string>
     <string name="specifications_product">Характеристики</string>

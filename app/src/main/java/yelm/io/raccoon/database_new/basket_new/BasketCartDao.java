@@ -22,8 +22,6 @@ public interface BasketCartDao {
     @Query("SELECT * FROM BasketCart WHERE itemID = :BasketCartItemId")
     List<BasketCart> getListBasketCartByItemID(String BasketCartItemId);
 
-
-
     @Query("SELECT modifier FROM BasketCart WHERE itemID =:BasketCartItemId")
     String getModifier(String BasketCartItemId);
 

@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
 
@@ -157,6 +158,28 @@ public class ItemActivity extends AppCompatActivity implements AppBarLayout.OnOf
 
     private void bindingAddProductToBasket(Item product) {
         binding.addToCart.setOnClickListener(v -> {
+
+            List<BasketCart> listCartsByID = Common.basketCartRepository.getListBasketCartByItemID(product.getId());
+
+            //cant add product if limit is over
+            BigDecimal countOfProducts = new BigDecimal("0");
+            if (listCartsByID != null && listCartsByID.size() != 0) {
+                for (BasketCart basketCart : listCartsByID) {
+                    countOfProducts = countOfProducts.add(new BigDecimal(basketCart.count));
+                }
+                if (new BigDecimal(binding.countProducts.getText().toString()).add(countOfProducts).compareTo(new BigDecimal(listCartsByID.get(0).quantity)) > 0) {
+                    showToast((String) getText(R.string.productsNotAvailable) +
+                            " " + listCartsByID.get(0).quantity + " " + (String) getText(R.string.basketActivityPC));
+                    return;
+                }
+            } else {
+                if (new BigDecimal(binding.countProducts.getText().toString()).add(countOfProducts).compareTo(new BigDecimal(product.getQuantity())) > 0) {
+                    showToast((String) getText(R.string.productsNotAvailable) +
+                            " " + product.getQuantity() + " " + (String) getText(R.string.basketActivityPC));
+                    return;
+                }
+            }
+
             String added = (String) (binding.countProducts.getText().toString().equals("1") ? getText(R.string.productNewActivityAddedOne) : getText(R.string.productNewActivityAddedMulti));
             Toast.makeText(this, "" +
                     product.getName() + " " +
@@ -164,8 +187,6 @@ public class ItemActivity extends AppCompatActivity implements AppBarLayout.OnOf
                     getText(R.string.productNewActivityPC) + " " +
                     added + " " +
                     getText(R.string.productNewActivityAddedToBasket), Toast.LENGTH_SHORT).show();
-
-            List<BasketCart> listCartsByID = Common.basketCartRepository.getListBasketCartByItemID(product.getId());
 
             List<Modifier> listModifiers = new ArrayList<>();
             for (Map.Entry<String, String> modifierEntry : modifiers.entrySet()) {
@@ -207,6 +228,12 @@ public class ItemActivity extends AppCompatActivity implements AppBarLayout.OnOf
     }
 
 
+    private void showToast(String message) {
+        Toast toast = Toast.makeText(this, message, Toast.LENGTH_LONG);
+        //toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
+    }
+
     @Override
     public void onOffsetChanged(AppBarLayout appBarLayout, int i) {
         if (maxScrollSize == 0)
@@ -218,7 +245,6 @@ public class ItemActivity extends AppCompatActivity implements AppBarLayout.OnOf
         if (currentScrollPercentage >= PERCENTAGE_TO_SHOW_IMAGE) {
             if (!isImageHidden) {
                 isImageHidden = true;
-
                 //ViewCompat.animate(mFab).scaleY((float) 0.9).scaleX((float) 0.9).start();
                 //ViewCompat.animate(imageButton).scaleY((float) 0.2).scaleX((float) 0.2).setDuration(200).start();
             }
@@ -227,7 +253,6 @@ public class ItemActivity extends AppCompatActivity implements AppBarLayout.OnOf
         if (currentScrollPercentage < PERCENTAGE_TO_SHOW_IMAGE) {
             if (isImageHidden) {
                 isImageHidden = false;
-
                 //ViewCompat.animate(mFab).scaleY(1).scaleX(1).start();
                 //ViewCompat.animate(imageButton).scaleY(1).scaleX(1).start();
             }

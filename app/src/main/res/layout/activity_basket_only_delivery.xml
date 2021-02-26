@@ -35,6 +35,7 @@
             android:layout_height="match_parent"
             android:layout_marginTop="8dp"
             android:gravity="center|center_horizontal"
+            android:text="@string/order_is_accepted_by_google_pay"
             android:textAlignment="center"
             android:textColor="@color/mainThemeColor"
             android:textSize="18sp"

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -88,6 +90,7 @@ public class ProductsNewMenuSquareImageAdapter extends RecyclerView.Adapter<Prod
             notifyDataSetChanged();
         }
     };
+
     @NonNull
     @Override
     public ProductsNewMenuSquareImageAdapter.ProductHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -151,14 +154,21 @@ public class ProductsNewMenuSquareImageAdapter extends RecyclerView.Adapter<Prod
                 holder.binding.countItemsLayout.setVisibility(View.VISIBLE);
                 List<BasketCart> listCartsByID = Common.basketCartRepository.getListBasketCartByItemID(current.getId());
                 if (listCartsByID != null && listCartsByID.size() != 0) {
-                    BigInteger countOfAllProducts = new BigInteger("0");
+                    BigDecimal countOfAllProducts = new BigDecimal("0");
                     for (BasketCart basketCart : listCartsByID) {
-                        countOfAllProducts = countOfAllProducts.add(new BigInteger(basketCart.count));
+                        countOfAllProducts = countOfAllProducts.add(new BigDecimal(basketCart.count));
                     }
+
+                    if (countOfAllProducts.compareTo(new BigDecimal(listCartsByID.get(0).quantity)) >= 0) {
+                        showToast((String) context.getText(R.string.productsNotAvailable) +
+                                " " + listCartsByID.get(0).quantity +" "+(String) context.getText(R.string.basketActivityPC));
+                        return;
+                    }
+
                     for (BasketCart basketCart : listCartsByID) {
                         if (basketCart.modifier.equals(current.getModifier())) {
                             basketCart.count = new BigDecimal(basketCart.count).add(new BigDecimal("1")).toString();
-                            holder.binding.countItemInCart.setText(String.format("%s", countOfAllProducts.add(new BigInteger("1"))));
+                            holder.binding.countItemInCart.setText(String.format("%s", countOfAllProducts.add(new BigDecimal("1"))));
                             Common.basketCartRepository.updateBasketCart(basketCart);
                             Log.d(Logging.debug, "Method add BasketCart to Basket. No modifiers - listCartsByID !=null:  " + basketCart.toString());
                             return;
@@ -373,4 +383,12 @@ public class ProductsNewMenuSquareImageAdapter extends RecyclerView.Adapter<Prod
             this.binding = binding;
         }
     }
+
+
+    private void showToast(String message) {
+        Toast toast = Toast.makeText(context, message, Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
+    }
+
 }

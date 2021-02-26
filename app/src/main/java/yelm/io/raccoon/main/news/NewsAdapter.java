@@ -4,23 +4,16 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
 import java.util.List;
-
 import yelm.io.raccoon.databinding.NewsItemBinding;
-
 import yelm.io.raccoon.rest.query.Statistic;
 import yelm.io.raccoon.support_stuff.GradientTransformation;
 import yelm.io.raccoon.support_stuff.Logging;
@@ -30,7 +23,6 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsHolder> {
     private Context context;
     private List<NewNews> news;
     boolean isMoving = false;
-
 
     public NewsAdapter(Context context, List<NewNews> news) {
         this.context = context;
@@ -100,13 +92,13 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsHolder> {
                     case MotionEvent.ACTION_CANCEL:
                         Log.d(Logging.debug, "cancel");
                         animationSet.cancel();
-                        if (!isMoving) {
-                            Statistic.sendStatistic("open_news");
-                            Intent intent = new Intent(context, NewsActivity.class);
-                            intent.putExtra("news", currentNews);
-                            intent.putParcelableArrayListExtra("items", (ArrayList<? extends Parcelable>) currentNews.getItems());
-                            context.startActivity(intent);
-                        }
+//                        if (!isMoving) {
+//                            Statistic.sendStatistic("open_news");
+//                            Intent intent = new Intent(context, NewsActivity.class);
+//                            intent.putExtra("news", currentNews);
+//                            intent.putParcelableArrayListExtra("items", (ArrayList<? extends Parcelable>) currentNews.getItems());
+//                            context.startActivity(intent);
+//                        }
                         AnimatorSet animationSet2 = new AnimatorSet();
                         ObjectAnimator scaleY2 = ObjectAnimator.ofFloat(holder.binding.news, "scaleY", holder.binding.news.getScaleY(), 1.0f);
                         ObjectAnimator scaleX2 = ObjectAnimator.ofFloat(holder.binding.news, "scaleX", holder.binding.news.getScaleX(), 1.0f);
@@ -117,55 +109,6 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsHolder> {
                 return false;
             }
         });
-
-        //holder.binding.image.setOnClickListener(v -> {
-//            Intent intent = new Intent(context, NewsActivity.class);
-//            intent.putExtra("news", currentNews);
-//            intent.putParcelableArrayListExtra("items", (ArrayList<? extends Parcelable>) currentNews.getItems());
-//            context.startActivity(intent);
-        //});
-        //holder.image.setOnClickListener(view -> setLinks(currentNews.getAttachments()));
-    }
-
-    private void setAnimator(View view, NewNews news, boolean isMoving){
-        //boolean isMoving = false;
-//        AnimatorSet animationSet = new AnimatorSet();
-//        ObjectAnimator scaleY = ObjectAnimator.ofFloat(view, "scaleY", 1f, 0.9f);
-//        ObjectAnimator scaleX = ObjectAnimator.ofFloat(view, "scaleX", 1f, 0.9f);
-//        animationSet.setDuration(200).playTogether(scaleX, scaleY);
-//        view.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View view, MotionEvent motionEvent) {
-//                Log.d("AlexDebug", "onTouch");
-//                switch (motionEvent.getAction()) {
-//                    case MotionEvent.ACTION_DOWN:
-//                        Log.d("AlexDebug", "down");
-//                        animationSet.start();
-//                        isMoving = false;
-//                        break;
-//                    case MotionEvent.ACTION_MOVE:
-//                        Log.d("AlexDebug", "move");
-//                        isMoving = true;
-//                        break;
-//                    case MotionEvent.ACTION_UP:
-//                        Log.d("AlexDebug", "up");
-//                        animationSet.cancel();
-//                        AnimatorSet animationSet = new AnimatorSet();
-//                        ObjectAnimator scaleY = ObjectAnimator.ofFloat(view, "scaleY", view.getScaleY(), 1.0f);
-//                        ObjectAnimator scaleX = ObjectAnimator.ofFloat(view, "scaleX", view.getScaleX(), 1.0f);
-//                        animationSet.setDuration(200).playTogether(scaleX, scaleY);
-//                        animationSet.start();
-//                        if (!isMoving) {
-//                            Intent intent = new Intent(context, NewsActivity.class);
-//                            intent.putExtra("news", news);
-//                            intent.putParcelableArrayListExtra("items", (ArrayList<? extends Parcelable>) news.getItems());
-//                            context.startActivity(intent);
-//                        }
-//                        break;
-//                }
-//                return true;
-//            }
-//        });
     }
 
     @Override
