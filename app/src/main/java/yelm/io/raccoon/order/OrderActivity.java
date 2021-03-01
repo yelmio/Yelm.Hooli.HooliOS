@@ -542,7 +542,7 @@ public class OrderActivity extends AppCompatActivity implements ThreeDSDialogLis
     private void charge(String cardCryptogramPacket, String cardHolderName, BigDecimal
             paymentCost, String order) {
         compositeDisposable.add(PayApi
-                .charge(cardCryptogramPacket, cardHolderName, paymentCost, order)
+                .charge(cardCryptogramPacket, cardHolderName, paymentCost, order, "googlepay")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(disposable -> showLoading())
@@ -593,7 +593,7 @@ public class OrderActivity extends AppCompatActivity implements ThreeDSDialogLis
     // Завершаем транзакцию после прохождения 3DS формы
     private void post3ds(String md, String paRes) {
         compositeDisposable.add(PayApi
-                .post3ds(md, paRes)
+                .post3ds(md, paRes, "googlepay")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(disposable -> showLoading())
@@ -626,7 +626,6 @@ public class OrderActivity extends AppCompatActivity implements ThreeDSDialogLis
 
     public void showToast(String message) {
         Log.d(Logging.debug, "message: " + message);
-
 //        Snackbar snackbar = Snackbar.make(
 //                findViewById(R.id.layout),
 //                message,

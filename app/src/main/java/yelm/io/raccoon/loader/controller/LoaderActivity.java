@@ -47,6 +47,7 @@ public class LoaderActivity extends AppCompatActivity {
 
     public static final String USER_NAME = "USER_NAME";
     public static final String MIN_PRICE_FOR_FREE_DELIVERY = "MIN_PRICE_FOR_FREE_DELIVERY";
+    public static final String COLOR = "COLOR";
     public static final String MIN_ORDER_PRICE = "MIN_ORDER_PRICE";
     public static final String PRICE_IN = "PRICE_IN";
     public static final String CURRENCY = "CNT";
@@ -169,6 +170,7 @@ public class LoaderActivity extends AppCompatActivity {
                                 editor.putString(MIN_PRICE_FOR_FREE_DELIVERY, response.body().getSettings().getMinDeliveryPrice());
                                 editor.putString(MIN_ORDER_PRICE, response.body().getSettings().getMinOrderPrice());
                                 editor.putString(CURRENCY, response.body().getCurrency());
+                                editor.putString(COLOR, response.body().getSettings().getTheme());
                                 editor.putString(PRICE_IN, response.body().getSymbol());
                                 editor.putString(COUNTRY_CODE, response.body().getSettings().getRegionCode());
                                 editor.apply();

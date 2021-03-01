@@ -143,9 +143,6 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
         String cardCVC = editTextCardCVC.getText().toString();
         String cardHolderName = editTextCardHolderName.getText().toString();
 
-        //testing
-        //sendOrder();
-        //testing
 
         CPCardApi api = new CPCardApi(this);
 
@@ -292,7 +289,7 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
     private void auth(String cardCryptogramPacket, String cardHolderName, BigDecimal price, String order) {
         Log.d(Logging.debug, "Method auth()");
         compositeDisposable.add(PayApi
-                .auth(cardCryptogramPacket, cardHolderName, price, order)
+                .auth(cardCryptogramPacket, cardHolderName, price, order, "card")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(disposable -> {
@@ -358,7 +355,7 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
     // Завершаем транзакцию после прохождения 3DS формы
     private void post3ds(String md, String paRes) {
         compositeDisposable.add(PayApi
-                .post3ds(md, paRes)
+                .post3ds(md, paRes,"card")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(disposable -> {

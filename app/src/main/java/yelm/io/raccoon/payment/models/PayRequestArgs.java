@@ -7,6 +7,17 @@ public class PayRequestArgs {
     @SerializedName("amount")
     private String amount; // Сумма платежа (Обязательный)
 
+    @SerializedName("type")
+    private String type; // Сумма платежа (Обязательный)
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     @SerializedName("currency")
     private String currency; // Валюта (Обязательный)
 

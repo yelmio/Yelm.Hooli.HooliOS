@@ -10,6 +10,10 @@ public class Post3dsRequestArgs {
     @SerializedName("pares")
     private String paRes;
 
+    @SerializedName("type")
+    private String type;
+
+
     public String getTransactionId() {
         return transactionId;
     }
@@ -24,5 +28,13 @@ public class Post3dsRequestArgs {
 
     public void setPaRes(String paRes) {
         this.paRes = paRes;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

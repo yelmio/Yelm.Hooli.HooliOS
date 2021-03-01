@@ -15,7 +15,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import yelm.io.raccoon.payment.interfaces.PayMethods;
 
 public class PayApiFactory  {
-    private static final String HOST = "https://dev.yelm.io/api/mobile/";
+    private static final String HOST = "https://rest.yelm.io/api/mobile/";
     private static final String API_URL = "";
 
     private static final int TIMEOUT = 10;
