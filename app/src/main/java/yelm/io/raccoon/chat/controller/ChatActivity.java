@@ -73,7 +73,6 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
     ChatAdapter chatAdapter;
 
     ArrayList<ChatContent> chatContentList = new ArrayList<>();
-    Bitmap bitmap;
     PickImageBottomSheet pickImageBottomSheet = new PickImageBottomSheet();
 
     private static final int REQUEST_TAKE_PHOTO = 11;
@@ -106,8 +105,6 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
         binding();
         tuneSocketConnection();
         getChatHistory();
-
-
 
 
     }
@@ -268,48 +265,53 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
                                     } catch (ParseException e) {
                                         e.printStackTrace();
                                     }
-                                    if (chat.getType().equals("message")) {
-                                        chatContentList.add(new ChatContent(chat.getFromWhom(),
-                                                chat.getToWhom(),
-                                                chat.getMessage(),
-                                                printedFormatterDate.format(current.getTime()),
-                                                "message",
-                                                "",
-                                                null,
-                                                false,
-                                                chat.getOrderID()));
-                                    } else if (chat.getType().equals("images")) {
-                                        for (String image : chat.getImages()) {
+                                    switch (chat.getType()) {
+                                        case "message":
                                             chatContentList.add(new ChatContent(chat.getFromWhom(),
                                                     chat.getToWhom(),
                                                     chat.getMessage(),
                                                     printedFormatterDate.format(current.getTime()),
-                                                    "images",
-                                                    image,
+                                                    "message",
+                                                    "",
                                                     null,
                                                     false,
                                                     chat.getOrderID()));
-                                        }
-                                    } else if (chat.getType().equals("items")) {
-                                        chatContentList.add(new ChatContent(chat.getFromWhom(),
-                                                chat.getToWhom(),
-                                                chat.getMessage(),
-                                                printedFormatterDate.format(current.getTime()),
-                                                "items",
-                                                "",
-                                                chat.getItems(),
-                                                false,
-                                                chat.getOrderID()));
-                                    } else {
-                                        chatContentList.add(new ChatContent(chat.getFromWhom(),
-                                                chat.getToWhom(),
-                                                chat.getMessage(),
-                                                printedFormatterDate.format(current.getTime()),
-                                                "order",
-                                                "",
-                                                null,
-                                                false,
-                                                chat.getOrderID()));
+                                            break;
+                                        case "images":
+                                            for (String image : chat.getImages()) {
+                                                chatContentList.add(new ChatContent(chat.getFromWhom(),
+                                                        chat.getToWhom(),
+                                                        chat.getMessage(),
+                                                        printedFormatterDate.format(current.getTime()),
+                                                        "images",
+                                                        image,
+                                                        null,
+                                                        false,
+                                                        chat.getOrderID()));
+                                            }
+                                            break;
+                                        case "items":
+                                            chatContentList.add(new ChatContent(chat.getFromWhom(),
+                                                    chat.getToWhom(),
+                                                    chat.getMessage(),
+                                                    printedFormatterDate.format(current.getTime()),
+                                                    "items",
+                                                    "",
+                                                    chat.getItems(),
+                                                    false,
+                                                    chat.getOrderID()));
+                                            break;
+                                        case "order":
+                                            chatContentList.add(new ChatContent(chat.getFromWhom(),
+                                                    chat.getToWhom(),
+                                                    chat.getMessage(),
+                                                    printedFormatterDate.format(current.getTime()),
+                                                    "order",
+                                                    "",
+                                                    null,
+                                                    false,
+                                                    chat.getOrderID()));
+                                            break;
                                     }
                                 }
                                 chatAdapter = new ChatAdapter(ChatActivity.this, chatContentList);
@@ -476,6 +478,7 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
 
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
             if (data != null) {
+
                 Bitmap bitmap = (Bitmap) data.getExtras().get("data");
                 Log.d(Logging.debug, "Bitmap: " + bitmap.getByteCount());
                 new Thread(() -> socketSendPhoto(bitmap)).start();

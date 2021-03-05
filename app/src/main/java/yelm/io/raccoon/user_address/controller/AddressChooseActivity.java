@@ -99,7 +99,7 @@ public class AddressChooseActivity extends AppCompatActivity {
 
         binding.getLocation.setOnClickListener(view -> {
             if (cameraPositionCurrent != null) {
-                String userStreet="";
+                String userStreet;
                 userStreet =
                         (userSelectedAddress.getThoroughfare() == null ? "" : userSelectedAddress.getThoroughfare())
                                 + (userSelectedAddress.getThoroughfare() != null && userSelectedAddress.getFeatureName() != null ? ", " : "")

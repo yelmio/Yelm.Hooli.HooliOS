@@ -232,17 +232,6 @@ public class LoaderActivity extends AppCompatActivity {
         Common.userAddressesRepository = UserAddressesRepository.getInstance(UserAddressesDataSource.getInstance(Common.sDatabase.addressesDao()));
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        Log.d(Logging.debug, "LoaderActivity - intent: " + intent.getStringExtra("data"));
-    }
-
     private void init() {
         if (isNetworkConnected()) {
             Log.d(Logging.debug, "Method init() - NetworkConnected successfully");

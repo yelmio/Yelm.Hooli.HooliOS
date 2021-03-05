@@ -21,7 +21,6 @@ public class UserAddressesAdapter extends RecyclerView.Adapter<UserAddressesAdap
     private Context context;
     private List<UserAddress> userAddresses;
     private AddressChangeListener addressChangeListener;
-    boolean[] checked;
 
     public interface AddressChangeListener {
         void onAddressChange();
@@ -100,7 +99,7 @@ public class UserAddressesAdapter extends RecyclerView.Adapter<UserAddressesAdap
         return userAddresses.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         private UserAddressItemBinding binding;
 
         public ViewHolder(@NonNull UserAddressItemBinding binding) {

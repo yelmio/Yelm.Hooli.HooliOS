@@ -46,7 +46,6 @@ public class OrderByIDActivity extends AppCompatActivity implements AppBarLayout
     SimpleDateFormat currentFormatterDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     SimpleDateFormat printedFormatterDate = new SimpleDateFormat("yyyy-MM-dd");
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         MapKitFactory.setApiKey(getString(R.string.yandex_maps_API_key));
@@ -66,6 +65,7 @@ public class OrderByIDActivity extends AppCompatActivity implements AppBarLayout
         }
     }
 
+
     private void getOrder(String id) {
         RetrofitClient.
                 getClient(RestAPI.URL_API_MAIN).
@@ -81,7 +81,6 @@ public class OrderByIDActivity extends AppCompatActivity implements AppBarLayout
                         if (response.isSuccessful()) {
                             Log.d(Logging.debug, "isSuccessful");
                             if (response.body() != null) {
-
                                 binding.mapView.getMap().move(
                                         new CameraPosition(new Point(Double.parseDouble(response.body().getLatitude()),
                                                 Double.parseDouble(response.body().getLongitude())),
@@ -110,18 +109,18 @@ public class OrderByIDActivity extends AppCompatActivity implements AppBarLayout
                                         getText(R.string.orderByIDActivityOrderAddress),
                                         response.body().getAddress()));
 
-                                binding.collapsingToolbar.setTitle(response.body().getTransactionStatus());
+                                binding.collapsingToolbar.setTitle(response.body().getStatus());
 
-                                if (response.body().getTransactionStatus().equals("Подтвержденный")) {
-                                    binding.collapsingToolbar.setCollapsedTitleTextColor(getResources().getColor(R.color.greenColor));
-                                    binding.collapsingToolbar.setExpandedTitleColor(getResources().getColor(R.color.greenColor));
-                                } else if (response.body().getTransactionStatus().equals("Неподтвержденный")) {
-                                    binding.collapsingToolbar.setCollapsedTitleTextColor(getResources().getColor(R.color.colorOrangeText));
-                                    binding.collapsingToolbar.setExpandedTitleColor(getResources().getColor(R.color.colorOrangeText));
-                                } else if (response.body().getTransactionStatus().equals("Отмененный")) {
-                                    binding.collapsingToolbar.setCollapsedTitleTextColor(getResources().getColor(R.color.redColor));
-                                    binding.collapsingToolbar.setExpandedTitleColor(getResources().getColor(R.color.redColor));
-                                }
+//                                if (response.body().getTransactionStatus().equals("Подтвержденный")) {
+//                                    binding.collapsingToolbar.setCollapsedTitleTextColor(getResources().getColor(R.color.greenColor));
+//                                    binding.collapsingToolbar.setExpandedTitleColor(getResources().getColor(R.color.greenColor));
+//                                } else if (response.body().getTransactionStatus().equals("Неподтвержденный")) {
+//                                    binding.collapsingToolbar.setCollapsedTitleTextColor(getResources().getColor(R.color.colorOrangeText));
+//                                    binding.collapsingToolbar.setExpandedTitleColor(getResources().getColor(R.color.colorOrangeText));
+//                                } else if (response.body().getTransactionStatus().equals("Отмененный")) {
+//                                    binding.collapsingToolbar.setCollapsedTitleTextColor(getResources().getColor(R.color.redColor));
+//                                    binding.collapsingToolbar.setExpandedTitleColor(getResources().getColor(R.color.redColor));
+//                                }
 
                                 //need for correct getting counts of items cuz server BD gives weird result >_<
                                 HashMap<String, String> mapItems = new HashMap<>();
@@ -189,7 +188,5 @@ public class OrderByIDActivity extends AppCompatActivity implements AppBarLayout
         super.onStart();
         MapKitFactory.getInstance().onStart();
         binding.mapView.onStart();
-
     }
-
 }

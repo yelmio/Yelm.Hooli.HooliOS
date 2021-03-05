@@ -69,7 +69,6 @@ public class PickImageBottomSheet extends BottomSheetDialogFragment {
         return binding.getRoot();
     }
 
-
     private void getImagesFromStorage(RecyclerView recyclerPickImages) {
         Log.d(Logging.debug, "getImages()");
 
@@ -78,7 +77,7 @@ public class PickImageBottomSheet extends BottomSheetDialogFragment {
         Cursor cursor;
         int columnIndexData, columnIndexFolderName;
 
-        String absolutePathOfImage = null;
+        String absolutePathOfImage;
         String[] projection = {MediaStore.MediaColumns.DATA, MediaStore.Images.Media.BUCKET_DISPLAY_NAME};
 
         final String orderBy = MediaStore.Images.Media.DATE_ADDED;
@@ -124,10 +123,11 @@ public class PickImageBottomSheet extends BottomSheetDialogFragment {
 
         for (int i = 0; i < allImages.size(); i++) {
             Log.d(Logging.debug, allImages.get(i).getFolder());
-            for (int j = 0; j < allImages.get(i).getAllImagesPath().size(); j++) {
-                //Log.d(Logging.debug, allImages.get(i).getAllImagesPath().get(j));
-                imagesList.add(allImages.get(i).getAllImagesPath().get(j));
-            }
+            imagesList.addAll(allImages.get(i).getAllImagesPath());
+//            for (int j = 0; j < allImages.get(i).getAllImagesPath().size(); j++) {
+//                Log.d(Logging.debug, allImages.get(i).getAllImagesPath().get(j));
+//                imagesList.add(allImages.get(i).getAllImagesPath().get(j));
+//            }
         }
         cursor.close();
         //obj_adapter = new Adapter_PhotosFolder(getApplicationContext(),al_images);

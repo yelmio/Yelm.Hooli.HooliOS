@@ -509,8 +509,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             connection.setDoInput(true);
             connection.connect();
             InputStream input = connection.getInputStream();
-            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-            return myBitmap;
+            return BitmapFactory.decodeStream(input);
         } catch (IOException e) {
             Log.d(Logging.debug, "IOException: " + e.getMessage());
             Log.d(Logging.debug, "IOException: " + e.toString());
@@ -545,8 +544,10 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
 
             try {
-                fileOutputStream.flush();
-                fileOutputStream.close();
+                if (fileOutputStream != null) {
+                    fileOutputStream.flush();
+                    fileOutputStream.close();
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -554,11 +555,9 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             //update the gallery to gain access to recently added
             MediaScannerConnection.scanFile(context,
                     new String[]{outFile.toString()}, null,
-                    new MediaScannerConnection.OnScanCompletedListener() {
-                        public void onScanCompleted(String path, Uri uri) {
-                            Log.d(Logging.debug, "Scanned " + path + ":");
-                            Log.d(Logging.debug, "-> uri=" + uri);
-                        }
+                    (path, uri) -> {
+                        Log.d(Logging.debug, "Scanned " + path + ":");
+                        Log.d(Logging.debug, "-> uri=" + uri);
                     });
         }).start();
     }

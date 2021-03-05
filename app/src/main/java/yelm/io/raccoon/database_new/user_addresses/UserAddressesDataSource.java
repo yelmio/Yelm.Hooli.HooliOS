@@ -4,7 +4,6 @@ import java.util.List;
 
 import io.reactivex.Flowable;
 
-
 public class UserAddressesDataSource {
 
     private AddressesDao addressesDAO;
@@ -20,7 +19,6 @@ public class UserAddressesDataSource {
         }
         return instance;
     }
-
 
     public Flowable<List<UserAddress>> getUserAddresses() {
         return addressesDAO.getUserAddresses();
@@ -57,6 +55,4 @@ public class UserAddressesDataSource {
     public void deleteUserAddress(UserAddress userAddress) {
         addressesDAO.deleteUserAddress(userAddress);
     }
-
-
 }

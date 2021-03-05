@@ -5,6 +5,8 @@ import android.view.View;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.jetbrains.annotations.NotNull;
+
 public class ItemOffsetDecorationBottom extends RecyclerView.ItemDecoration {
 
     private int offset;
@@ -14,7 +16,7 @@ public class ItemOffsetDecorationBottom extends RecyclerView.ItemDecoration {
     }
 
     @Override
-    public void getItemOffsets(Rect outRect, View view,
+    public void getItemOffsets(@NotNull Rect outRect,@NotNull View view,
                                RecyclerView parent, RecyclerView.State state) {
 
         // Добавление отступов к нулевому элементу

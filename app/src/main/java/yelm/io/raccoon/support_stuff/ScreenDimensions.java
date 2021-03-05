@@ -43,7 +43,4 @@ public class ScreenDimensions {
         DisplayMetrics displayMetrics = getScreenDimension(activity);
         return displayMetrics.heightPixels / displayMetrics.density;
     }
-
-
-
 }

@@ -50,9 +50,7 @@ public class AddressesBottomSheet extends BottomSheetDialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = AdressesBottomSheepDialogBinding.inflate(inflater, container, false);
         binding.addressesDone.setOnClickListener(v -> this.dismiss());
-        binding.addNewAddress.setOnClickListener(v -> {
-            startActivityForResult(new Intent(getContext(), AddressChooseActivity.class), USER_ADDRESS_CHOOSE_REQUEST_CODE);
-        });
+        binding.addNewAddress.setOnClickListener(v -> startActivityForResult(new Intent(getContext(), AddressChooseActivity.class), USER_ADDRESS_CHOOSE_REQUEST_CODE));
         binding.recyclerUserAddresses.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         userAddressesAdapter = new UserAddressesAdapter(getContext(), Common.userAddressesRepository.getUserAddressesList());
         userAddressesAdapter.setListener(() -> {
@@ -66,7 +64,6 @@ public class AddressesBottomSheet extends BottomSheetDialogFragment {
             userAddressesAdapter.setNewUserAddressList(Common.userAddressesRepository.getUserAddressesList());
         });
         binding.recyclerUserAddresses.setAdapter(userAddressesAdapter);
-
         return binding.getRoot();
     }
 

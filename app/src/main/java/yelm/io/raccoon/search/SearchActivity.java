@@ -36,7 +36,6 @@ import yelm.io.raccoon.constants.Constants;
 public class SearchActivity extends AppCompatActivity {
     ActivitySearchBinding binding;
     SearchProductAdapter searchProductAdapter;
-    private List<Item> products;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +59,7 @@ public class SearchActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String s) {
-                searchProductAdapter.getFilter().filter(s.toString());
+                searchProductAdapter.getFilter().filter(s);
                 binding.recyclerProducts.scrollToPosition(0);
                 return false;
             }
@@ -74,8 +73,8 @@ public class SearchActivity extends AppCompatActivity {
                 create(RestAPI.class).
                 getAllItems(
                         "3",
-                        String.valueOf(getResources().getConfiguration().locale.getLanguage()),
-                        String.valueOf(getResources().getConfiguration().locale.getCountry()),
+                        getResources().getConfiguration().locale.getLanguage(),
+                        getResources().getConfiguration().locale.getCountry(),
                         RestAPI.PLATFORM_NUMBER,
                         Constants.ShopID).
                 enqueue(new Callback<ArrayList<Item>>() {

@@ -7,8 +7,6 @@ import android.widget.EditText;
 
 public class PhoneTextFormatter implements TextWatcher {
 
-    private final String TAG = this.getClass().getSimpleName();
-
     private EditText editText;
 
     private String pattern;

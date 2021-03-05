@@ -157,7 +157,6 @@ public class BasketActivity extends AppCompatActivity {
     }
 
     private void updateBasket(List<BasketCart> carts) {
-
         binding.emptyBasket.setVisibility(carts.size() == 0 ? View.VISIBLE : View.GONE);
         binding.layoutDeliveryInfo.setVisibility(carts.size() == 0 ? View.GONE : View.VISIBLE);
         binding.layoutFinalCost.setVisibility(carts.size() == 0 ? View.GONE : View.VISIBLE);

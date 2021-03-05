@@ -24,8 +24,8 @@ public class GradientTransformation implements Transformation {
 
     @Override public Bitmap transform(Bitmap source) {
 
-        int x = source.getWidth();
-        int y = source.getHeight();
+        float x = source.getWidth();
+        float y = source.getHeight();
 
         Bitmap gradientBitmap = source.copy(source.getConfig(), true);
         Canvas canvas = new Canvas(gradientBitmap);

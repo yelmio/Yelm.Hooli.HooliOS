@@ -32,7 +32,7 @@
     <item name="android:textStyle">bold</item>
     <item name="android:theme">@style/ProDisplayTextStyle</item>
     <item name="android:fontFamily">@font/sf_prodisplay_regular</item>
-    <item name="android:textColor">@color/colorText</item>
+    <item name="android:textColor">@color/mainThemeColor</item>
     </style>
 
     <style name="CollapsingTextAppearance.Inverse" parent="Base.TextAppearance.AppCompat.Widget.ActionBar.Title" >
@@ -40,7 +40,7 @@
         <item name="android:textStyle">bold</item>
         <item name="android:theme">@style/ProDisplayTextStyle</item>
         <item name="android:fontFamily">@font/sf_prodisplay_regular</item>
-        <item name="android:textColor">@color/colorText</item>
+        <item name="android:textColor">@color/mainThemeColor</item>
     </style>
 
     <style name="ProgressBarAddress">

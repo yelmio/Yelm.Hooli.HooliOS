@@ -176,14 +176,14 @@ public class ItemActivity extends AppCompatActivity implements AppBarLayout.OnOf
                     countOfProducts = countOfProducts.add(new BigDecimal(basketCart.count));
                 }
                 if (new BigDecimal(binding.countProducts.getText().toString()).add(countOfProducts).compareTo(new BigDecimal(listCartsByID.get(0).quantity)) > 0) {
-                    showToast((String) getText(R.string.productsNotAvailable) +
-                            " " + listCartsByID.get(0).quantity + " " + (String) getText(R.string.basketActivityPC));
+                    showToast(getString(R.string.productsNotAvailable) +
+                            " " + listCartsByID.get(0).quantity + " " + getString(R.string.basketActivityPC));
                     return;
                 }
             } else {
                 if (new BigDecimal(binding.countProducts.getText().toString()).add(countOfProducts).compareTo(new BigDecimal(product.getQuantity())) > 0) {
-                    showToast((String) getText(R.string.productsNotAvailable) +
-                            " " + product.getQuantity() + " " + (String) getText(R.string.basketActivityPC));
+                    showToast(getString(R.string.productsNotAvailable) +
+                            " " + product.getQuantity() + " " + getString(R.string.basketActivityPC));
                     return;
                 }
             }

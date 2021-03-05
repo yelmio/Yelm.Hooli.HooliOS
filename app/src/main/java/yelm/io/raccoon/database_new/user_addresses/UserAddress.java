@@ -42,6 +42,4 @@ public class UserAddress implements Serializable {
         this.address = address;
         this.isChecked = isChecked;
     }
-
-
 }

@@ -240,7 +240,7 @@ public class ProductsNewMenuSquareImageAdapter extends RecyclerView.Adapter<Prod
                 .load(imageUrl)
                 .noPlaceholder()
                 .centerCrop()
-                .resize(600, 0)
+                .resize(300, 0)
                 .into(holder.binding.image, new Callback() {
                     @Override
                     public void onSuccess() {
