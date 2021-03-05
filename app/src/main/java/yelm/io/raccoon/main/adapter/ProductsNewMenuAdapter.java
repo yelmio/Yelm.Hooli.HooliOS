@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.math.BigDecimal;
@@ -31,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 import yelm.io.raccoon.item.ItemActivity;
-import yelm.io.raccoon.rest.query.Statistic;
+import yelm.io.raccoon.rest.query.RestMethods;
 import yelm.io.raccoon.support_stuff.Logging;
 import yelm.io.raccoon.R;
 import yelm.io.raccoon.database_new.basket_new.BasketCart;
@@ -112,7 +113,7 @@ public class ProductsNewMenuAdapter extends RecyclerView.Adapter<ProductsNewMenu
         }
 
         holder.binding.cardProduct.setOnClickListener(v -> {
-            Statistic.sendStatistic("open_item");
+            RestMethods.sendStatistic("open_item");
             Intent intent = new Intent(context, ItemActivity.class);
             intent.putExtra("item", current);
             context.startActivity(intent);
@@ -227,13 +228,24 @@ public class ProductsNewMenuAdapter extends RecyclerView.Adapter<ProductsNewMenu
             }
         });
 
+        holder.binding.image.setAlpha(0f);
         String imageUrl = current.getPreviewImage();
         Picasso.get()
                 .load(imageUrl)
                 .noPlaceholder()
                 .centerCrop()
                 .resize(600, 0)
-                .into(holder.binding.image);
+                .into(holder.binding.image, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        holder.binding.image.animate().setDuration(300).alpha(1f).start();
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+
+                    }
+                });
     }
 
     //if product have modifiers then we show bottomSheetDialog for its choice

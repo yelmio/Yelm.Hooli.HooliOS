@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.math.BigDecimal;
@@ -45,12 +46,23 @@ public class BasketAdapter extends RecyclerView.Adapter<BasketAdapter.BasketHold
             holder.binding.modifiers.setText(modifiers.toString());
         }
 
+        holder.binding.imageHolder.setAlpha(0f);
         Picasso.get()
                 .load(current.imageUrl)
                 .noPlaceholder()
                 .centerCrop()
                 .resize(300, 300)
-                .into(holder.binding.imageHolder);
+                .into(holder.binding.imageHolder, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        holder.binding.imageHolder.animate().setDuration(300).alpha(1f).start();
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+
+                    }
+                });
 
         BigDecimal currentStartFinal = new BigDecimal(current.finalPrice);
         for (Modifier modifier : current.modifier) {

@@ -63,7 +63,6 @@ import yelm.io.raccoon.payment.googleplay.PaymentsUtil;
 import yelm.io.raccoon.support_stuff.PhoneTextFormatter;
 
 public class OrderActivity extends AppCompatActivity implements ThreeDSDialogListener {
-
     ActivityOrderNewBinding binding;
 
     private static final int PAYMENT_SUCCESS = 77;
@@ -79,6 +78,7 @@ public class OrderActivity extends AppCompatActivity implements ThreeDSDialogLis
     private BigDecimal discountPromo = new BigDecimal("0");
 
     private String deliveryTime = "";
+    private String discountType = "0";
     UserAddress currentAddress;
 
     private static final int LOAD_PAYMENT_DATA_REQUEST_CODE = 991;
@@ -108,9 +108,7 @@ public class OrderActivity extends AppCompatActivity implements ThreeDSDialogLis
             startCost = finalCost;
             deliveryCostStart = new BigDecimal(args.getString("deliveryCost"));
             deliveryCostFinal = deliveryCostStart;
-
             paymentCost = finalCost.add(deliveryCostStart);
-
             deliveryTime = args.getString("deliveryTime");
             currentAddress = (UserAddress) args.getSerializable(UserAddress.class.getSimpleName());
             Log.d(Logging.debug, "startCost: " + startCost);
@@ -176,6 +174,7 @@ public class OrderActivity extends AppCompatActivity implements ThreeDSDialogLis
         deliveryCostFinal = deliveryCostStart;
         discountPromo = new BigDecimal(promoCode.getAmount());
         Log.d(Logging.debug, "promoCode.getType(): " + promoCode.getType());
+        discountType = promoCode.getType();
         switch (promoCode.getType()) {
             case "full":
                 binding.discountPercent.setText(String.format("%s",
@@ -206,6 +205,9 @@ public class OrderActivity extends AppCompatActivity implements ThreeDSDialogLis
                 discount = discount.multiply(finalCost).setScale(2, BigDecimal.ROUND_HALF_UP);
                 binding.discountPrice.setText(String.format("%s", discount));
                 finalCost = finalCost.subtract(discount);
+                if (finalCost.compareTo(new BigDecimal("0")) == 0) {
+                    finalCost = new BigDecimal("1");
+                }
                 break;
         }
         paymentCost = finalCost.add(deliveryCostFinal);
@@ -248,14 +250,15 @@ public class OrderActivity extends AppCompatActivity implements ThreeDSDialogLis
                         "googlepay",
                         binding.floor.getText().toString(),
                         binding.entrance.getText().toString(),
-                        finalCost.add(deliveryCostStart).toString(),
+                        paymentCost.toString(),
                         binding.phone.getText().toString(),
                         binding.flat.getText().toString(),
                         "delivery",
                         jsonObjectItems.toString(),
                         deliveryCostFinal.toString(),
                         currency,
-                        Constants.ShopID
+                        Constants.ShopID,
+                        discountType
                 ).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(@NotNull Call<ResponseBody> call, @NotNull Response<ResponseBody> response) {
@@ -396,6 +399,7 @@ public class OrderActivity extends AppCompatActivity implements ThreeDSDialogLis
                 intent.putExtra("entrance", binding.entrance.getText().toString());
                 intent.putExtra("phone", binding.phone.getText().toString());
                 intent.putExtra("flat", binding.flat.getText().toString());
+                intent.putExtra("discountType", discountType);
                 intent.putExtra(UserAddress.class.getSimpleName(), currentAddress);
                 startActivityForResult(intent, PAYMENT_SUCCESS);
             }
@@ -434,9 +438,6 @@ public class OrderActivity extends AppCompatActivity implements ThreeDSDialogLis
         binding.pwgButton.getRoot().setVisibility(View.VISIBLE);
         binding.pwgButton.getRoot().setOnClickListener(v -> {
             if (preparePayment()) {
-//                //testing
-//                sendOrder();
-//                //testing
                 if (Objects.equals(LoaderActivity.settings.getString(LoaderActivity.CURRENCY, ""), "RUB")) {
                     requestPayment(paymentsClient);
                 } else {
@@ -487,9 +488,9 @@ public class OrderActivity extends AppCompatActivity implements ThreeDSDialogLis
                 .convertPrice(
                         paymentCost.toString(),
                         LoaderActivity.settings.getString(LoaderActivity.CURRENCY, "")
-                ).enqueue(new Callback<PriceConverterResponseClass>() {
+                ).enqueue(new Callback<PriceConverterResponse>() {
             @Override
-            public void onResponse(@NotNull Call<PriceConverterResponseClass> call, @NotNull Response<PriceConverterResponseClass> response) {
+            public void onResponse(@NotNull Call<PriceConverterResponse> call, @NotNull Response<PriceConverterResponse> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         Log.d(Logging.debug, "Method convertPrice() - paymentCost: " + response.body().getPrice());
@@ -505,7 +506,7 @@ public class OrderActivity extends AppCompatActivity implements ThreeDSDialogLis
             }
 
             @Override
-            public void onFailure(@NotNull Call<PriceConverterResponseClass> call, @NotNull Throwable t) {
+            public void onFailure(@NotNull Call<PriceConverterResponse> call, @NotNull Throwable t) {
                 Log.e(Logging.error, "Method convertPrice() - failure: " + t.toString());
             }
         });

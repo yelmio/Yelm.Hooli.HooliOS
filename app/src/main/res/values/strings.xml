@@ -8,7 +8,7 @@
 
     <!-- ItemActivity -->
     <string name="product_discount">Скидка</string>
-    <string name="product_specifications">Харатеристики</string>
+    <string name="product_specifications">Характеристики</string>
     <string name="product_modifier">Дополнения:</string>
     <string name="button_to_basket">В корзину</string>
     <string name="productNewActivityAddedMulti">добавлены</string>

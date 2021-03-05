@@ -12,6 +12,7 @@ import android.widget.Filterable;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.math.BigDecimal;
@@ -21,7 +22,7 @@ import java.util.List;
 
 import yelm.io.raccoon.item.ItemActivity;
 import yelm.io.raccoon.main.model.Item;
-import yelm.io.raccoon.rest.query.Statistic;
+import yelm.io.raccoon.rest.query.RestMethods;
 import yelm.io.raccoon.support_stuff.Logging;
 import yelm.io.raccoon.databinding.ProductItemSearcheableBinding;
 import yelm.io.raccoon.loader.controller.LoaderActivity;
@@ -99,18 +100,29 @@ public class SearchProductAdapter extends RecyclerView.Adapter<SearchProductAdap
         holder.binding.weight.setText(String.format("%s / %s", current.getUnitType(), current.getType()));
 
         holder.binding.containerProduct.setOnClickListener(v -> {
-            Statistic.sendStatistic("open_item_search");
+            RestMethods.sendStatistic("open_item_search");
             Intent intent = new Intent(context, ItemActivity.class);
             intent.putExtra("item", current);
             context.startActivity(intent);
         });
 
+        holder.binding.imageHolder.setAlpha(0f);
         Picasso.get()
                 .load(current.getPreviewImage())
                 .noPlaceholder()
                 .centerCrop()
                 .resize(300, 300)
-                .into(holder.binding.imageHolder);
+                .into(holder.binding.imageHolder, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        holder.binding.imageHolder.animate().setDuration(300).alpha(1f).start();
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+
+                    }
+                });
     }
 
     @NonNull

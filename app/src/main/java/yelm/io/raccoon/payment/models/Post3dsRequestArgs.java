@@ -13,7 +13,6 @@ public class Post3dsRequestArgs {
     @SerializedName("type")
     private String type;
 
-
     public String getTransactionId() {
         return transactionId;
     }

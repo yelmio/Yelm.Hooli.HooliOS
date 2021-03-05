@@ -4,11 +4,9 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -16,14 +14,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import yelm.io.raccoon.by_category.ProductsByCategoriesActivity;
 import yelm.io.raccoon.databinding.SquareCategoryItemBinding;
 import yelm.io.raccoon.main.categories.CategoriesPOJO;
-import yelm.io.raccoon.main.news.NewsActivity;
-import yelm.io.raccoon.rest.query.Statistic;
 import yelm.io.raccoon.support_stuff.Logging;
 
 public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.ProductHolder> {

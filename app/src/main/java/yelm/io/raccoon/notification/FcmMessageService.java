@@ -39,41 +39,10 @@ public class FcmMessageService extends FirebaseMessagingService {
     public void onNewToken(@NotNull String s) {
         super.onNewToken(s);
         Log.d(Logging.debug, "Refreshed token: " + s);
-        sendRegistrationToServer(s);
-    }
-
-    private void sendRegistrationToServer(String s) {
-        new Handler(Looper.getMainLooper()) {{
-            postDelayed(() -> {
-                String user = LoaderActivity.settings.getString(LoaderActivity.USER_NAME, "");
-                Log.d(Logging.debug, "FCM user: " + user);
-                RetrofitClient
-                        .getClient(RestAPI.URL_API_MAIN)
-                        .create(RestAPI.class)
-                        .putFCM(RestAPI.PLATFORM_NUMBER, user, s)
-                        .enqueue(new retrofit2.Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(@NotNull Call<ResponseBody> call, @NotNull final Response<ResponseBody> response) {
-                                if (response.isSuccessful()) {
-                                    Log.d(Logging.debug, "FCM Token registered");
-                                    Log.d(Logging.debug, "FCM response: " + response);
-                                } else {
-                                    Log.d(Logging.debug, "FCM Code: " + response.code() + "Message: " + response.message());
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(@NotNull Call<ResponseBody> call, @NotNull Throwable t) {
-                                Log.d(Logging.debug, "FCM Throwable: " + t.toString());
-                            }
-                        });
-            }, 2000);
-        }};
     }
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-
         Log.d(Logging.debug, "From: " + remoteMessage.getFrom());
         Log.d(Logging.debug, "remoteMessage.getData(): " + remoteMessage.getData().toString());
         Log.d(Logging.debug, "remoteMessage.toString(): " + remoteMessage.toString());

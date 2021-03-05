@@ -123,17 +123,18 @@
                 android:id="@+id/storeFragments"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"></LinearLayout>
+                android:orientation="vertical" />
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:paddingBottom="16dp">
 
                 <TextView
                     android:id="@+id/title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_weight="1"
                     android:includeFontPadding="false"
@@ -142,6 +143,7 @@
                     android:textSize="22sp"
                     android:textStyle="bold"
                     android:theme="@style/ProDisplayTextStyle"
+                    app:layout_constraintEnd_toStartOf="@+id/categoryExpand"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -153,26 +155,31 @@
                     android:adjustViewBounds="true"
                     android:background="@drawable/circle_button_selector"
                     android:padding="6dp"
+                    android:rotation="90"
                     android:scaleType="fitCenter"
                     android:src="@drawable/ic_arrow_forward_24_white"
                     app:layout_constraintBottom_toBottomOf="@+id/title"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/title" />
 
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerCategories"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:visibility="visible"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/title" />
 
-            </LinearLayout>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerCategories"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:visibility="gone" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <View
+                android:id="@+id/footer"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/dimen_80dp" />
+                android:layout_height="@dimen/dimen_60dp" />
 
         </LinearLayout>
 

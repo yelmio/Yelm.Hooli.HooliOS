@@ -29,6 +29,7 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -199,9 +200,22 @@ public class PickImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             String path = listImages.get(position - 1);
             ((ItemViewHolder) holder).binding.selector.setChecked(checked[position - 1]);
             //holder.binding.image.getLayoutParams().height = (int) (((screenDimensions.getWidthDP() - 48) / 3) * screenDimensions.getScreenDensity() + 0.5f);
+
+
+            ((ItemViewHolder) holder).binding.image.setAlpha(0f);
             Picasso.get().load(Uri.fromFile(new File(path)))
                     .resize(200, 0)
-                    .into(((ItemViewHolder) holder).binding.image);
+                    .into(((ItemViewHolder) holder).binding.image, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            ((ItemViewHolder) holder).binding.image.animate().setDuration(300).alpha(1f).start();
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+
+                        }
+                    });
 
             ((ItemViewHolder) holder).binding.imageRoot.setOnClickListener(view -> {
                 checked[position - 1] = !checked[position - 1];

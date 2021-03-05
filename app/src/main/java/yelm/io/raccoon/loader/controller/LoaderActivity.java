@@ -21,7 +21,7 @@ import retrofit2.Response;
 import yelm.io.raccoon.R;
 import yelm.io.raccoon.loader.model.ApplicationSettings;
 import yelm.io.raccoon.loader.model.ChatSettingsClass;
-import yelm.io.raccoon.rest.query.Statistic;
+import yelm.io.raccoon.rest.query.RestMethods;
 import yelm.io.raccoon.support_stuff.Logging;
 import yelm.io.raccoon.database_new.basket_new.BasketCartDataSource;
 import yelm.io.raccoon.database_new.basket_new.BasketCartRepository;
@@ -80,7 +80,7 @@ public class LoaderActivity extends AppCompatActivity {
             notificationManager.createNotificationChannel(new NotificationChannel(channelId,
                     channelName, NotificationManager.IMPORTANCE_HIGH));
         }
-        Statistic.sendStatistic("open_app");
+        RestMethods.sendStatistic("open_app");
         initRoom();
         init();
     }
@@ -222,12 +222,12 @@ public class LoaderActivity extends AppCompatActivity {
 
     private void initRoom() {
         Common.sDatabase = Database.getInstance(this);
-        Common.cartRepository = CartRepository.getInstance(CartDataSource.getInstance(Common.sDatabase.cartDAO()));
+        //Common.cartRepository = CartRepository.getInstance(CartDataSource.getInstance(Common.sDatabase.cartDAO()));
         Common.basketCartRepository = BasketCartRepository.getInstance(BasketCartDataSource.getInstance(Common.sDatabase.basketCartDao()));
-        Common.productRepository = ProductRepository.getInstance(ProductDataSource.getInstance(Common.sDatabase.productDao()));
+        //Common.productRepository = ProductRepository.getInstance(ProductDataSource.getInstance(Common.sDatabase.productDao()));
         //Common.stockRepository = StockRepository.getInstance(StockDataSource.getInstance(Common.sDatabase.stockDao()));
-        Common.newsRepository = NewsRepository.getInstance(NewsDataSource.getInstance(Common.sDatabase.newsDao()));
-        Common.articlesRepository = ArticlesRepository.getInstance(ArticleDataSource.getInstance(Common.sDatabase.articlesDao()));
+        //Common.newsRepository = NewsRepository.getInstance(NewsDataSource.getInstance(Common.sDatabase.newsDao()));
+        //Common.articlesRepository = ArticlesRepository.getInstance(ArticleDataSource.getInstance(Common.sDatabase.articlesDao()));
         //Common.userRepository = UserRepository.getInstance(UserDataSource.getInstance(Common.sDatabase.userDAO()));
         Common.userAddressesRepository = UserAddressesRepository.getInstance(UserAddressesDataSource.getInstance(Common.sDatabase.addressesDao()));
     }

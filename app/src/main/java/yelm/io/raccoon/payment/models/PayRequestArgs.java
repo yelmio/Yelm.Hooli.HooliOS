@@ -8,7 +8,7 @@ public class PayRequestArgs {
     private String amount; // Сумма платежа (Обязательный)
 
     @SerializedName("type")
-    private String type; // Сумма платежа (Обязательный)
+    private String type;
 
     public String getType() {
         return type;

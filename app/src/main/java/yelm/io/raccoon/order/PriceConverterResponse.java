@@ -3,7 +3,7 @@ package yelm.io.raccoon.order;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class PriceConverterResponseClass {
+public class PriceConverterResponse {
 
     @SerializedName("price")
     @Expose

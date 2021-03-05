@@ -21,7 +21,7 @@ import yelm.io.raccoon.main.categories.CategoriesPOJO;
 import yelm.io.raccoon.main.model.CategoriesWithProductsClass;
 import yelm.io.raccoon.main.model.Item;
 import yelm.io.raccoon.main.news.NewNews;
-import yelm.io.raccoon.order.PriceConverterResponseClass;
+import yelm.io.raccoon.order.PriceConverterResponse;
 import yelm.io.raccoon.order.promocode.PromoCodeClass;
 import yelm.io.raccoon.order.user_order.model.UserOrderPOJO;
 
@@ -82,9 +82,6 @@ public interface RestAPI {
             @Field("platform") String platform,
             @Field("login") String login);
 
-
-
-
     @GET("news?")
     Call<NewNews> getNewsByID(
             @Query("version") String version,
@@ -104,10 +101,9 @@ public interface RestAPI {
             @Query("id") String id
     );
 
-
     @FormUrlEncoded
     @GET("converter?")
-    Call<PriceConverterResponseClass> convertPrice(
+    Call<PriceConverterResponse> convertPrice(
             @Field("price") String price,
             @Field("currency") String currency
     );
@@ -188,7 +184,8 @@ public interface RestAPI {
             @Field("items") String items,
             @Query("delivery_price") String deliveryPrice,
             @Query("currency") String currency,
-            @Query("shop_id") String shopID
+            @Query("shop_id") String shopID,
+            @Query("discount_type") String discountType
     );
 
     @FormUrlEncoded
@@ -197,12 +194,11 @@ public interface RestAPI {
             @Field("login") String login
     );
 
-
     @FormUrlEncoded
     @POST("statistic?")
     Call<ResponseBody> sendStatistic(
             @Field("platform") String platform,
             @Field("login") String login,
             @Field("type") String type
-           );
+    );
 }

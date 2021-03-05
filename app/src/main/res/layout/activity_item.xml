@@ -98,19 +98,18 @@
                         android:layout_width="32dp"
                         android:layout_height="32dp"
                         android:background="@drawable/address_back_view_blue"
-                        android:backgroundTint="@color/discountColor"
                         android:padding="10dp"
-                        app:srcCompat="@drawable/ic_percent" />
+                        app:srcCompat="@drawable/ic_percent"
+                        android:contentDescription="@string/app_name" />
 
                     <TextView
                         android:id="@+id/discount"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_marginStart="12dp"
                         android:layout_weight="1"
                         android:gravity="center_vertical"
                         android:singleLine="true"
-                        android:text="Example "
                         android:textColor="@color/colorText"
                         android:textSize="14sp"
                         android:textStyle="bold"
@@ -134,7 +133,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:text=" sdfsdf  FFDFDFdfd dd f"
+
                     android:textSize="14sp"
                     android:theme="@style/ProDisplayTextStyle" />
 
@@ -217,7 +216,7 @@
                 android:id="@+id/descriptionLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/modifierLayout"
+
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
@@ -225,12 +224,13 @@
 
                 <TextView
                     android:id="@+id/name"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:fontFamily="@font/sf_prodisplay_regular"
                     android:text="itemName"
                     android:textColor="@color/colorText"
+                    android:textSize="16sp"
                     android:theme="@style/ProDisplayTextStyle" />
 
                 <TextView
@@ -240,6 +240,7 @@
                     android:fontFamily="@font/sf_prodisplay_regular"
                     android:text="TextView"
                     android:textColor="@color/colorText"
+                    android:textSize="16sp"
                     android:theme="@style/ProDisplayTextStyle" />
             </LinearLayout>
 
@@ -274,7 +275,8 @@
                         android:padding="4dp"
                         android:scaleType="centerInside"
                         android:theme="@style/ProDisplayTextStyle"
-                        app:srcCompat="@drawable/ic_remove_24_white" />
+                        app:srcCompat="@drawable/ic_remove_24_white"
+                        android:contentDescription="@string/app_name" />
 
                     <TextView
                         android:id="@+id/countProducts"
@@ -297,7 +299,8 @@
                         android:padding="4dp"
                         android:scaleType="centerInside"
                         android:theme="@style/ProDisplayTextStyle"
-                        app:srcCompat="@drawable/ic_add_24_white" />
+                        app:srcCompat="@drawable/ic_add_24_white"
+                        android:contentDescription="@string/app_name" />
 
 
                 </LinearLayout>

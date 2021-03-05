@@ -36,6 +36,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -57,7 +58,7 @@ import yelm.io.raccoon.database_new.basket_new.BasketCart;
 import yelm.io.raccoon.item.ItemActivity;
 import yelm.io.raccoon.loader.controller.LoaderActivity;
 import yelm.io.raccoon.order.user_order.OrderByIDActivity;
-import yelm.io.raccoon.rest.query.Statistic;
+import yelm.io.raccoon.rest.query.RestMethods;
 import yelm.io.raccoon.support_stuff.Logging;
 import yelm.io.raccoon.support_stuff.ScreenDimensions;
 
@@ -141,7 +142,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             ((OrderHolder) holder).nameSender.setText(context.getResources().getText(R.string.app_name));
             ((OrderHolder) holder).message.setText(chatContent.getMessage());
             ((OrderHolder) holder).details.setOnClickListener(v -> {
-                Statistic.sendStatistic("open_order_history");
+                RestMethods.sendStatistic("open_order_history");
                 Intent intent = new Intent(context, OrderByIDActivity.class);
                 intent.putExtra("id", chatContent.getOrderID());
                 context.startActivity(intent);
@@ -152,10 +153,22 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private void setItem(@NonNull ItemHolder holder, ChatContent chatContent) {
         holder.date.setText(chatContent.getCreated_at());
         holder.nameSender.setText(context.getResources().getText(R.string.app_name));
+
+        holder.image.setAlpha(0f);
         Picasso.get().load(chatContent.getItem().getPreviewImage())
                 .resize(300, 300)
                 .centerCrop()
-                .into(holder.image);
+                .into(holder.image, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        holder.image.animate().setDuration(300).alpha(1f).start();
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+
+                    }
+                });
 
         List<BasketCart> listBasketCartByItemID = Common.basketCartRepository.getListBasketCartByItemID(chatContent.getItem().getId());
         if (listBasketCartByItemID != null && listBasketCartByItemID.size() != 0) {
@@ -300,10 +313,21 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             Log.d(Logging.debug, "newHeight " + newHeight);
             Log.d(Logging.debug, "newWight " + newWight);
 
+            holder.image.setAlpha(0f);
             Picasso.get().load(uri)
                     .resize(newWight, newHeight)
                     .centerCrop()
-                    .into(holder.image);
+                    .into(holder.image, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            holder.image.animate().setDuration(300).alpha(1f).start();
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+
+                        }
+                    });
             holder.image.setOnLongClickListener(v -> {
                 popupMenu(context, holder.image, chatContent.getImage(), chatContent.isInner());
                 return true;
@@ -347,9 +371,20 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 Log.d(Logging.debug, "newWight " + newWight);
                 //   java.lang.IllegalArgumentException: x + width must be <= bitmap.width()
                 //holder.image.setImageBitmap(Bitmap.createBitmap(bitmap, 0, 0, newWight, newHeight));
+                holder.image.setAlpha(0f);
                 Picasso.get().load(chatContent.getImage())
                         .resize(newWight, newHeight)
-                        .into(holder.image);
+                        .into(holder.image, new Callback() {
+                            @Override
+                            public void onSuccess() {
+                                holder.image.animate().setDuration(300).alpha(1f).start();
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+
+                            }
+                        });
                 holder.image.setOnLongClickListener(v -> {
                     popupMenu(context, holder.image, chatContent.getImage(), chatContent.isInner());
                     return true;
@@ -404,7 +439,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private void popupMenu(Context context, View view, String image, boolean inner) {
         Log.d(Logging.debug, "image: " + image);
 
-        if (!hasReadExternalStoragePermission()){
+        if (!hasReadExternalStoragePermission()) {
             ActivityCompat.requestPermissions((Activity) context, READ_WRITE_EXTERNAL_PERMISSIONS, REQUEST_PERMISSIONS_READ_WRITE_STORAGE);
         }
 

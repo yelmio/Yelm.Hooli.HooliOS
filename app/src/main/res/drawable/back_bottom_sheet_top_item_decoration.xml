@@ -4,5 +4,4 @@
         android:radius="12dp" />
     <solid
         android:color="@color/colorBottomSheetTopDecorator"  />
-
 </shape>

@@ -51,7 +51,7 @@ import yelm.io.raccoon.database_new.Common;
 import yelm.io.raccoon.database_new.basket_new.BasketCart;
 import yelm.io.raccoon.database_new.user_addresses.UserAddress;
 import yelm.io.raccoon.loader.controller.LoaderActivity;
-import yelm.io.raccoon.order.PriceConverterResponseClass;
+import yelm.io.raccoon.order.PriceConverterResponse;
 import yelm.io.raccoon.payment.models.Transaction;
 import yelm.io.raccoon.payment.response.PayApiError;
 import yelm.io.raccoon.rest.rest_api.RestAPI;
@@ -80,6 +80,7 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
     private BigDecimal startCost = new BigDecimal("0");
     private BigDecimal discountPromo = new BigDecimal("0");
     private String order = "";
+    private String discountType = "";
     private String userID = LoaderActivity.settings.getString(LoaderActivity.USER_NAME, "");
     private String transactionID = "0";
     private String currency = LoaderActivity.settings.getString(LoaderActivity.CURRENCY, "");
@@ -143,6 +144,9 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
         String cardCVC = editTextCardCVC.getText().toString();
         String cardHolderName = editTextCardHolderName.getText().toString();
 
+        //test
+        sendOrder();
+        //test
 
         CPCardApi api = new CPCardApi(this);
 
@@ -219,9 +223,9 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
                 .convertPrice(
                         paymentCost.toString(),
                         LoaderActivity.settings.getString(LoaderActivity.CURRENCY, "")
-                ).enqueue(new Callback<PriceConverterResponseClass>() {
+                ).enqueue(new Callback<PriceConverterResponse>() {
             @Override
-            public void onResponse(@NotNull Call<PriceConverterResponseClass> call, @NotNull Response<PriceConverterResponseClass> response) {
+            public void onResponse(@NotNull Call<PriceConverterResponse> call, @NotNull Response<PriceConverterResponse> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         hideLoading();
@@ -239,7 +243,7 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
             }
 
             @Override
-            public void onFailure(@NotNull Call<PriceConverterResponseClass> call, @NotNull Throwable t) {
+            public void onFailure(@NotNull Call<PriceConverterResponse> call, @NotNull Throwable t) {
                 hideLoading();
                 Log.e(Logging.error, "Method convertPrice() - failure: " + t.toString());
             }
@@ -255,11 +259,10 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
         Bundle args = getIntent().getExtras();
         if (args != null) {
             startCost = new BigDecimal(args.getString("startCost"));
-            paymentCost = new BigDecimal(args.getString("finalPrice"));
+            paymentCost = new BigDecimal(args.getString("finalPrice")).add(deliveryCost);
             deliveryCost = new BigDecimal(args.getString("deliveryCost"));
             discountPromo = new BigDecimal(args.getString("discountPromo"));
-            paymentCost = paymentCost.add(deliveryCost);
-
+            discountType = args.getString("discountType");
             floor = args.getString("floor");
             entrance = args.getString("entrance");
             phone = args.getString("phone");
@@ -275,7 +278,7 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
             Log.d(Logging.debug, "entrance: " + entrance);
             Log.d(Logging.debug, "phone: " + phone);
             Log.d(Logging.debug, "flat: " + flat);
-            //Log.d(Logging.debug, "deliveryTime: " + deliveryTime);
+            Log.d(Logging.debug, "discountType: " + discountType);
             Log.d(Logging.debug, "currentAddress: " + currentAddress.toString());
         }
 
@@ -439,7 +442,8 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
                         jsonObjectItems.toString(),
                         deliveryCost.toString(),
                         currency,
-                        yelm.io.raccoon.constants.Constants.ShopID
+                        yelm.io.raccoon.constants.Constants.ShopID,
+                        discountType
                 ).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(@NotNull Call<ResponseBody> call, @NotNull Response<ResponseBody> response) {

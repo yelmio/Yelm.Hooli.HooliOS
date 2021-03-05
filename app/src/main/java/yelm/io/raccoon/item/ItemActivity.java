@@ -4,9 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
 
@@ -27,7 +28,7 @@ import yelm.io.raccoon.databinding.ActivityItemBinding;
 import yelm.io.raccoon.loader.controller.LoaderActivity;
 import yelm.io.raccoon.main.model.Item;
 import yelm.io.raccoon.main.model.Modifier;
-import yelm.io.raccoon.rest.query.Statistic;
+import yelm.io.raccoon.rest.query.RestMethods;
 import yelm.io.raccoon.support_stuff.Logging;
 
 public class ItemActivity extends AppCompatActivity implements AppBarLayout.OnOffsetChangedListener {
@@ -56,7 +57,7 @@ public class ItemActivity extends AppCompatActivity implements AppBarLayout.OnOf
             bindingAddSubtractProductCount();
             bindingAddProductToBasket(item);
             binding.share.setOnClickListener(v -> {
-                Statistic.sendStatistic("share_item");
+                RestMethods.sendStatistic("share_item");
                 String sharingLink = "https://yelm.io/item/" + item.getId();
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 intent.setType("text/plain");
@@ -117,6 +118,13 @@ public class ItemActivity extends AppCompatActivity implements AppBarLayout.OnOf
         binding.collapsingToolbar.setTitle(item.getName());
         binding.name.setText(item.getName());
         binding.appbar.addOnOffsetChangedListener(this);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            binding.description.setText(Html.fromHtml(item.getDescription(), Html.FROM_HTML_MODE_COMPACT));
+        } else {
+            binding.description.setText(Html.fromHtml(item.getDescription()));
+        }
+
         binding.description.setText(item.getDescription());
         binding.discount.setText(String.format("%s %s %%", getText(R.string.product_discount), item.getDiscount()));
         binding.ratingBar.setRating(Float.parseFloat(item.getRating()));

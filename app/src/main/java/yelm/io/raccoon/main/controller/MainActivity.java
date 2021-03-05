@@ -19,6 +19,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
@@ -44,6 +45,7 @@ import java.util.Objects;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -53,6 +55,7 @@ import yelm.io.raccoon.main.adapter.CategoriesAdapter;
 import yelm.io.raccoon.main.categories.CategoriesPOJO;
 import yelm.io.raccoon.main.news.NewNews;
 import yelm.io.raccoon.main.news.NewsFromNotificationActivity;
+import yelm.io.raccoon.rest.query.RestMethods;
 import yelm.io.raccoon.support_stuff.Logging;
 import yelm.io.raccoon.search.SearchActivity;
 import yelm.io.raccoon.database_new.basket_new.BasketCart;
@@ -129,7 +132,10 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
         binding.search.setOnClickListener(v -> startActivity(new Intent(this, SearchActivity.class)));
         binding.basket.setOnClickListener(v -> startActivity(new Intent(this, BasketActivity.class)));
 
-        binding.categoryExpand.setOnClickListener(v->{
+        binding.recyclerCategories.setLayoutManager(new StaggeredGridLayoutManager(2, LinearLayout.VERTICAL));
+        binding.recyclerCategories.setHasFixedSize(false);
+
+        binding.categoryExpand.setOnClickListener(v -> {
             if (binding.recyclerCategories.getVisibility() == View.VISIBLE) {
                 binding.recyclerCategories.setVisibility(View.GONE);
                 binding.categoryExpand.setRotation(0);
@@ -349,7 +355,7 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
                                 CategoriesAdapter categoriesAdapter = new CategoriesAdapter(MainActivity.this, response.body());
-                                binding.recyclerCategories.setLayoutManager(new StaggeredGridLayoutManager(2, LinearLayout.VERTICAL));
+
                                 binding.recyclerCategories.setAdapter(categoriesAdapter);
                             } else {
                                 Log.e(Logging.error, "Method getCategories() - by some reason response is null!");
@@ -376,6 +382,7 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
                     }
                     String token = task.getResult();
                     Log.d(Logging.debug, "FCM: token:" + token);
+                    RestMethods.sendRegistrationToServer(token);
                 });
     }
 
@@ -443,8 +450,10 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
                     if (carts.size() == 0) {
                         binding.basket.setVisibility(View.GONE);
                         binding.basket.setText(String.format("0 %s", LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
+                        binding.footer.setVisibility(View.GONE);
                     } else {
                         binding.basket.setVisibility(View.VISIBLE);
+                        binding.footer.setVisibility(View.VISIBLE);
                         BigDecimal basketPrice = new BigDecimal("0");
                         for (BasketCart cart : carts) {
                             BigDecimal costCurrentCart = new BigDecimal(cart.finalPrice);
