@@ -12,7 +12,6 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -29,7 +28,6 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.material.badge.BadgeDrawable;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.jetbrains.annotations.NotNull;
@@ -74,7 +72,6 @@ import yelm.io.raccoon.support_stuff.ItemOffsetDecorationRight;
 
 public class MainActivity extends AppCompatActivity implements AddressesBottomSheet.AddressesBottomSheetListener {
 
-    public BadgeDrawable badge;
 
     ActivityMainBinding binding;
     AddressesBottomSheet addressesBottomSheet = new AddressesBottomSheet();
@@ -170,21 +167,19 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case LOCATION_PERMISSION_REQUEST_CODE:
-                if (hasLocationPermission()) {
-                    Log.d(Logging.debug, "Method onRequestPermissionsResult() - Request Permissions Result: Success!");
-                    getUserCurrentLocation();
-                } else if (shouldShowRequestPermissionRationale(permissions[0])) {
-                    showDialogExplanationAboutRequestLocationPermission(getText(R.string.mainActivityRequestPermission).toString());
-                } else {
-                    Log.d(Logging.debug, "Method onRequestPermissionsResult() - Request Permissions Result: Failed!");
-                    performIfNoLocationPermission();
-                }
-                break;
-            default:
-                super.onRequestPermissionsResult(requestCode, permissions,
-                        grantResults);
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (hasLocationPermission()) {
+                Log.d(Logging.debug, "Method onRequestPermissionsResult() - Request Permissions Result: Success!");
+                getUserCurrentLocation();
+            } else if (shouldShowRequestPermissionRationale(permissions[0])) {
+                showDialogExplanationAboutRequestLocationPermission(getText(R.string.mainActivityRequestPermission).toString());
+            } else {
+                Log.d(Logging.debug, "Method onRequestPermissionsResult() - Request Permissions Result: Failed!");
+                performIfNoLocationPermission();
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions,
+                    grantResults);
         }
     }
 
@@ -379,16 +374,18 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
                         return;
                     }
                     String token = task.getResult();
-                    Log.d(Logging.debug, "FCM: token:" + token);
+                    //Log.d(Logging.debug, "FCM: token:" + token);
                     RestMethods.sendRegistrationToServer(token);
                 });
     }
 
     @Override
     public void selectedAddress(UserAddress selectedUserAddress) {
+        binding.progress.setVisibility(View.GONE);
         Log.d(Logging.debug, "Method selectedAddress() - address: " + selectedUserAddress.address);
         binding.userCurrentAddress.setText(selectedUserAddress.address);
         getCategoriesWithProducts(selectedUserAddress.latitude, selectedUserAddress.longitude);
+        LocationServices.getFusedLocationProviderClient(this).removeLocationUpdates(locationCallback);
     }
 
     private void initNews() {
@@ -469,11 +466,10 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
                 }));
     }
 
-    @SuppressLint("MissingSuperCall")
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NotNull Bundle outState) {
         //No call for super(). Bug on API Level > 11.
-        //super.onSaveInstanceState(outState);
+        super.onSaveInstanceState(outState);
     }
 
     synchronized private void redrawProducts() {

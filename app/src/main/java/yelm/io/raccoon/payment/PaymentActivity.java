@@ -169,11 +169,8 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
         }
 
         // Пример определения банка по номеру карты
-        api.getBinInfo(cardNumber, binInfo -> {
-            Log.d(Logging.debug, "Bank name: " + binInfo.getBankName());
-        }, message -> {
-            Log.e(Logging.error, "Bank name error: " + message);
-        });
+        api.getBinInfo(cardNumber, binInfo -> Log.d(Logging.debug, "Bank name: " + binInfo.getBankName()),
+                message -> Log.e(Logging.error, "Bank name error: " + message));
 
         // После проверики, если все данные корректны, создаем объект CPCard, иначе при попытке создания объекта CPCard мы получим исключение.
         CPCard card = new CPCard(cardNumber, cardDate, cardCVC);
@@ -184,19 +181,7 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
         try {
             // Чтобы создать криптограмму необходим PublicID (его можно посмотреть в личном кабинете)
             cardCryptogram = card.cardCryptogram(Constants.MERCHANT_PUBLIC_ID);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (BadPaddingException e) {
-            e.printStackTrace();
-        } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (StringIndexOutOfBoundsException e) {
+        } catch (UnsupportedEncodingException | NoSuchPaddingException | NoSuchAlgorithmException | BadPaddingException | IllegalBlockSizeException | InvalidKeyException | StringIndexOutOfBoundsException e) {
             e.printStackTrace();
         }
 
@@ -259,15 +244,14 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
         Bundle args = getIntent().getExtras();
         if (args != null) {
             startCost = new BigDecimal(args.getString("startCost"));
-            paymentCost = new BigDecimal(args.getString("finalPrice")).add(deliveryCost);
             deliveryCost = new BigDecimal(args.getString("deliveryCost"));
+            paymentCost = new BigDecimal(args.getString("finalPrice")).add(deliveryCost);
             discountPromo = new BigDecimal(args.getString("discountPromo"));
             discountType = args.getString("discountType");
             floor = args.getString("floor");
             entrance = args.getString("entrance");
             phone = args.getString("phone");
             flat = args.getString("flat");
-            //deliveryTime = args.getString("deliveryTime");
             currentAddress = (UserAddress) args.getSerializable(UserAddress.class.getSimpleName());
 
             Log.d(Logging.debug, "startCost: " + startCost);
@@ -295,15 +279,9 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
                 .auth(cardCryptogramPacket, cardHolderName, price, order, "card")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(disposable -> {
-                    showLoading();
-                })
-                .doOnEach(notification -> {
-                    hideLoading();
-                })
-                .subscribe(transaction -> {
-                    checkResponse(transaction);
-                }, this::handleError));
+                .doOnSubscribe(disposable -> showLoading())
+                .doOnEach(notification -> hideLoading())
+                .subscribe(this::checkResponse, this::handleError));
     }
 
     // Проверяем необходимо ли подтверждение с использованием 3DS
@@ -358,18 +336,12 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
     // Завершаем транзакцию после прохождения 3DS формы
     private void post3ds(String md, String paRes) {
         compositeDisposable.add(PayApi
-                .post3ds(md, paRes,"card")
+                .post3ds(md, paRes, "card")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(disposable -> {
-                    showLoading();
-                })
-                .doOnEach(notification -> {
-                    hideLoading();
-                })
-                .subscribe(transaction -> {
-                    checkResponse(transaction);
-                }, this::handleError));
+                .doOnSubscribe(disposable -> showLoading())
+                .doOnEach(notification -> hideLoading())
+                .subscribe(this::checkResponse, this::handleError));
     }
 
     @Override

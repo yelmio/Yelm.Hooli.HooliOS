@@ -179,24 +179,22 @@ public class AddressChooseActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         Log.d(Logging.debug, "Call Request Permissions Result");
-        switch (requestCode) {
-            case LOCATION_PERMISSION_REQUEST_CODE:
-                if (hasLocationPermission()) {
-                    if (snackbar != null) {
-                        snackbar.dismiss();
-                    }
-                    Log.d(Logging.debug, "Method onRequestPermissionsResult() - Request Permissions Result: Success!");
-                    getCurrentLocation();
-                } else if (shouldShowRequestPermissionRationale(permissions[0])) {
-                    showDialogExplanationAboutRequestLocationPermission(getText(R.string.addressChooseActivityRequestPermission).toString());
-                } else {
-                    Log.d(Logging.debug, "Method onRequestPermissionsResult() - Request Permissions Result: Failed!");
-                    showSnackBar();
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (hasLocationPermission()) {
+                if (snackbar != null) {
+                    snackbar.dismiss();
                 }
-            default:
-                super.onRequestPermissionsResult(requestCode, permissions,
-                        grantResults);
+                Log.d(Logging.debug, "Method onRequestPermissionsResult() - Request Permissions Result: Success!");
+                getCurrentLocation();
+            } else if (shouldShowRequestPermissionRationale(permissions[0])) {
+                showDialogExplanationAboutRequestLocationPermission(getText(R.string.addressChooseActivityRequestPermission).toString());
+            } else {
+                Log.d(Logging.debug, "Method onRequestPermissionsResult() - Request Permissions Result: Failed!");
+                showSnackBar();
+            }
         }
+        super.onRequestPermissionsResult(requestCode, permissions,
+                grantResults);
 
     }
 

@@ -82,17 +82,15 @@ public class AddressesBottomSheet extends BottomSheetDialogFragment {
         if (data == null) {
             return;
         }
-        switch (requestCode) {
-            case USER_ADDRESS_CHOOSE_REQUEST_CODE:
-                Log.d(Logging.debug, "USER_ADDRESS_CHOOSE_REQUEST_CODE");
-                for (UserAddress current : Common.userAddressesRepository.getUserAddressesList()) {
-                    if (current.isChecked) {
-                        listener.selectedAddress(current);
-                        break;
-                    }
+        if (requestCode == USER_ADDRESS_CHOOSE_REQUEST_CODE) {
+            Log.d(Logging.debug, "USER_ADDRESS_CHOOSE_REQUEST_CODE");
+            for (UserAddress current : Common.userAddressesRepository.getUserAddressesList()) {
+                if (current.isChecked) {
+                    listener.selectedAddress(current);
+                    break;
                 }
-                userAddressesAdapter.setNewUserAddressList(Common.userAddressesRepository.getUserAddressesList());
-                break;
+            }
+            userAddressesAdapter.setNewUserAddressList(Common.userAddressesRepository.getUserAddressesList());
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

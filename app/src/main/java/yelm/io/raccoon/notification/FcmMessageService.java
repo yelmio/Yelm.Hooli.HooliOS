@@ -38,7 +38,7 @@ public class FcmMessageService extends FirebaseMessagingService {
     @Override
     public void onNewToken(@NotNull String s) {
         super.onNewToken(s);
-        Log.d(Logging.debug, "Refreshed token: " + s);
+        //Log.d(Logging.debug, "Refreshed token: " + s);
     }
 
     @Override

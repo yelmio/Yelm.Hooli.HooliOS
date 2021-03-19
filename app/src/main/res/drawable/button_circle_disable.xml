@@ -2,6 +2,8 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
 
     android:shape="oval">
-    <solid android:color="@color/colorButtonOrderingDisable"></solid>
-    <size android:width="20dp" android:height="20dp"></size>
+    <solid android:color="@color/colorButtonOrderingDisable" />
+    <size
+        android:width="20dp"
+        android:height="20dp" />
 </shape>

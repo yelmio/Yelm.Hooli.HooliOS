@@ -25,7 +25,7 @@
                 app:collapsedTitleTextAppearance="@style/CollapsingTextAppearance.Inverse"
 
                 app:contentScrim="@color/whiteColor"
-                app:expandedTitleMarginBottom="18dp"
+                app:expandedTitleMarginBottom="12dp"
                 app:expandedTitleMarginStart="16dp"
 
                 app:expandedTitleTextAppearance="@style/CollapsingTextAppearance.Inverse"
@@ -47,7 +47,7 @@
                     <TextView
                         android:id="@+id/newsTitle"
                         android:layout_width="match_parent"
-                        android:layout_height="60dp"
+                        android:layout_height="54dp"
                         android:layout_alignParentBottom="true"
                         android:background="@drawable/coordinator_layout_top_rounded_decoration"
                         android:textColor="@color/colorText"
@@ -64,8 +64,8 @@
                     app:contentInsetStart="0dp"
                     app:contentInsetStartWithNavigation="0dp"
                     app:layout_collapseMode="pin"
-                    app:titleMarginTop="8dp"
-                    app:titleMarginStart="8dp" />
+                    app:titleMarginStart="8dp"
+                    app:titleMarginTop="8dp" />
 
             </com.google.android.material.appbar.CollapsingToolbarLayout>
         </com.google.android.material.appbar.AppBarLayout>

@@ -28,7 +28,7 @@ import yelm.io.raccoon.database_old.user.UserDao;
 
 @androidx.room.Database(entities =
         {Cart.class, Product.class, Articles.class, Stock.class, News.class, User.class, UserAddress.class, BasketCart.class},
-        version = 1,
+        version = 2,
         exportSchema = false)
 @TypeConverters({ModifiersConverter.class})
 
@@ -69,5 +69,4 @@ public abstract class Database extends RoomDatabase {
             // Поскольку мы не изменяли таблицу, здесь больше ничего не нужно делать.
         }
     };
-
 }

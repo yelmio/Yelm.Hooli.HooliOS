@@ -548,9 +548,7 @@ public class OrderActivity extends AppCompatActivity implements ThreeDSDialogLis
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(disposable -> showLoading())
                 .doOnEach(notification -> hideLoading())
-                .subscribe(transaction -> {
-                    checkResponse(transaction);
-                }, this::handleError));
+                .subscribe(this::checkResponse, this::handleError));
     }
 
     // Проверяем необходимо ли подтверждение с использованием 3DS
@@ -599,9 +597,7 @@ public class OrderActivity extends AppCompatActivity implements ThreeDSDialogLis
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(disposable -> showLoading())
                 .doOnEach(notification -> hideLoading())
-                .subscribe(transaction -> {
-                    checkResponse(transaction);
-                }, this::handleError));
+                .subscribe(this::checkResponse, this::handleError));
     }
 
     public void handleError(Throwable throwable, Class... ignoreClasses) {

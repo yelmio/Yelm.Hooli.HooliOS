@@ -331,7 +331,7 @@
             android:layout_weight="1"
             android:background="@drawable/stroke_back"
             android:fontFamily="@font/sf_prodisplay_regular"
-            android:hint="+"
+            android:hint="+7 (999) 123-46-57"
             android:inputType="phone"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"

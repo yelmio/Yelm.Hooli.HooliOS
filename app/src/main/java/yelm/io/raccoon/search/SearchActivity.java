@@ -107,7 +107,6 @@ public class SearchActivity extends AppCompatActivity {
         updateCost();
     }
 
-
     private void updateCost() {
         List<BasketCart> carts = Common.basketCartRepository.getBasketCartsList();
         if (carts.size() == 0) {

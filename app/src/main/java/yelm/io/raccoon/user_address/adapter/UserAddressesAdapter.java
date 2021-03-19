@@ -73,6 +73,8 @@ public class UserAddressesAdapter extends RecyclerView.Adapter<UserAddressesAdap
 
         holder.binding.checkedIcon.setOnClickListener(v -> {
             if (Common.userAddressesRepository.getUserAddressesList().get(position).isChecked) {
+                addressChangeListener.onAddressChange();
+                Log.d(Logging.debug, "changeAddress");
                 return;
             }
 
