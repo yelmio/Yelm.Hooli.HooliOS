@@ -1,6 +1,7 @@
 package yelm.io.raccoon.payment;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.util.Log;
@@ -143,10 +144,6 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
         String cardDate = editTextCardDate.getText().toString().replace("/", "");
         String cardCVC = editTextCardCVC.getText().toString();
         String cardHolderName = editTextCardHolderName.getText().toString();
-
-        //test
-        //sendOrder();
-        //test
 
         CPCardApi api = new CPCardApi(this);
 
@@ -293,12 +290,20 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
             show3DS(transaction);
         } else {
             // Показываем результат:
-            Log.d(Logging.debug, "transaction result: " + transaction.getCardHolderMessage());
+            //Log.d(Logging.debug, "transaction result: " + transaction.getCardHolderMessage());
             // showToast(transaction.getCardHolderMessage());
             if (transaction.getReasonCode() == 0) {
                 transactionID = transaction.getId();
-                Log.d(Logging.debug, "transaction.getId(): " + transaction.getId());
+                //Log.d(Logging.debug, "transaction.getId(): " + transaction.getId());
+                Log.d(Logging.debug, "transaction successful ");
+                SharedPreferences.Editor editor = LoaderActivity.settings.edit();
+                editor.putString(LoaderActivity.DISCOUNT_TYPE, "");
+                editor.putString(LoaderActivity.DISCOUNT_AMOUNT, "0");
+                editor.putString(LoaderActivity.DISCOUNT_NAME, "");
+                editor.apply();
                 sendOrder();
+            }else {
+                Log.d(Logging.debug, "transaction not successful ");
             }
         }
     }
@@ -313,7 +318,6 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
 
     public void handleError(Throwable throwable, Class... ignoreClasses) {
         Log.e(Logging.error, "handleError");
-
         if (ignoreClasses.length > 0) {
             List<Class> classList = Arrays.asList(ignoreClasses);
             if (classList.contains(throwable.getClass())) {
@@ -388,7 +392,7 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        Log.d(Logging.debug, "jsonObjectItems: " + jsonObjectItems.toString());
+        //Log.d(Logging.debug, "jsonObjectItems: " + jsonObjectItems.toString());
         RetrofitClient.
                 getClient(RestAPI.URL_API_MAIN)
                 .create(RestAPI.class)

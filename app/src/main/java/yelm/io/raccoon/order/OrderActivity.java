@@ -44,7 +44,6 @@ import retrofit2.Response;
 import ru.cloudpayments.sdk.three_ds.ThreeDSDialogListener;
 import ru.cloudpayments.sdk.three_ds.ThreeDsDialogFragment;
 import yelm.io.raccoon.constants.Constants;
-import yelm.io.raccoon.order.promocode.PromoCode;
 import yelm.io.raccoon.order.promocode.PromoCodeClass;
 import yelm.io.raccoon.payment.PayApi;
 import yelm.io.raccoon.payment.PaymentActivity;
@@ -119,20 +118,32 @@ public class OrderActivity extends AppCompatActivity implements ThreeDSDialogLis
             Log.d(Logging.debug, "deliveryTime: " + deliveryTime);
             Log.d(Logging.debug, "currentAddress: " + currentAddress.toString());
         }
-
         binding();
-
         paymentsClient = PaymentsUtil.createPaymentsClient(this);
         checkIsReadyToPay();
-
         bindingChosePaymentType();
-
         binding.applyPromocode.setOnClickListener(v -> getPromoCode());
+
+        getPromoIfExist();
+
     }
+
+    private void getPromoIfExist() {
+        String type = LoaderActivity.settings.getString(LoaderActivity.DISCOUNT_TYPE, "");
+        String amount = LoaderActivity.settings.getString(LoaderActivity.DISCOUNT_AMOUNT, "0");
+        String name = LoaderActivity.settings.getString(LoaderActivity.DISCOUNT_NAME, "");
+        if (type != null) {
+            if (!type.isEmpty()) {
+                setPromoCode(type, amount);
+                binding.promoCode.setText(name);
+            }
+        }
+    }
+
 
     private void getPromoCode() {
         if (binding.promoCode.getText().toString().trim().isEmpty()) {
-            showToast((String) getText(R.string.orderActivityEnterPromoCode));
+            showToast(getString(R.string.orderActivityEnterPromoCode));
         } else {
             RetrofitClient.
                     getClient(RestAPI.URL_API_MAIN)
@@ -147,7 +158,7 @@ public class OrderActivity extends AppCompatActivity implements ThreeDSDialogLis
                         if (response.body() != null) {
                             Log.d(Logging.debug, " " + Constants.ShopID);
                             if (response.body().getStatus().equals("200")) {
-                                setPromoCode(response.body().getPromocode());
+                                setPromoCode(response.body().getPromocode().getType(), response.body().getPromocode().getAmount());
                             }
                             showToast(response.body().getMessage());
                         } else {
@@ -168,14 +179,22 @@ public class OrderActivity extends AppCompatActivity implements ThreeDSDialogLis
         }
     }
 
-    private void setPromoCode(PromoCode promoCode) {
+    private void setPromoCode(String type, String amount) {
+
         binding.layoutDiscount.setVisibility(View.VISIBLE);
         finalCost = startCost;
         deliveryCostFinal = deliveryCostStart;
-        discountPromo = new BigDecimal(promoCode.getAmount());
-        Log.d(Logging.debug, "promoCode.getType(): " + promoCode.getType());
-        discountType = promoCode.getType();
-        switch (promoCode.getType()) {
+        discountPromo = new BigDecimal(amount);
+        Log.d(Logging.debug, "promoCode.getType(): " + type);
+        discountType = type;
+
+        SharedPreferences.Editor editor = LoaderActivity.settings.edit();
+        editor.putString(LoaderActivity.DISCOUNT_TYPE, type);
+        editor.putString(LoaderActivity.DISCOUNT_AMOUNT, amount);
+        editor.putString(LoaderActivity.DISCOUNT_NAME, binding.promoCode.getText().toString());
+        editor.apply();
+
+        switch (type) {
             case "full":
                 binding.discountPercent.setText(String.format("%s",
                         getText(R.string.orderDiscount)));
@@ -203,7 +222,8 @@ public class OrderActivity extends AppCompatActivity implements ThreeDSDialogLis
                 binding.discountPercent.setText(String.format("%s %s%%", getText(R.string.orderDiscount), discountPromo));
                 BigDecimal discount = discountPromo.divide(new BigDecimal("100"), 2, BigDecimal.ROUND_HALF_UP);
                 discount = discount.multiply(finalCost).setScale(2, BigDecimal.ROUND_HALF_UP);
-                binding.discountPrice.setText(String.format("%s", discount));
+                binding.discountPrice.setText(String.format("%s %s", discount,
+                        LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
                 finalCost = finalCost.subtract(discount);
                 if (finalCost.compareTo(new BigDecimal("0")) == 0) {
                     finalCost = new BigDecimal("1");
@@ -221,7 +241,6 @@ public class OrderActivity extends AppCompatActivity implements ThreeDSDialogLis
         JSONArray jsonObjectItems = new JSONArray();
         try {
             for (int i = 0; i < basketCarts.size(); i++) {
-                BigDecimal fullPrice = new BigDecimal(basketCarts.get(i).finalPrice).multiply(new BigDecimal(basketCarts.get(i).count));
                 JSONObject jsonObjectItem = new JSONObject();
                 jsonObjectItem
                         .put("id", basketCarts.get(i).itemID)
@@ -565,6 +584,11 @@ public class OrderActivity extends AppCompatActivity implements ThreeDSDialogLis
             if (transaction.getReasonCode() == 0) {
                 transactionID = transaction.getId();
                 Log.d(Logging.debug, "transaction.getId(): " + transaction.getId());
+                SharedPreferences.Editor editor = LoaderActivity.settings.edit();
+                editor.putString(LoaderActivity.DISCOUNT_TYPE, "");
+                editor.putString(LoaderActivity.DISCOUNT_AMOUNT, "0");
+                editor.putString(LoaderActivity.DISCOUNT_NAME, "");
+                editor.apply();
                 sendOrder();
             }
         }

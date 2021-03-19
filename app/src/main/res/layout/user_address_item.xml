@@ -11,12 +11,12 @@
         android:id="@+id/checkedIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingEnd="8dp"
         app:srcCompat="@drawable/ic_pin_gray_24" />
 
     <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="8dp"
         android:layout_weight="1"
         android:scrollbars="none">
 
@@ -36,12 +36,12 @@
         android:layout_width="1dp"
         android:layout_height="match_parent"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
         android:background="@color/colorSeparatorLogistic" />
 
     <ImageView
         android:id="@+id/removeAddress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingStart="8dp"
         app:srcCompat="@drawable/ic_remove_address" />
 </LinearLayout>

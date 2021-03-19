@@ -51,7 +51,7 @@ public class PayApi {
         args.setJsonData(order); // Любые другие данные, которые будут связаны с транзакцией (необязательный)
         args.setType(type); // Payment Type
 
-        Log.d(Logging.debug, "cardCryptogramPacket: " + cardCryptogramPacket);
+        Log.d(Logging.debug, "cardCryptogramPacket");
 
         return PayApiFactory.getPayMethods()
                 .auth(CONTENT_TYPE, args)

@@ -63,6 +63,7 @@ import yelm.io.raccoon.main.model.Modifier;
 import yelm.io.raccoon.rest.rest_api.RestAPI;
 import yelm.io.raccoon.rest.client.RetrofitClient;
 import yelm.io.raccoon.constants.Constants;
+import yelm.io.raccoon.support_stuff.StaticRepository;
 import yelm.io.raccoon.user_address.controller.AddressesBottomSheet;
 import yelm.io.raccoon.chat.controller.ChatActivity;
 import yelm.io.raccoon.R;
@@ -216,7 +217,7 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
 
     private void getUserCurrentLocation() {
         Log.d(Logging.debug, "Method getUserCurrentLocation()");
-        LocationRequest locationRequest = new LocationRequest();
+        LocationRequest locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationRequest.setNumUpdates(1);
         locationRequest.setInterval(0);
@@ -229,47 +230,42 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
 
     private LocationCallback locationCallback = new LocationCallback() {
         @Override
-        public void onLocationResult(LocationResult locationResult) {
+        public void onLocationResult(@NotNull LocationResult locationResult) {
             super.onLocationResult(locationResult);
             binding.progress.setVisibility(View.GONE);
-            if (locationResult != null && locationResult.getLastLocation() != null) {
-                double latitude = locationResult.getLastLocation().getLatitude();
-                double longitude = locationResult.getLastLocation().getLongitude();
-                Log.d(Logging.debug, "location updated:" + "\nlatitude: " + latitude + "\nlongitude: " + longitude);
-                String userStreet = getUserStreet(locationResult.getLastLocation());
-                Log.d(Logging.debug, "Method getUserCurrentLocation() - userStreet: " + userStreet);
+            double latitude = locationResult.getLastLocation().getLatitude();
+            double longitude = locationResult.getLastLocation().getLongitude();
+            Log.d(Logging.debug, "location updated:" + "\nlatitude: " + latitude + "\nlongitude: " + longitude);
+            String userStreet = getUserStreet(locationResult.getLastLocation());
+            Log.d(Logging.debug, "Method getUserCurrentLocation() - userStreet: " + userStreet);
 
-                if (userStreet.trim().isEmpty()) {
-                    performIfNoLocationPermission();
-                    return;
-                }
-
-                for (UserAddress userAddress : Common.userAddressesRepository.getUserAddressesList()) {
-                    if (userAddress.isChecked) {
-                        userAddress.isChecked = false;
-                        Common.userAddressesRepository.updateUserAddresses(userAddress);
-                        break;
-                    }
-                }
-                UserAddress currentUserAddress = Common.userAddressesRepository.getUserAddressByName(userStreet);
-                if (currentUserAddress == null) {
-                    UserAddress userAddress = new UserAddress(
-                            String.valueOf(latitude),
-                            String.valueOf(longitude),
-                            userStreet, true);
-                    Common.userAddressesRepository.insertToUserAddresses(userAddress);
-                    binding.userCurrentAddress.setText(userAddress.address);
-                } else {
-                    currentUserAddress.isChecked = true;
-                    Common.userAddressesRepository.updateUserAddresses(currentUserAddress);
-                    binding.userCurrentAddress.setText(currentUserAddress.address);
-                }
-                getCategoriesWithProducts(String.valueOf(latitude),
-                        String.valueOf(longitude));
-            } else {
-                Log.d(Logging.debug, "Method getUserCurrentLocation() - location null - unexpected error");
+            if (userStreet.trim().isEmpty()) {
                 performIfNoLocationPermission();
+                return;
             }
+
+            for (UserAddress userAddress : Common.userAddressesRepository.getUserAddressesList()) {
+                if (userAddress.isChecked) {
+                    userAddress.isChecked = false;
+                    Common.userAddressesRepository.updateUserAddresses(userAddress);
+                    break;
+                }
+            }
+            UserAddress currentUserAddress = Common.userAddressesRepository.getUserAddressByName(userStreet);
+            if (currentUserAddress == null) {
+                UserAddress userAddress = new UserAddress(
+                        String.valueOf(latitude),
+                        String.valueOf(longitude),
+                        userStreet, true);
+                Common.userAddressesRepository.insertToUserAddresses(userAddress);
+                binding.userCurrentAddress.setText(userAddress.address);
+            } else {
+                currentUserAddress.isChecked = true;
+                Common.userAddressesRepository.updateUserAddresses(currentUserAddress);
+                binding.userCurrentAddress.setText(currentUserAddress.address);
+            }
+            getCategoriesWithProducts(String.valueOf(latitude),
+                    String.valueOf(longitude));
         }
     };
 

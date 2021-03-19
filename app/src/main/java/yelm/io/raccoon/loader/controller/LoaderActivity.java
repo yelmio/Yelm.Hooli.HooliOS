@@ -1,6 +1,7 @@
 package yelm.io.raccoon.loader.controller;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -11,10 +12,13 @@ import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+
 import com.google.android.material.snackbar.Snackbar;
+
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -56,6 +60,10 @@ public class LoaderActivity extends AppCompatActivity {
     public static final String ROOM_CHAT_ID = "ROOM_ID";
     public static final String SHOP_CHAT_ID = "SHOP_ID";
     public static final String CLIENT_CHAT_ID = "CLIENT_ID";
+
+    public static final String DISCOUNT_TYPE = "DISCOUNT_TYPE";
+    public static final String DISCOUNT_AMOUNT = "DISCOUNT_AMOUNT";
+    public static final String DISCOUNT_NAME = "DISCOUNT_NAME";
 
     public static SharedPreferences settings;
     private static final String APP_PREFERENCES = "settings";
@@ -173,6 +181,9 @@ public class LoaderActivity extends AppCompatActivity {
                                 editor.putString(COLOR, response.body().getSettings().getTheme());
                                 editor.putString(PRICE_IN, response.body().getSymbol());
                                 editor.putString(COUNTRY_CODE, response.body().getSettings().getRegionCode());
+                                editor.putString(LoaderActivity.DISCOUNT_TYPE, "");
+                                editor.putString(LoaderActivity.DISCOUNT_AMOUNT, "0");
+                                editor.putString(LoaderActivity.DISCOUNT_NAME, "");
                                 editor.apply();
                                 launchMain();
                             } else {
@@ -222,24 +233,13 @@ public class LoaderActivity extends AppCompatActivity {
 
     private void initRoom() {
         Common.sDatabase = Database.getInstance(this);
-        //Common.cartRepository = CartRepository.getInstance(CartDataSource.getInstance(Common.sDatabase.cartDAO()));
         Common.basketCartRepository = BasketCartRepository.getInstance(BasketCartDataSource.getInstance(Common.sDatabase.basketCartDao()));
-        //Common.productRepository = ProductRepository.getInstance(ProductDataSource.getInstance(Common.sDatabase.productDao()));
-        //Common.stockRepository = StockRepository.getInstance(StockDataSource.getInstance(Common.sDatabase.stockDao()));
-        //Common.newsRepository = NewsRepository.getInstance(NewsDataSource.getInstance(Common.sDatabase.newsDao()));
-        //Common.articlesRepository = ArticlesRepository.getInstance(ArticleDataSource.getInstance(Common.sDatabase.articlesDao()));
-        //Common.userRepository = UserRepository.getInstance(UserDataSource.getInstance(Common.sDatabase.userDAO()));
         Common.userAddressesRepository = UserAddressesRepository.getInstance(UserAddressesDataSource.getInstance(Common.sDatabase.addressesDao()));
     }
 
     private void init() {
         if (isNetworkConnected()) {
             Log.d(Logging.debug, "Method init() - NetworkConnected successfully");
-            //clean all data before adding if there is network connection
-            //Common.productRepository.emptyProduct();
-            //Common.articlesRepository.emptyArticles();
-            //Common.stockRepository.emptyStock();
-            //Common.newsRepository.emptyNews();
             checkUser();
         } else {
             Log.d(Logging.debug, "Method init() - NetworkConnected not successful");

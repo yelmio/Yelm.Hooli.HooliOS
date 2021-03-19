@@ -23,8 +23,6 @@ public class PayApiResponse<T> {
 
     @Nullable
     public T getData() {
-        Log.d(Logging.debug, "getData");
-
         return data;
     }
 

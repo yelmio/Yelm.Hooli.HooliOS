@@ -105,8 +105,7 @@ dependencies {
     implementation 'ru.cloudpayments.android:sdk:1.0.7'
 
     //spring
-    def dynamicanimation_version = '1.0.0'
-    implementation "androidx.dynamicanimation:dynamicanimation:$dynamicanimation_version"
+    implementation "androidx.dynamicanimation:dynamicanimation:1.0.0"
 
     // gPay
     implementation 'com.google.android.gms:play-services-wallet:18.0.0'
@@ -120,8 +119,8 @@ dependencies {
 //    implementation 'com.yandex.android:search:3.5.0'
 //    implementation 'com.yandex.android:transport:3.5.0'
 
-//dependency for location by play services:
-    implementation 'com.google.android.gms:play-services-location:17.0.0'
+    //dependency for location by play services:
+    implementation 'com.google.android.gms:play-services-location:18.0.0'
 
     //spinner
     implementation 'com.github.arcadefire:nice-spinner:1.4.4'

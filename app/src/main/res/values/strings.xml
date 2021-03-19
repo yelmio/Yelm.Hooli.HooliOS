@@ -2,8 +2,10 @@
     <string name="app_name" translatable="false">Енот</string>
     <string name="yandex_maps_API_key" translatable="false">09ee0a39-0ad1-490a-9ea8-8600c46b9ef8</string>
 
-
     <string name="productsNotAvailable">Нет достаточного количества товара, всего осталось</string>
+
+    <string name="errorConnectedToServer">Ошибка соединения с сервером. Попробуйте позже</string>
+
 
 
     <!-- ItemActivity -->
@@ -102,7 +104,7 @@
     <string name="orderActivityEnterPromoCode">Введите промокод</string>
     <string name="inYourOrderProductsPC">шт.</string>
     <string name="inYourOrderProductsCount">Товаров:</string>
-    <string name="orderDiscount">Скидка</string>
+    <string name="orderDiscount">Скидка по промокоду</string>
     <string name="orderDiscountDelivery">Скидка на доставку</string>
     <string name="orderDiscountDeliveryAlreadyFree">доставка уже бесплатная</string>
     <string name="cardPayment">Оплата картой</string>

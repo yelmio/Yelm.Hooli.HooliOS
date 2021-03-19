@@ -9,7 +9,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.Toast;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
@@ -121,16 +123,19 @@ public class BasketActivity extends AppCompatActivity {
                                 new Thread(() -> updateBasketCartsQuantity(response.body().getDeletedId())).start();
                             } else {
                                 Log.e(Logging.error, "Method checkBasket() - by some reason response is null!");
+                                showToast(getString(R.string.errorConnectedToServer));
                             }
                         } else {
                             Log.e(Logging.error, "Method checkBasket() - response is not successful." +
                                     "Code: " + response.code() + "Message: " + response.message());
+                            showToast(getString(R.string.errorConnectedToServer));
                         }
                     }
 
                     @Override
                     public void onFailure(@NotNull Call<BasketCheckPOJO> call, @NotNull Throwable t) {
                         Log.e(Logging.error, "Method checkBasket() - failure: " + t.toString());
+                        showToast(getString(R.string.errorConnectedToServer));
                     }
                 });
     }
@@ -256,18 +261,16 @@ public class BasketActivity extends AppCompatActivity {
         if (data == null) {
             return;
         }
-        switch (requestCode) {
-            case PAYMENT_SUCCESS:
-                Common.basketCartRepository.emptyBasketCart();
-                Log.d("AlexDebug", "PAYMENT_SUCCESS " + data.getStringExtra("success"));
-                if (Objects.equals(data.getStringExtra("success"), "card")) {
-                    binding.paymentResultText.setText(getText(R.string.order_is_accepted_by_card));
-                } else {
-                    binding.paymentResultText.setText(getText(R.string.order_is_accepted_by_google_pay));
-                }
-                binding.paymentResult.setVisibility(View.VISIBLE);
-                binding.lotti.playAnimation();
-                break;
+        if (requestCode == PAYMENT_SUCCESS) {
+            Common.basketCartRepository.emptyBasketCart();
+            Log.d("AlexDebug", "PAYMENT_SUCCESS " + data.getStringExtra("success"));
+            if (Objects.equals(data.getStringExtra("success"), "card")) {
+                binding.paymentResultText.setText(getText(R.string.order_is_accepted_by_card));
+            } else {
+                binding.paymentResultText.setText(getText(R.string.order_is_accepted_by_google_pay));
+            }
+            binding.paymentResult.setVisibility(View.VISIBLE);
+            binding.lotti.playAnimation();
         }
         new Handler(Looper.getMainLooper()) {{
             postDelayed(new Runnable() {
@@ -278,6 +281,13 @@ public class BasketActivity extends AppCompatActivity {
             }, 3000);
         }};
     }
+
+    private void showToast(String message) {
+        Toast toast = Toast.makeText(this, message, Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
+    }
+
 
     @Override
     protected void onDestroy() {
