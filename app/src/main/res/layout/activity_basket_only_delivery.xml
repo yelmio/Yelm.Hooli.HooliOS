@@ -7,6 +7,8 @@
     android:layout_height="match_parent"
     tools:context=".basket.controller.BasketActivity">
 
+
+
     <LinearLayout
         android:id="@+id/paymentResult"
         android:layout_width="match_parent"
@@ -206,7 +208,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_marginTop="8dp"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:visibility="gone">
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -269,7 +272,6 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
-
                             android:layout_marginBottom="12dp"
                             android:drawableStart="@drawable/ic_delivery_not_available_24"
                             android:drawablePadding="8dp"
@@ -338,5 +340,14 @@
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
+
 
 </RelativeLayout>

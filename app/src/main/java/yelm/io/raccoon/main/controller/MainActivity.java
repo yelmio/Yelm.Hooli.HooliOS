@@ -28,6 +28,7 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.jetbrains.annotations.NotNull;
@@ -115,6 +116,21 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
                 intent.putExtra("id", args.getString("id"));
                 startActivity(intent);
             }
+        }
+
+        checkIfGPSEnabled();
+    }
+
+    private void checkIfGPSEnabled() {
+        if (!StaticRepository.isLocationEnabled(this)) {
+            Snackbar snackbar = Snackbar.make(
+                    findViewById(R.id.layout),
+                    R.string.mainActivityNoGPS,
+                    Snackbar.LENGTH_INDEFINITE);
+            snackbar.setAction("Включить", view -> {
+                startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+            }).setActionTextColor(getResources().getColor(R.color.mainThemeColor));
+            snackbar.show();
         }
     }
 

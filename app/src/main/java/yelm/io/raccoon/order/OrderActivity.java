@@ -123,9 +123,7 @@ public class OrderActivity extends AppCompatActivity implements ThreeDSDialogLis
         checkIsReadyToPay();
         bindingChosePaymentType();
         binding.applyPromocode.setOnClickListener(v -> getPromoCode());
-
         getPromoIfExist();
-
     }
 
     private void getPromoIfExist() {
@@ -139,7 +137,6 @@ public class OrderActivity extends AppCompatActivity implements ThreeDSDialogLis
             }
         }
     }
-
 
     private void getPromoCode() {
         if (binding.promoCode.getText().toString().trim().isEmpty()) {

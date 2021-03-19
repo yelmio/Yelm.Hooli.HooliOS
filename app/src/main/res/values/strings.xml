@@ -24,13 +24,14 @@
     <string name="AddressPickupChooseActivitySelectPickupPoint">Выберите пункт выдачи</string>
 
 
-    <!-- NewActivityMain -->
+    <!-- ActivityMain -->
     <string name="choose_address">Выберите адрес</string>
     <string name="mainActivityChooseAddressOrProvideLocationPermission">Выберите адрес или разрешите приложению доступ к данным о местоположении устройства.</string>
     <string name="mainActivityYes">Да</string>
     <string name="mainActivityOk">Ok</string>
     <string name="mainActivityAttention">Внимание!</string>
     <string name="mainActivityCategories">Категории</string>
+    <string name="mainActivityNoGPS">Нет доступа к данным о местоположении</string>
 
     <string name="mainActivityRequestPermission">Для корректной работы разрешите приложению доступ к данным о местоположении устройства. </string>
 

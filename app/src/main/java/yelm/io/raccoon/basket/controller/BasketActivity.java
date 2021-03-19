@@ -82,7 +82,7 @@ public class BasketActivity extends AppCompatActivity {
     private void checkBasket(String lat, String lon) {
         //stop upgrade basket UI
         //compositeDisposableBasket.clear();
-
+        binding.progressBar.setVisibility(View.VISIBLE);
         JSONArray jsonObjectItems = new JSONArray();
         List<BasketCart> basketCarts = Common.basketCartRepository.getBasketCartsList();
         for (BasketCart basketCart : basketCarts) {
@@ -114,8 +114,10 @@ public class BasketActivity extends AppCompatActivity {
                 enqueue(new Callback<BasketCheckPOJO>() {
                     @Override
                     public void onResponse(@NotNull Call<BasketCheckPOJO> call, @NotNull final Response<BasketCheckPOJO> response) {
+                        binding.progressBar.setVisibility(View.GONE);
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
+                                binding.layoutDelivery.setVisibility(View.VISIBLE);
                                 Log.d(Logging.debug, "Method checkBasket() - BasketCheckPOJO: " + response.body().toString());
                                 deliveryTime = response.body().getDelivery().getTime();
                                 binding.time.setText(String.format("%s %s", deliveryTime, getText(R.string.delivery_time)));
@@ -136,6 +138,7 @@ public class BasketActivity extends AppCompatActivity {
                     public void onFailure(@NotNull Call<BasketCheckPOJO> call, @NotNull Throwable t) {
                         Log.e(Logging.error, "Method checkBasket() - failure: " + t.toString());
                         showToast(getString(R.string.errorConnectedToServer));
+                        binding.progressBar.setVisibility(View.GONE);
                     }
                 });
     }
