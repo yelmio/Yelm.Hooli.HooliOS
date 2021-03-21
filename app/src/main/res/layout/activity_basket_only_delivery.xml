@@ -71,6 +71,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:includeFontPadding="false"
             android:singleLine="true"
             android:text="@string/basket"
             android:textColor="@color/colorText"
@@ -487,6 +488,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/workingTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:text="@string/basketActivityWorkingTime"
+        android:textColor="@color/colorText"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:theme="@style/ProDisplayTextStyle"
         android:visibility="gone" />
 
 

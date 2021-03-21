@@ -77,6 +77,7 @@
 
     <!-- BasketActivity -->
     <string name="clean_basket">Очистить</string>
+    <string name="basketActivityWorkingTime"> Магазин в настоящее время закрыт.\nВремя работы:</string>
     <string name="basketActivityCutlery">Приборы</string>
     <string name="basketActivityTotal">Итог</string>
     <string name="basketActivitySelectAddress">Выберите адрес</string>

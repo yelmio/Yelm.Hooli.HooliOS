@@ -66,7 +66,7 @@ public class ItemFromNotificationActivity extends AppCompatActivity  implements 
                 getClient(RestAPI.URL_API_MAIN).
                 create(RestAPI.class).
                 getIemByID(
-                        "3",
+                        "3.1",
                         RestAPI.PLATFORM_NUMBER,
                         getResources().getConfiguration().locale.getLanguage(),
                         getResources().getConfiguration().locale.getCountry(),

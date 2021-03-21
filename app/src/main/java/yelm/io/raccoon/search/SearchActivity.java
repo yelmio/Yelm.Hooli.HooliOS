@@ -72,7 +72,7 @@ public class SearchActivity extends AppCompatActivity {
                 getClient(RestAPI.URL_API_MAIN).
                 create(RestAPI.class).
                 getAllItems(
-                        "3",
+                        "3.1",
                         getResources().getConfiguration().locale.getLanguage(),
                         getResources().getConfiguration().locale.getCountry(),
                         RestAPI.PLATFORM_NUMBER,

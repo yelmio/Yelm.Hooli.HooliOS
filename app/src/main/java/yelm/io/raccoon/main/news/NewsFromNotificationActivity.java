@@ -53,7 +53,7 @@ public class NewsFromNotificationActivity extends AppCompatActivity implements A
                 getClient(RestAPI.URL_API_MAIN).
                 create(RestAPI.class).
                 getNewsByID(
-                        "3",
+                        "3.1",
                         RestAPI.PLATFORM_NUMBER,
                         getResources().getConfiguration().locale.getLanguage(),
                         getResources().getConfiguration().locale.getCountry(),

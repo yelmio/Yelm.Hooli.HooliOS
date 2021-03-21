@@ -71,7 +71,7 @@ public class OrderByIDActivity extends AppCompatActivity implements AppBarLayout
                 getClient(RestAPI.URL_API_MAIN).
                 create(RestAPI.class).
                 getOrderByID(RestAPI.PLATFORM_NUMBER,
-                        "3",
+                        "3.1",
                         getResources().getConfiguration().locale.getLanguage(),
                         getResources().getConfiguration().locale.getCountry(),
                         id).

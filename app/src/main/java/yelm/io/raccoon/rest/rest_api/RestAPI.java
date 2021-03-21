@@ -138,6 +138,7 @@ public interface RestAPI {
     @FormUrlEncoded
     @POST("basket?")
     Call<BasketCheckPOJO> checkBasket(
+            @Query("version") String version,
             @Query("platform") String platform,
             @Query("shop_id") String shopID,
             @Query("language_code") String languageCode,

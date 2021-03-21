@@ -397,7 +397,7 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
         RetrofitClient.
                 getClient(RestAPI.URL_API_MAIN)
                 .create(RestAPI.class)
-                .sendOrder("3",
+                .sendOrder("3.1",
                         getResources().getConfiguration().locale.getCountry(),
                         getResources().getConfiguration().locale.getLanguage(),
                         RestAPI.PLATFORM_NUMBER,

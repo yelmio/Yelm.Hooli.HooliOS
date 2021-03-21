@@ -181,7 +181,6 @@ public class LoaderActivity extends AppCompatActivity {
                                 editor.putString(COLOR, response.body().getSettings().getTheme());
                                 editor.putString(PRICE_IN, response.body().getSymbol());
                                 editor.putString(COUNTRY_CODE, response.body().getSettings().getRegionCode());
-                                editor.putString(LoaderActivity.DISCOUNT_TYPE, "");
                                 editor.apply();
                                 launchMain();
                             } else {

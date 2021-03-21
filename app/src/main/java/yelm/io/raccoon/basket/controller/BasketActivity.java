@@ -110,6 +110,7 @@ public class BasketActivity extends AppCompatActivity {
                 getClient(RestAPI.URL_API_MAIN).
                 create(RestAPI.class).
                 checkBasket(
+                        "3.1",
                         RestAPI.PLATFORM_NUMBER,
                         Constants.ShopID,
                         getResources().getConfiguration().locale.getLanguage(),
@@ -124,12 +125,20 @@ public class BasketActivity extends AppCompatActivity {
                         binding.progressBar.setVisibility(View.GONE);
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
-                                binding.layoutDelivery.setVisibility(View.VISIBLE);
-                                Log.d(Logging.debug, "Method checkBasket() - BasketCheckPOJO: " + response.body().toString());
-                                deliveryTime = response.body().getDelivery().getTime();
-                                binding.time.setText(String.format("%s %s", deliveryTime, getText(R.string.delivery_time)));
-                                deliveryCostStart = new BigDecimal(response.body().getDelivery().getPrice());
-                                new Thread(() -> updateBasketCartsQuantity(response.body().getDeletedId())).start();
+                                if (response.body().getType().equals("close")) {
+                                    binding.workingTime.setVisibility(View.VISIBLE);
+                                    binding.workingTime.setText(String.format("%s %s",
+                                            getString(R.string.basketActivityWorkingTime),
+                                            response.body().getTimeWork()));
+                                } else {
+                                    binding.layoutDelivery.setVisibility(View.VISIBLE);
+                                    Log.d(Logging.debug, "Method checkBasket() - BasketCheckPOJO: " + response.body().toString());
+                                    deliveryTime = response.body().getDelivery().getTime();
+                                    binding.time.setText(String.format("%s %s", deliveryTime, getText(R.string.delivery_time)));
+                                    deliveryCostStart = new BigDecimal(response.body().getDelivery().getPrice());
+                                    new Thread(() -> updateBasketCartsQuantity(response.body().getDeletedId())).start();
+                                }
+
                             } else {
                                 Log.e(Logging.error, "Method checkBasket() - by some reason response is null!");
                                 showToast(getString(R.string.errorConnectedToServer));

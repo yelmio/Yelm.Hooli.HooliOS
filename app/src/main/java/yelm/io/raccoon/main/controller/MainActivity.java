@@ -310,7 +310,7 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
                 getClient(RestAPI.URL_API_MAIN).
                 create(RestAPI.class).
                 getCategoriesWithChosenProducts(
-                        "3",
+                        "3.1",
                         getResources().getConfiguration().locale.getLanguage(),
                         getResources().getConfiguration().locale.getCountry(),
                         RestAPI.PLATFORM_NUMBER,
@@ -402,7 +402,7 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
         RetrofitClient.
                 getClient(RestAPI.URL_API_MAIN).
                 create(RestAPI.class).
-                getNews("3",
+                getNews("3.1",
                         getResources().getConfiguration().locale.getLanguage(),
                         getResources().getConfiguration().locale.getCountry(),
                         RestAPI.PLATFORM_NUMBER).

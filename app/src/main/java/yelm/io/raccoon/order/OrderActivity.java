@@ -133,9 +133,14 @@ public class OrderActivity extends AppCompatActivity implements ThreeDSDialogLis
         String type = LoaderActivity.settings.getString(LoaderActivity.DISCOUNT_TYPE, "");
         String amount = LoaderActivity.settings.getString(LoaderActivity.DISCOUNT_AMOUNT, "0");
         String name = LoaderActivity.settings.getString(LoaderActivity.DISCOUNT_NAME, "");
+        Log.d(Logging.debug, "type: " + type);
+        Log.d(Logging.debug, "amount: " + amount);
+        Log.d(Logging.debug, "name: " + name);
+
+
         if (type != null) {
             if (!type.isEmpty()) {
-                setPromoCode(type, amount);
+                setPromoCode(type, amount, name);
                 binding.promoCode.setText(name);
             }
         }
@@ -158,7 +163,9 @@ public class OrderActivity extends AppCompatActivity implements ThreeDSDialogLis
                         if (response.body() != null) {
                             Log.d(Logging.debug, " " + Constants.ShopID);
                             if (response.body().getStatus().equals("200")) {
-                                setPromoCode(response.body().getPromocode().getType(), response.body().getPromocode().getAmount());
+                                setPromoCode(response.body().getPromocode().getType(),
+                                        response.body().getPromocode().getAmount(),
+                                        response.body().getPromocode().getName());
                             }
                             showToast(response.body().getMessage());
                         } else {
@@ -179,19 +186,18 @@ public class OrderActivity extends AppCompatActivity implements ThreeDSDialogLis
         }
     }
 
-    private void setPromoCode(String type, String amount) {
+    private void setPromoCode(String type, String amount, String name) {
 
         binding.layoutDiscount.setVisibility(View.VISIBLE);
         finalCost = startCost;
         deliveryCostFinal = deliveryCostStart;
         discountPromo = new BigDecimal(amount);
-        Log.d(Logging.debug, "promoCode.getType(): " + type);
         discountType = type;
 
         SharedPreferences.Editor editor = LoaderActivity.settings.edit();
         editor.putString(LoaderActivity.DISCOUNT_TYPE, type);
         editor.putString(LoaderActivity.DISCOUNT_AMOUNT, amount);
-        editor.putString(LoaderActivity.DISCOUNT_NAME, binding.promoCode.getText().toString());
+        editor.putString(LoaderActivity.DISCOUNT_NAME, name);
         editor.apply();
 
         switch (type) {
@@ -254,7 +260,7 @@ public class OrderActivity extends AppCompatActivity implements ThreeDSDialogLis
         RetrofitClient.
                 getClient(RestAPI.URL_API_MAIN)
                 .create(RestAPI.class)
-                .sendOrder("3",
+                .sendOrder("3.1",
                         getResources().getConfiguration().locale.getCountry(),
                         getResources().getConfiguration().locale.getLanguage(),
                         RestAPI.PLATFORM_NUMBER,
