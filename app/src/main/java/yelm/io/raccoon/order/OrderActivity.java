@@ -86,7 +86,7 @@ public class OrderActivity extends AppCompatActivity implements ThreeDSDialogLis
     private String order = "";
     private String userID = LoaderActivity.settings.getString(LoaderActivity.USER_NAME, "");
     private String currency = LoaderActivity.settings.getString(LoaderActivity.CURRENCY, "");
-
+    private String countCutlery = "1";
     private static final String ENTRANCE = "ENTRANCE";
     private static final String FLOOR = "FLOOR";
     private static final String FLAT = "FLAT";
@@ -110,6 +110,9 @@ public class OrderActivity extends AppCompatActivity implements ThreeDSDialogLis
             paymentCost = finalCost.add(deliveryCostStart);
             deliveryTime = args.getString("deliveryTime");
             currentAddress = (UserAddress) args.getSerializable(UserAddress.class.getSimpleName());
+            countCutlery = args.getString("countCutlery");
+
+            Log.d(Logging.debug, "countCutlery: " + countCutlery);
             Log.d(Logging.debug, "startCost: " + startCost);
             Log.d(Logging.debug, "finalCost: " + finalCost);
             Log.d(Logging.debug, "paymentCost: " + paymentCost);
@@ -274,7 +277,8 @@ public class OrderActivity extends AppCompatActivity implements ThreeDSDialogLis
                         deliveryCostFinal.toString(),
                         currency,
                         Constants.ShopID,
-                        discountType
+                        discountType,
+                        countCutlery
                 ).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(@NotNull Call<ResponseBody> call, @NotNull Response<ResponseBody> response) {
@@ -416,6 +420,7 @@ public class OrderActivity extends AppCompatActivity implements ThreeDSDialogLis
                 intent.putExtra("phone", binding.phone.getText().toString());
                 intent.putExtra("flat", binding.flat.getText().toString());
                 intent.putExtra("discountType", discountType);
+                intent.putExtra("countCutlery", countCutlery);
                 intent.putExtra(UserAddress.class.getSimpleName(), currentAddress);
                 startActivityForResult(intent, PAYMENT_SUCCESS);
             }

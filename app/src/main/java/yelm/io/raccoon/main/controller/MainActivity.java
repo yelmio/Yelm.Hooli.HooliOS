@@ -127,9 +127,7 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
                     findViewById(R.id.layout),
                     R.string.mainActivityNoGPS,
                     Snackbar.LENGTH_INDEFINITE);
-            snackbar.setAction("Включить", view -> {
-                startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-            }).setActionTextColor(getResources().getColor(R.color.mainThemeColor));
+            snackbar.setAction("Включить", view -> startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS))).setActionTextColor(getResources().getColor(R.color.mainThemeColor));
             snackbar.show();
         }
     }

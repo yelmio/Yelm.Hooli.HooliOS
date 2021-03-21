@@ -185,7 +185,8 @@ public interface RestAPI {
             @Query("delivery_price") String deliveryPrice,
             @Query("currency") String currency,
             @Query("shop_id") String shopID,
-            @Query("discount_type") String discountType
+            @Query("discount_type") String discountType,
+            @Query("cutlery") String cutlery
     );
 
     @FormUrlEncoded

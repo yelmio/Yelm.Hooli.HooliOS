@@ -7,8 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".basket.controller.BasketActivity">
 
-
-
     <LinearLayout
         android:id="@+id/paymentResult"
         android:layout_width="match_parent"
@@ -121,7 +119,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="start"
                     android:textColor="@color/mainThemeColor"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:textStyle="bold"
                     android:theme="@style/ProDisplayTextStyle" />
 
@@ -130,7 +128,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="start"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     android:theme="@style/ProDisplayTextStyle" />
             </LinearLayout>
 
@@ -189,7 +187,9 @@
                     android:layout_marginEnd="16dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:itemCount="3"
+                    tools:listitem="@layout/basket_cart_item" />
 
                 <LinearLayout
                     android:id="@+id/layoutDeliveryInfo"
@@ -207,13 +207,152 @@
                         android:id="@+id/layoutDelivery"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginTop="8dp"
                         android:orientation="vertical"
                         android:visibility="gone">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/layoutCutlery"
+
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <ImageView
+                                android:id="@+id/iconCutlery"
+                                android:layout_width="28dp"
+                                android:layout_height="28dp"
+                                android:layout_marginTop="12dp"
+                                android:layout_marginBottom="12dp"
+                                app:layout_constraintBottom_toTopOf="@+id/separator"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:srcCompat="@drawable/ic_cutlery" />
+
+                            <ImageButton
+                                android:id="@+id/removeCutlery"
+                                android:layout_width="26dp"
+                                android:layout_height="26dp"
+                                android:layout_marginEnd="10dp"
+                                android:adjustViewBounds="true"
+                                android:background="@drawable/circle_button_selector"
+                                android:padding="4dp"
+                                android:scaleType="centerInside"
+                                android:theme="@style/ProDisplayTextStyle"
+                                app:layout_constraintBottom_toBottomOf="@+id/cutleryTitle"
+                                app:layout_constraintEnd_toStartOf="@+id/cutleryCount"
+                                app:layout_constraintTop_toTopOf="@+id/cutleryTitle"
+                                app:srcCompat="@drawable/ic_remove_24_white" />
+
+                            <TextView
+                                android:id="@+id/cutleryCount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="10dp"
+                                android:gravity="center|center_vertical"
+                                android:text="1"
+                                android:textColor="@color/colorText"
+                                android:textSize="14sp"
+                                android:theme="@style/ProDisplayTextStyle"
+                                app:layout_constraintBottom_toBottomOf="@+id/removeCutlery"
+                                app:layout_constraintEnd_toStartOf="@+id/addCutlery"
+                                app:layout_constraintTop_toTopOf="@+id/removeCutlery" />
+
+                            <ImageButton
+                                android:id="@+id/addCutlery"
+                                android:layout_width="26dp"
+                                android:layout_height="26dp"
+                                android:adjustViewBounds="true"
+                                android:background="@drawable/circle_button_selector"
+                                android:padding="4dp"
+                                android:scaleType="centerInside"
+                                android:theme="@style/ProDisplayTextStyle"
+                                app:layout_constraintBottom_toBottomOf="@+id/cutleryCount"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="@+id/cutleryCount"
+                                app:srcCompat="@drawable/ic_add_24_white" />
+
+
+                            <TextView
+                                android:id="@+id/cutleryTitle"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:includeFontPadding="false"
+                                android:text="@string/basketActivityCutlery"
+                                android:textColor="@color/colorText"
+                                android:textSize="18sp"
+                                android:textStyle="bold"
+                                android:theme="@style/ProDisplayTextStyle"
+                                app:layout_constraintBottom_toBottomOf="@+id/iconCutlery"
+                                app:layout_constraintEnd_toStartOf="@+id/removeCutlery"
+                                app:layout_constraintStart_toEndOf="@+id/iconCutlery"
+                                app:layout_constraintTop_toTopOf="@+id/iconCutlery" />
+
+                            <View
+                                android:id="@+id/separator"
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="@color/colorSeparator"
+                                android:visibility="visible"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent" />
+
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <View
+                                android:id="@+id/separatorTotal"
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:layout_marginTop="8dp"
+                                android:background="@color/colorSeparator"
+                                android:visibility="visible"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent" />
+
+                            <TextView
+                                android:id="@+id/textView"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="12dp"
+                                android:layout_marginBottom="12dp"
+                                android:includeFontPadding="false"
+                                android:text="@string/basketActivityTotal"
+                                android:textColor="@color/colorText"
+                                android:textSize="18sp"
+
+                                android:textStyle="bold"
+                                android:theme="@style/ProDisplayTextStyle"
+                                app:layout_constraintBottom_toTopOf="@+id/separatorTotal"
+                                app:layout_constraintEnd_toStartOf="@+id/total"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <TextView
+                                android:id="@+id/total"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="end"
+                                android:includeFontPadding="false"
+                                android:textColor="@color/mainThemeColor"
+                                android:textSize="16sp"
+                                android:theme="@style/ProDisplayTextStyle"
+
+
+                                app:layout_constraintBottom_toTopOf="@+id/separatorTotal"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
+                            android:layout_marginTop="12dp"
                             android:gravity="center_vertical"
                             android:orientation="horizontal">
 
@@ -233,6 +372,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:gravity="end"
+                                android:includeFontPadding="false"
                                 android:textColor="@color/mainThemeColor"
                                 android:textSize="16sp"
                                 android:theme="@style/ProDisplayTextStyle" />
@@ -242,7 +382,7 @@
                             android:id="@+id/freeDelivery"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
+                            android:paddingTop="4dp"
                             android:textSize="14sp"
                             android:textStyle="normal"
                             android:theme="@style/ProDisplayTextStyle" />
@@ -251,7 +391,7 @@
                             android:id="@+id/separatorDelivery"
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
-                            android:layout_marginTop="8dp"
+                            android:layout_marginTop="12dp"
                             android:background="@color/colorSeparator"
                             android:visibility="visible"
                             app:layout_constraintBottom_toBottomOf="parent"

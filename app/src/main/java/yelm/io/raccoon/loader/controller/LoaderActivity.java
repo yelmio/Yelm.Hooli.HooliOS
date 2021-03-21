@@ -171,8 +171,8 @@ public class LoaderActivity extends AppCompatActivity {
                     public void onResponse(@NotNull Call<ApplicationSettings> call, @NotNull final Response<ApplicationSettings> response) {
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
-                                Log.d(Logging.debug, "Method getApplicationSettings() - MERCHANT_PUBLIC_ID: " +
-                                        " " + response.body().getSettings().getPublicId());
+//                                Log.d(Logging.debug, "Method getApplicationSettings() - MERCHANT_PUBLIC_ID: " +
+//                                        " " + response.body().getSettings().getPublicId());
                                 Constants.MERCHANT_PUBLIC_ID = response.body().getSettings().getPublicId();
                                 SharedPreferences.Editor editor = settings.edit();
                                 editor.putString(MIN_PRICE_FOR_FREE_DELIVERY, response.body().getSettings().getMinDeliveryPrice());
@@ -182,8 +182,6 @@ public class LoaderActivity extends AppCompatActivity {
                                 editor.putString(PRICE_IN, response.body().getSymbol());
                                 editor.putString(COUNTRY_CODE, response.body().getSettings().getRegionCode());
                                 editor.putString(LoaderActivity.DISCOUNT_TYPE, "");
-                                editor.putString(LoaderActivity.DISCOUNT_AMOUNT, "0");
-                                editor.putString(LoaderActivity.DISCOUNT_NAME, "");
                                 editor.apply();
                                 launchMain();
                             } else {

@@ -13,6 +13,28 @@ public class BasketCheckPOJO {
     @SerializedName("delivery")
     @Expose
     private Delivery delivery;
+    @SerializedName("type")
+    @Expose
+    private String type;
+    @SerializedName("time_work")
+    @Expose
+    private String timeWork;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getTimeWork() {
+        return timeWork;
+    }
+
+    public void setTimeWork(String timeWork) {
+        this.timeWork = timeWork;
+    }
 
     public List<DeletedId> getDeletedId() {
         return deletedId;
@@ -35,6 +57,8 @@ public class BasketCheckPOJO {
         return "BasketCheckPOJO{" +
                 "deletedId=" + deletedId +
                 ", delivery=" + delivery +
+                ", type='" + type + '\'' +
+                ", timeWork='" + timeWork + '\'' +
                 '}';
     }
 }

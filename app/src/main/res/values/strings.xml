@@ -7,7 +7,6 @@
     <string name="errorConnectedToServer">Ошибка соединения с сервером. Попробуйте позже</string>
 
 
-
     <!-- ItemActivity -->
     <string name="product_discount">Скидка</string>
     <string name="product_specifications">Характеристики</string>
@@ -78,6 +77,8 @@
 
     <!-- BasketActivity -->
     <string name="clean_basket">Очистить</string>
+    <string name="basketActivityCutlery">Приборы</string>
+    <string name="basketActivityTotal">Итог</string>
     <string name="basketActivitySelectAddress">Выберите адрес</string>
     <string name="delivery_time">мин</string>
     <string name="basket_delivery">Доставка</string>

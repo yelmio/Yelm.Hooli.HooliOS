@@ -35,7 +35,13 @@ public class BasketAdapter extends RecyclerView.Adapter<BasketAdapter.BasketHold
     public void onBindViewHolder(@NonNull final BasketAdapter.BasketHolder holder, final int position) {
         BasketCart current = basket.get(position);
 
-        holder.binding.description.setText(current.name);
+        holder.binding.description.setText(String.format("%s %s %s / %s %s",
+                current.name,
+                current.finalPrice,
+                LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, ""),
+                current.quantityType,
+                current.type));
+
         holder.binding.countProducts.setText(current.count);
         BigDecimal weight = new BigDecimal(current.count).multiply(new BigDecimal(current.quantityType));
         holder.binding.weight.setText(String.format("%s %s", weight.toString(), current.type));
@@ -46,23 +52,12 @@ public class BasketAdapter extends RecyclerView.Adapter<BasketAdapter.BasketHold
             holder.binding.modifiers.setText(modifiers.toString());
         }
 
-        holder.binding.imageHolder.setAlpha(0f);
         Picasso.get()
                 .load(current.imageUrl)
                 .noPlaceholder()
                 .centerCrop()
                 .resize(300, 300)
-                .into(holder.binding.imageHolder, new Callback() {
-                    @Override
-                    public void onSuccess() {
-                        holder.binding.imageHolder.animate().setDuration(300).alpha(1f).start();
-                    }
-
-                    @Override
-                    public void onError(Exception e) {
-
-                    }
-                });
+                .into(holder.binding.imageHolder);
 
         BigDecimal currentStartFinal = new BigDecimal(current.finalPrice);
         for (Modifier modifier : current.modifier) {

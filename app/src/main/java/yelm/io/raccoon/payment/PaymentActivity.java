@@ -91,7 +91,7 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
     private String floor = "";
     private String flat = "";
     private String phone = "";
-
+    private String countCutlery = "1";
     protected CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     @BindView(R.id.text_total)
@@ -250,7 +250,8 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
             phone = args.getString("phone");
             flat = args.getString("flat");
             currentAddress = (UserAddress) args.getSerializable(UserAddress.class.getSimpleName());
-
+            countCutlery = args.getString("countCutlery");
+            Log.d(Logging.debug, "countCutlery: " + countCutlery);
             Log.d(Logging.debug, "startCost: " + startCost);
             Log.d(Logging.debug, "paymentCost: " + paymentCost);
             Log.d(Logging.debug, "discountPromo: " + discountPromo);
@@ -302,7 +303,7 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
                 editor.putString(LoaderActivity.DISCOUNT_NAME, "");
                 editor.apply();
                 sendOrder();
-            }else {
+            } else {
                 Log.d(Logging.debug, "transaction not successful ");
             }
         }
@@ -419,7 +420,8 @@ public class PaymentActivity extends AppCompatActivity implements ThreeDSDialogL
                         deliveryCost.toString(),
                         currency,
                         yelm.io.raccoon.constants.Constants.ShopID,
-                        discountType
+                        discountType,
+                        countCutlery
                 ).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(@NotNull Call<ResponseBody> call, @NotNull Response<ResponseBody> response) {

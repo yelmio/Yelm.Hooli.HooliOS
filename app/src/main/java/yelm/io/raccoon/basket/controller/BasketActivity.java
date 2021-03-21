@@ -2,6 +2,7 @@ package yelm.io.raccoon.basket.controller;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.content.Intent;
@@ -31,6 +32,7 @@ import retrofit2.Response;
 import yelm.io.raccoon.R;
 import yelm.io.raccoon.basket.adapter.BasketAdapter;
 import yelm.io.raccoon.basket.model.BasketCheckPOJO;
+import yelm.io.raccoon.basket.model.CutleryViewModel;
 import yelm.io.raccoon.basket.model.DeletedId;
 import yelm.io.raccoon.constants.Constants;
 import yelm.io.raccoon.database_new.Common;
@@ -56,11 +58,16 @@ public class BasketActivity extends AppCompatActivity {
     private String deliveryTime = "0";
     private static final int PAYMENT_SUCCESS = 777;
 
+    private int countCutlery = 1;
+    //CutleryViewModel cutleryViewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityBasketOnlyDeliveryBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        //cutleryViewModel = new ViewModelProvider(this).get(CutleryViewModel.class);
+
         binding();
         currentAddress = getDeliveryAddress();
         //check if there is user address in db and delivery available to it
@@ -79,6 +86,7 @@ public class BasketActivity extends AppCompatActivity {
         }
     }
 
+
     private void checkBasket(String lat, String lon) {
         //stop upgrade basket UI
         //compositeDisposableBasket.clear();
@@ -92,7 +100,6 @@ public class BasketActivity extends AppCompatActivity {
                         .put("id", basketCart.itemID)
                         .put("count", basketCart.count);
                 jsonObjectItems.put(jsonObjectItem);
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -224,6 +231,9 @@ public class BasketActivity extends AppCompatActivity {
 
         Log.d(Logging.debug, "Method updateBasket() - deliveryCostFinal: " + deliveryCostFinal.toString());
 
+        binding.total.setText(String.format("%s %s",
+                finalCost,
+                LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
         binding.deliveryCost.setText(String.format("%s %s",
                 deliveryCostFinal,
                 LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
@@ -232,7 +242,28 @@ public class BasketActivity extends AppCompatActivity {
                 LoaderActivity.settings.getString(LoaderActivity.PRICE_IN, "")));
     }
 
+    private void cutleryLogic() {
+        setCutleryButtonEnable();
+        binding.removeCutlery.setOnClickListener(v -> {
+            countCutlery -= 1;
+            //cutleryViewModel.getCashBack().postValue(new BigDecimal(String.valueOf(countCutlery)));
+            binding.cutleryCount.setText(String.valueOf(countCutlery));
+            setCutleryButtonEnable();
+        });
+        binding.addCutlery.setOnClickListener(v -> {
+            countCutlery += 1;
+            binding.cutleryCount.setText(String.valueOf(countCutlery));
+            setCutleryButtonEnable();
+        });
+    }
+
+    private void setCutleryButtonEnable() {
+        binding.addCutlery.setEnabled(countCutlery != 5);
+        binding.removeCutlery.setEnabled(countCutlery != 1);
+    }
+
     private void binding() {
+        cutleryLogic();
         binding.recyclerCart.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         binding.back.setOnClickListener(v -> finish());
         binding.cleanBasket.setOnClickListener(v -> Common.basketCartRepository.emptyBasketCart());
@@ -241,6 +272,7 @@ public class BasketActivity extends AppCompatActivity {
             intent.putExtra("finalPrice", finalCost.toString());
             intent.putExtra("deliveryCost", deliveryCostFinal.toString());
             intent.putExtra("deliveryTime", deliveryTime);
+            intent.putExtra("countCutlery", String.valueOf(countCutlery));
             intent.putExtra(UserAddress.class.getSimpleName(), currentAddress);
             startActivityForResult(intent, PAYMENT_SUCCESS);
         });
