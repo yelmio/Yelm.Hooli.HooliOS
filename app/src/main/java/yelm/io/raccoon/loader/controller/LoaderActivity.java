@@ -82,9 +82,8 @@ public class LoaderActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             String channelId = getString(R.string.default_notification_channel_id);
             String channelName = getString(R.string.default_notification_channel_name);
-            NotificationManager notificationManager =
-                    getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(new NotificationChannel(channelId,
+            NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            manager.createNotificationChannel(new NotificationChannel(channelId,
                     channelName, NotificationManager.IMPORTANCE_HIGH));
         }
         initRoom();

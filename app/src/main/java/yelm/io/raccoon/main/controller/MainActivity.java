@@ -74,7 +74,6 @@ import yelm.io.raccoon.support_stuff.ItemOffsetDecorationRight;
 
 public class MainActivity extends AppCompatActivity implements AddressesBottomSheet.AddressesBottomSheetListener {
 
-
     ActivityMainBinding binding;
     AddressesBottomSheet addressesBottomSheet = new AddressesBottomSheet();
 
@@ -115,6 +114,8 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
                 Intent intent = new Intent(MainActivity.this, ItemFromNotificationActivity.class);
                 intent.putExtra("id", args.getString("id"));
                 startActivity(intent);
+            } else if (Objects.equals(args.getString("name"), "chat")){
+                startActivity(new Intent(MainActivity.this, ChatActivity.class));
             }
         }
 

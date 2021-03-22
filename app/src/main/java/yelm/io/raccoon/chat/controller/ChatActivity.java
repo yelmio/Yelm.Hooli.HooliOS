@@ -57,6 +57,7 @@ import yelm.io.raccoon.R;
 import yelm.io.raccoon.chat.adapter.ChatAdapter;
 import yelm.io.raccoon.chat.model.ChatContent;
 import yelm.io.raccoon.chat.model.ChatHistoryClass;
+import yelm.io.raccoon.constants.Constants;
 import yelm.io.raccoon.databinding.ActivityChatBinding;
 import yelm.io.raccoon.loader.controller.LoaderActivity;
 import yelm.io.raccoon.main.model.Item;
@@ -110,6 +111,8 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
     }
 
     private void tuneSocketConnection() {
+        Constants.customerInChat = true;
+
         try {
             IO.Options options = new IO.Options();
             options.query = "token=" + LoaderActivity.settings.getString(LoaderActivity.API_TOKEN, "")
@@ -118,6 +121,7 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
             socket = IO.socket(CHAT_SERVER_URL, options);
             socket.on("room." + LoaderActivity.settings.getString(LoaderActivity.ROOM_CHAT_ID, ""), onLogin);
             socket.connect();
+
             Log.d("AlexDebug", "room: " + LoaderActivity.settings.getString(LoaderActivity.ROOM_CHAT_ID, ""));
             Log.d("AlexDebug", "connected!");
         } catch (URISyntaxException e) {
@@ -475,10 +479,8 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
             if (data != null) {
-
                 Bitmap bitmap = (Bitmap) data.getExtras().get("data");
                 Log.d(Logging.debug, "Bitmap: " + bitmap.getByteCount());
                 new Thread(() -> socketSendPhoto(bitmap)).start();
@@ -521,11 +523,9 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
 
                 MediaScannerConnection.scanFile(this,
                         new String[]{outFile.toString()}, null,
-                        new MediaScannerConnection.OnScanCompletedListener() {
-                            public void onScanCompleted(String path, Uri uri) {
-                                Log.d(Logging.debug, "Scanned " + path + ":");
-                                Log.d(Logging.debug, "-> uri=" + uri);
-                            }
+                        (path, uri) -> {
+                            Log.d(Logging.debug, "Scanned " + path + ":");
+                            Log.d(Logging.debug, "-> uri=" + uri);
                         });
             }
             pickImageBottomSheet.dismiss();
@@ -551,9 +551,7 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
                     "0"));
             chatAdapter.notifyDataSetChanged();
             binding.chatRecycler.smoothScrollToPosition(chatContentList.size() - 1);
-            new Thread(() -> {
-                socketSendPictures(picture.getValue());
-            }).start();
+            new Thread(() -> socketSendPictures(picture.getValue())).start();
         }
     }
 
@@ -641,6 +639,7 @@ public class ChatActivity extends AppCompatActivity implements PickImageBottomSh
 
     @Override
     protected void onDestroy() {
+        Constants.customerInChat = false;
         socket.off("room." + LoaderActivity.settings.getString(LoaderActivity.ROOM_CHAT_ID, ""));
         socket.disconnect();
         super.onDestroy();
