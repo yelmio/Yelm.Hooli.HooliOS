@@ -234,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
         LocationRequest locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationRequest.setNumUpdates(1);
-        locationRequest.setInterval(0);
+        locationRequest.setInterval(100);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             performIfNoLocationPermission();
         } else {

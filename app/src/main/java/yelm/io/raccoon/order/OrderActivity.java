@@ -1,6 +1,7 @@
 package yelm.io.raccoon.order;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.app.Activity;
 import android.content.Context;
@@ -8,8 +9,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.ApiException;
@@ -122,12 +126,45 @@ public class OrderActivity extends AppCompatActivity implements ThreeDSDialogLis
             Log.d(Logging.debug, "currentAddress: " + currentAddress.toString());
         }
         binding();
+        checkEditText();
         paymentsClient = PaymentsUtil.createPaymentsClient(this);
         checkIsReadyToPay();
         bindingChosePaymentType();
         binding.applyPromocode.setOnClickListener(v -> getPromoCode());
         getPromoIfExist();
     }
+
+    private void checkEditText() {
+        binding.entrance.addTextChangedListener(new CustomTextWatcher(binding.entrance, this));
+        binding.floor.addTextChangedListener(new CustomTextWatcher(binding.floor, this));
+        binding.flat.addTextChangedListener(new CustomTextWatcher(binding.flat, this));
+        binding.phone.addTextChangedListener(new CustomTextWatcher(binding.phone, this));
+    }
+
+    private static class CustomTextWatcher implements TextWatcher {
+        private EditText editText;
+        private Context context;
+
+        public CustomTextWatcher(EditText e, Context context) {
+            this.editText = e;
+            this.context = context;
+        }
+
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if (s.toString().trim().length() == 0) {
+                editText.setBackground(ContextCompat.getDrawable(context, R.drawable.back_edittext_red));
+            } else {
+                editText.setBackground(ContextCompat.getDrawable(context, R.drawable.back_edittext_green));
+            }
+        }
+
+        public void afterTextChanged(Editable s) {
+        }
+    }
+
 
     private void getPromoIfExist() {
         String type = LoaderActivity.settings.getString(LoaderActivity.DISCOUNT_TYPE, "");

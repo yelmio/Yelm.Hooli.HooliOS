@@ -112,15 +112,18 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:gravity="center|center_vertical"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="visible">
 
                 <TextView
                     android:id="@+id/finalPrice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="start"
+                    android:includeFontPadding="false"
                     android:textColor="@color/mainThemeColor"
                     android:textSize="18sp"
+                    android:text="total"
                     android:textStyle="bold"
                     android:theme="@style/ProDisplayTextStyle" />
 
@@ -128,7 +131,11 @@
                     android:id="@+id/time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="start"
+                    android:drawableStart="@drawable/ic_clock"
+                    android:drawablePadding="4dp"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="time"
                     android:textSize="14sp"
                     android:theme="@style/ProDisplayTextStyle" />
             </LinearLayout>

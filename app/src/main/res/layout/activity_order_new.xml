@@ -45,10 +45,20 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="start"
+                    android:includeFontPadding="false"
+                    android:text="total"
                     android:textColor="@color/mainThemeColor"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:theme="@style/ProDisplayTextStyle" />
+
+                <TextView
+                    android:id="@+id/totalText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:includeFontPadding="false"
+                    android:paddingTop="2dp"
+                    android:text="@string/orderActivityTotal" />
 
                 <TextView
                     android:id="@+id/time"
@@ -263,7 +273,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/stroke_back"
+                android:background="@drawable/back_edittext_green"
                 android:ems="10"
                 android:hint="@string/entrance"
                 android:inputType="number"
@@ -278,7 +288,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_weight="1"
-                android:background="@drawable/stroke_back"
+                android:background="@drawable/back_edittext_green"
                 android:ems="10"
                 android:hint="@string/floor"
                 android:inputType="number"
@@ -292,7 +302,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/stroke_back"
+                android:background="@drawable/back_edittext_green"
                 android:ems="10"
                 android:hint="@string/appartament"
                 android:inputType="number"
@@ -329,7 +339,7 @@
             android:layout_height="46dp"
             android:layout_marginTop="8dp"
             android:layout_weight="1"
-            android:background="@drawable/stroke_back"
+            android:background="@drawable/back_edittext_green"
             android:fontFamily="@font/sf_prodisplay_regular"
             android:hint="+7 (999) 123-46-57"
             android:inputType="phone"
@@ -377,6 +387,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/inYourOrderProductsCount"
+                android:includeFontPadding="false"
                 android:textColor="@color/colorTextGray"
                 android:textSize="16sp"
                 android:theme="@style/ProDisplayTextStyle" />
@@ -386,6 +397,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="end"
+                android:includeFontPadding="false"
                 android:textColor="@color/mainThemeColor"
                 android:textSize="16sp"
                 android:theme="@style/ProDisplayTextStyle" />
@@ -404,6 +416,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/delivery"
+                android:includeFontPadding="false"
                 android:textColor="@color/colorTextGray"
                 android:textSize="16sp"
                 android:theme="@style/ProDisplayTextStyle" />
@@ -412,7 +425,7 @@
                 android:id="@+id/deliveryPrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
+                android:includeFontPadding="false"
                 android:textColor="@color/mainThemeColor"
                 android:textSize="16sp"
                 android:theme="@style/ProDisplayTextStyle" />
@@ -431,6 +444,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:includeFontPadding="false"
                 android:text="@string/orderDiscount"
                 android:textColor="@color/colorRedDiscount"
                 android:textSize="16sp"
@@ -442,6 +456,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorRedDiscount"
                 android:textSize="16sp"
+                android:includeFontPadding="false"
                 android:theme="@style/ProDisplayTextStyle" />
         </LinearLayout>
 

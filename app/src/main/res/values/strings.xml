@@ -101,9 +101,10 @@
     <!-- OrderActivity -->
     <string name="ordering">Оформление</string>
     <string name="promocode">Промокод</string>
+    <string name="orderActivityTotal">Итого</string>
     <string name="appartament">Квартира</string>
-    <string name="recipient">Получатель</string>
-    <string name="inYourOrder">В вашем заказе</string>
+    <string name="recipient">Номер телефона</string>
+    <string name="inYourOrder">Ваш заказ</string>
     <string name="orderActivityEnterPromoCode">Введите промокод</string>
     <string name="inYourOrderProductsPC">шт.</string>
     <string name="inYourOrderProductsCount">Товаров:</string>
