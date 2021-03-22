@@ -1,5 +1,6 @@
 package yelm.io.raccoon.loader.controller;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.NotificationChannel;
@@ -8,9 +9,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
+import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -38,6 +41,7 @@ import yelm.io.raccoon.main.controller.MainActivity;
 import yelm.io.raccoon.payment.Constants;
 import yelm.io.raccoon.rest.rest_api.RestAPI;
 import yelm.io.raccoon.rest.client.RetrofitClient;
+import yelm.io.raccoon.support_stuff.StaticRepository;
 
 public class LoaderActivity extends AppCompatActivity {
 
@@ -60,6 +64,9 @@ public class LoaderActivity extends AppCompatActivity {
     public static SharedPreferences settings;
     private static final String APP_PREFERENCES = "settings";
 
+    private static final int INTERNET_SETTINGS_CODE = 91;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,9 +87,7 @@ public class LoaderActivity extends AppCompatActivity {
             notificationManager.createNotificationChannel(new NotificationChannel(channelId,
                     channelName, NotificationManager.IMPORTANCE_HIGH));
         }
-        RestMethods.sendStatistic("open_app");
         initRoom();
-        init();
     }
 
     private JSONObject getDeviceInfo() {
@@ -103,10 +108,6 @@ public class LoaderActivity extends AppCompatActivity {
         return jsonData;
     }
 
-    private boolean isNetworkConnected() {
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected();
-    }
 
     //if user does not exist then we pull request to create it
     private void checkUser() {
@@ -227,8 +228,9 @@ public class LoaderActivity extends AppCompatActivity {
     }
 
     private void init() {
-        if (isNetworkConnected()) {
+        if (StaticRepository.isNetworkConnected(this)) {
             Log.d(Logging.debug, "Method init() - NetworkConnected successfully");
+            RestMethods.sendStatistic("open_app");
             checkUser();
         } else {
             Log.d(Logging.debug, "Method init() - NetworkConnected not successful");
@@ -236,8 +238,28 @@ public class LoaderActivity extends AppCompatActivity {
                     findViewById(R.id.layout),
                     R.string.loaderActivityNoNetworkConnection,
                     Snackbar.LENGTH_INDEFINITE)
-                    .setAction(R.string.loaderActivityUpdateNetworkConnection, view -> init());
+                    .setAction(R.string.loaderActivityUpdateNetworkConnection, view -> {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            startActivityForResult(new Intent(Settings.Panel.ACTION_INTERNET_CONNECTIVITY), INTERNET_SETTINGS_CODE);
+                        } else {
+                            //startActivityForResult(new Intent(Settings.ACTION_WIFI_SETTINGS), INTERNET_SETTINGS_CODE);
+                            startActivityForResult(new Intent(Settings.ACTION_NETWORK_OPERATOR_SETTINGS), INTERNET_SETTINGS_CODE);
+                            //startActivityForResult(new Intent(Settings.ACTION_WIFI_SETTINGS), INTERNET_SETTINGS_CODE);
+                        }
+                    });
             snackbar.show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (data == null) {
+            return;
+        }
+
+        if (requestCode == INTERNET_SETTINGS_CODE) {
+            init();
         }
     }
 
@@ -272,5 +294,11 @@ public class LoaderActivity extends AppCompatActivity {
                         Log.e(Logging.error, "Method getChatSettings() failure: " + t.toString());
                     }
                 });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        init();
     }
 }

@@ -53,7 +53,7 @@
 
 
     <!-- LoaderActivity -->
-    <string name="loaderActivityUpdateNetworkConnection">Обновить</string>
+    <string name="loaderActivityUpdateNetworkConnection">Включить</string>
     <string name="loaderActivityNoNetworkConnection">Нет подключения к интернету</string>
 
     <!-- ChatActivity -->

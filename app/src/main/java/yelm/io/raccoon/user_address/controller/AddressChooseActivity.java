@@ -97,6 +97,8 @@ public class AddressChooseActivity extends AppCompatActivity {
         binding.mapView.getMap().addCameraListener(cameraListener);
         setImageSpringAnimation();
 
+        binding.back.setOnClickListener(v -> onBackPressed());
+
         binding.getLocation.setOnClickListener(view -> {
             if (cameraPositionCurrent != null) {
                 String userStreet;
@@ -165,7 +167,7 @@ public class AddressChooseActivity extends AppCompatActivity {
     }
 
     private void getCurrentLocation() {
-        LocationRequest locationRequest = new LocationRequest();
+        LocationRequest locationRequest = LocationRequest.create();
         locationRequest.setInterval(4000); //interval in which we want to get location
         locationRequest.setFastestInterval(4000); //if location is available sooner you can get it early
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
