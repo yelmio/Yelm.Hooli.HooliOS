@@ -78,7 +78,6 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
     AddressesBottomSheet addressesBottomSheet = new AddressesBottomSheet();
 
     private ArrayList<CategoriesWithProductsClass> catalogsWithProductsList = new ArrayList<>();
-    private NewsAdapter newsAdapter;
 
     private static final String[] LOCATION_PERMISSIONS = new String[]{
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -102,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
         getAppToken();
         getCategories();
         getLocationPermission();
+
         Bundle args = getIntent().getExtras();
         if (args != null) {
             Log.d(Logging.debug, "MainActivity - Notification data: " + args.getString("id"));
@@ -114,12 +114,10 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
                 Intent intent = new Intent(MainActivity.this, ItemFromNotificationActivity.class);
                 intent.putExtra("id", args.getString("id"));
                 startActivity(intent);
-            } else if (Objects.equals(args.getString("name"), "chat")){
+            } else if (Objects.equals(args.getString("name"), "chat")) {
                 startActivity(new Intent(MainActivity.this, ChatActivity.class));
             }
         }
-
-        checkIfGPSEnabled();
     }
 
     private void checkIfGPSEnabled() {
@@ -233,9 +231,10 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
     private void getUserCurrentLocation() {
         Log.d(Logging.debug, "Method getUserCurrentLocation()");
         LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setInterval(100); //interval in which we want to get location
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setNumUpdates(1);
-        locationRequest.setInterval(100);
+        //locationRequest.setNumUpdates(1);
+        locationRequest.setFastestInterval(100);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             performIfNoLocationPermission();
         } else {
@@ -253,6 +252,7 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
             Log.d(Logging.debug, "location updated:" + "\nlatitude: " + latitude + "\nlongitude: " + longitude);
             String userStreet = getUserStreet(locationResult.getLastLocation());
             Log.d(Logging.debug, "Method getUserCurrentLocation() - userStreet: " + userStreet);
+            LocationServices.getFusedLocationProviderClient(MainActivity.this).removeLocationUpdates(locationCallback);
 
             if (userStreet.trim().isEmpty()) {
                 performIfNoLocationPermission();
@@ -292,9 +292,9 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
                     location.getLongitude(), 1);
             if (addresses.size() > 0) {
                 Address userCurrentAddress = addresses.get(0);
-                Log.d(Logging.debug, "userChosenAddress: " + userCurrentAddress.getAddressLine(0));
-                Log.d(Logging.debug, "getFeatureName: " + userCurrentAddress.getFeatureName());
-                Log.d(Logging.debug, "getThoroughfare: " + userCurrentAddress.getThoroughfare());
+                //Log.d(Logging.debug, "userChosenAddress: " + userCurrentAddress.getAddressLine(0));
+                //Log.d(Logging.debug, "getFeatureName: " + userCurrentAddress.getFeatureName());
+                //Log.d(Logging.debug, "getThoroughfare: " + userCurrentAddress.getThoroughfare());
                 userStreet =
                         (userCurrentAddress.getThoroughfare() == null ? "" : userCurrentAddress.getThoroughfare())
                                 + (userCurrentAddress.getThoroughfare() != null && userCurrentAddress.getFeatureName() != null ? ", " : "")
@@ -385,7 +385,6 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
                         return;
                     }
                     String token = task.getResult();
-                    //Log.d(Logging.debug, "FCM: token:" + token);
                     RestMethods.sendRegistrationToServer(token);
                 });
     }
@@ -413,8 +412,7 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
                                 List<NewNews> newsList = response.body();
-                                newsAdapter = new NewsAdapter(MainActivity.this, newsList);
-                                binding.recyclerCards.setAdapter(newsAdapter);
+                                binding.recyclerCards.setAdapter(new NewsAdapter(MainActivity.this, newsList));
                             } else {
                                 Log.e(Logging.error, "Method initNews() - by some reason response is null!");
                             }
@@ -435,6 +433,12 @@ public class MainActivity extends AppCompatActivity implements AddressesBottomSh
     public void onStop() {
         compositeDisposableBasket.clear();
         super.onStop();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkIfGPSEnabled();
     }
 
     @Override

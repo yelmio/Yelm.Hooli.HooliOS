@@ -121,9 +121,9 @@
                     android:layout_height="wrap_content"
                     android:gravity="start"
                     android:includeFontPadding="false"
+                    android:text="total"
                     android:textColor="@color/mainThemeColor"
                     android:textSize="18sp"
-                    android:text="total"
                     android:textStyle="bold"
                     android:theme="@style/ProDisplayTextStyle" />
 

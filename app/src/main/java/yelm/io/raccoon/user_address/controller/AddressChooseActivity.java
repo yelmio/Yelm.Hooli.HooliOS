@@ -62,7 +62,7 @@ public class AddressChooseActivity extends AppCompatActivity {
     };
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 3333;
-    private static final float DEFAULT_ZOOM = 15f;
+    private static final float DEFAULT_ZOOM = 16f;
     double currentLatitude = 0.0;
     double currentLongitude = 0.0;
     boolean moveCameraFirst = false;
@@ -96,11 +96,14 @@ public class AddressChooseActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         binding.mapView.getMap().addCameraListener(cameraListener);
         setImageSpringAnimation();
-
+        binding.mapView.setAlpha(0f);
         binding.back.setOnClickListener(v -> onBackPressed());
 
         binding.getLocation.setOnClickListener(view -> {
             if (cameraPositionCurrent != null) {
+                if (userSelectedAddress == null) {
+                    return;
+                }
                 String userStreet;
                 userStreet =
                         (userSelectedAddress.getThoroughfare() == null ? "" : userSelectedAddress.getThoroughfare())
@@ -139,7 +142,7 @@ public class AddressChooseActivity extends AppCompatActivity {
             if (currentLatitude != 0.0 && currentLongitude != 0.0) {
                 binding.mapView.getMap().move(
                         new CameraPosition(new Point(currentLatitude, currentLongitude), DEFAULT_ZOOM, 0.0f, 0.0f),
-                        new Animation(Animation.Type.SMOOTH, 3),
+                        new Animation(Animation.Type.SMOOTH, 2),
                         null);
             }
         });
@@ -244,7 +247,11 @@ public class AddressChooseActivity extends AppCompatActivity {
                 //move camera to current location once
                 if (!moveCameraFirst) {
                     binding.mapView.getMap().move(
-                            new CameraPosition(new Point(currentLatitude, currentLongitude), DEFAULT_ZOOM, 0.0f, 0.0f), new Animation(Animation.Type.SMOOTH, 3), null);
+                            new CameraPosition(new Point(currentLatitude, currentLongitude),
+                                    DEFAULT_ZOOM,
+                                    0.0f,
+                                    0.0f), new Animation(Animation.Type.SMOOTH, 0), null);
+                    binding.mapView.animate().setDuration(200).alpha(1f).start();
                 }
                 moveCameraFirst = true;
             }

@@ -4,7 +4,6 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.ViewGroup;
@@ -21,7 +20,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsHolder> {
 
     private Context context;
     private List<NewNews> news;
-    boolean isMoving = false;
+    //boolean isMoving = false;
 
     public NewsAdapter(Context context, List<NewNews> news) {
         this.context = context;
@@ -39,17 +38,17 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsHolder> {
         holder.binding.name.setText(currentNews.getTitle());
         if (currentNews.getTitle().trim().isEmpty()) {
             Picasso.get()
-                    .load(currentNews.getImage())
+                    .load(currentNews.getPreviewImage())
                     .noPlaceholder()
                     .centerCrop()
-                    .resize(300, 0)
+                    .resize(400, 0)
                     .into(holder.binding.image);
         } else {
             Picasso.get()
-                    .load(currentNews.getImage())
+                    .load(currentNews.getPreviewImage())
                     .noPlaceholder()
                     .centerCrop()
-                    .resize(300, 0)
+                    .resize(400, 0)
                     .transform(new GradientTransformation(context))
                     .into(holder.binding.image);
         }

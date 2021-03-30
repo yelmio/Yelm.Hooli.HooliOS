@@ -161,8 +161,8 @@ public class ProductsNewMenuSquareImageAdapter extends RecyclerView.Adapter<Prod
                     }
 
                     if (countOfAllProducts.compareTo(new BigDecimal(listCartsByID.get(0).quantity)) >= 0) {
-                        showToast((String) context.getText(R.string.productsNotAvailable) +
-                                " " + listCartsByID.get(0).quantity +" "+(String) context.getText(R.string.basketActivityPC));
+                        showToast(context.getString(R.string.productsNotAvailable) +
+                                " " + listCartsByID.get(0).quantity +" "+ context.getString(R.string.basketActivityPC));
                         return;
                     }
 

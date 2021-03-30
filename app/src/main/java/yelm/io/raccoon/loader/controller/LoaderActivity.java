@@ -111,7 +111,7 @@ public class LoaderActivity extends AppCompatActivity {
     //if user does not exist then we pull request to create it
     private void checkUser() {
         if (settings.contains(USER_NAME)) {
-            Log.d(Logging.debug, "Method checkUser() - user exist: " + settings.getString(USER_NAME, ""));
+            Logging.logDebug("Method checkUser() - user exist: " + settings.getString(USER_NAME, ""));
             getApplicationSettings();
             getChatSettings(settings.getString(USER_NAME, ""));
         } else {
@@ -129,7 +129,7 @@ public class LoaderActivity extends AppCompatActivity {
                                 if (response.body() != null) {
                                     SharedPreferences.Editor editor = settings.edit();
                                     editor.putString(USER_NAME, response.body().getLogin()).apply();
-                                    Log.d(Logging.debug, "Method checkUser() - created user: " + settings.getString(USER_NAME, ""));
+                                    Logging.logDebug("Method checkUser() - created user: " + settings.getString(USER_NAME, ""));
                                     getChatSettings(settings.getString(USER_NAME, ""));
                                     getApplicationSettings();
                                 } else {
@@ -228,11 +228,11 @@ public class LoaderActivity extends AppCompatActivity {
 
     private void init() {
         if (StaticRepository.isNetworkConnected(this)) {
-            Log.d(Logging.debug, "Method init() - NetworkConnected successfully");
+            Logging.logDebug("Method init() - NetworkConnected successfully");
             RestMethods.sendStatistic("open_app");
             checkUser();
         } else {
-            Log.d(Logging.debug, "Method init() - NetworkConnected not successful");
+            Logging.logDebug("Method init() - NetworkConnected not successful");
             Snackbar snackbar = Snackbar.make(
                     findViewById(R.id.layout),
                     R.string.loaderActivityNoNetworkConnection,
@@ -243,7 +243,6 @@ public class LoaderActivity extends AppCompatActivity {
                         } else {
                             //startActivityForResult(new Intent(Settings.ACTION_WIFI_SETTINGS), INTERNET_SETTINGS_CODE);
                             startActivityForResult(new Intent(Settings.ACTION_NETWORK_OPERATOR_SETTINGS), INTERNET_SETTINGS_CODE);
-                            //startActivityForResult(new Intent(Settings.ACTION_WIFI_SETTINGS), INTERNET_SETTINGS_CODE);
                         }
                     });
             snackbar.show();
@@ -253,11 +252,11 @@ public class LoaderActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (data == null) {
-            return;
-        }
-
+//        if (data == null) {
+//            return;
+//        }
         if (requestCode == INTERNET_SETTINGS_CODE) {
+            Logging.logDebug("INTERNET_SETTINGS_CODE");
             init();
         }
     }
@@ -272,7 +271,7 @@ public class LoaderActivity extends AppCompatActivity {
                     public void onResponse(@NotNull Call<ChatSettingsClass> call, @NotNull final Response<ChatSettingsClass> response) {
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
-                                Log.d(Logging.debug, "ChatSettingsClass: " + response.body().toString());
+                                Logging.logDebug("ChatSettingsClass: " + response.body().toString());
                                 SharedPreferences.Editor editor = settings.edit();
                                 editor.putString(API_TOKEN, response.body().getApiToken());
                                 editor.putString(SHOP_CHAT_ID, response.body().getShop());

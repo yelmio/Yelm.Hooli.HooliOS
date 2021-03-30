@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.SearchView;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -46,6 +47,19 @@ public class ItemsOfOneCategoryActivity extends AppCompatActivity {
         binding.recycler.addItemDecoration(new ItemOffsetDecorationBottom((int) getResources().getDimension(R.dimen.dimen_70dp)));
         binding.back.setOnClickListener(v -> finish());
         binding.basket.setOnClickListener(v -> startActivity(new Intent(this, BasketActivity.class)));
+        binding.search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                productsSquareAdapter.getFilter().filter(s);
+                binding.recycler.scrollToPosition(0);
+                return false;
+            }
+        });
     }
 
     private void rewriteView() {

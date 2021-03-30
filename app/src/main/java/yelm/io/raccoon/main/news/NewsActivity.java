@@ -11,6 +11,7 @@ import android.view.View;
 import com.google.android.material.appbar.AppBarLayout;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import yelm.io.raccoon.R;
@@ -26,7 +27,7 @@ public class NewsActivity extends AppCompatActivity implements AppBarLayout.OnOf
     private int maxScrollSize;
     private static final int PERCENTAGE_TO_SHOW_IMAGE = 80;
     private boolean isImageHidden;
-    ProductsNewMenuSquareImageAdapter productsSquareAdapter;
+    List<Item> products = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,13 +37,12 @@ public class NewsActivity extends AppCompatActivity implements AppBarLayout.OnOf
         NewNews news = getIntent().getParcelableExtra("news");
         if (news != null) {
             binding(news);
-            List<Item> products = news.getItems();
+            products = news.getItems();
             if (products.size() != 0) {
                 binding.titleProducts.setVisibility(View.VISIBLE);
             }
-            productsSquareAdapter = new ProductsNewMenuSquareImageAdapter(this, products);
             binding.recycler.setLayoutManager(new StaggeredGridLayoutManager(2, 1));
-            binding.recycler.setAdapter(productsSquareAdapter);
+            //binding.recycler.setAdapter(new ProductsNewMenuSquareImageAdapter(this, products));
             binding.share.setOnClickListener(v -> {
                 RestMethods.sendStatistic("share_news");
                 String sharingLink = "https://yelm.io/news/" + news.getId();
@@ -55,6 +55,12 @@ public class NewsActivity extends AppCompatActivity implements AppBarLayout.OnOf
         } else {
             Log.e(Logging.error, "Method onCreate() in NewsActivity: by some reason news==null");
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        binding.recycler.setAdapter(new ProductsNewMenuSquareImageAdapter(this, products));
     }
 
     private void binding(NewNews news) {
