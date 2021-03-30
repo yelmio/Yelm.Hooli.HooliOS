@@ -36,7 +36,7 @@ public class ItemActivity extends AppCompatActivity implements AppBarLayout.OnOf
     private int maxScrollSize;
     private static final int PERCENTAGE_TO_SHOW_IMAGE = 80;
     private boolean isImageHidden;
-
+    Toast toast;
     ProductSpecificationsAdapter productSpecificationsAdapter;
     ProductModifierAdapter productModifierAdapter;
 
@@ -189,12 +189,12 @@ public class ItemActivity extends AppCompatActivity implements AppBarLayout.OnOf
             }
 
             String added = (String) (binding.countProducts.getText().toString().equals("1") ? getText(R.string.productNewActivityAddedOne) : getText(R.string.productNewActivityAddedMulti));
-            Toast.makeText(this, "" +
+            showToast("" +
                     product.getName() + " " +
                     binding.countProducts.getText().toString() + " " +
                     getText(R.string.productNewActivityPC) + " " +
                     added + " " +
-                    getText(R.string.productNewActivityAddedToBasket), Toast.LENGTH_SHORT).show();
+                    getText(R.string.productNewActivityAddedToBasket));
 
             List<Modifier> listModifiers = new ArrayList<>();
             for (Map.Entry<String, String> modifierEntry : modifiers.entrySet()) {
@@ -235,9 +235,11 @@ public class ItemActivity extends AppCompatActivity implements AppBarLayout.OnOf
         });
     }
 
-
     private void showToast(String message) {
-        Toast toast = Toast.makeText(this, message, Toast.LENGTH_LONG);
+        if (toast != null) {
+            toast.cancel();
+        }
+        toast = Toast.makeText(this, message, Toast.LENGTH_LONG);
         //toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
     }
